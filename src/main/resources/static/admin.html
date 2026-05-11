@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TellMe Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#f5f5f5;
+        }
+
+        .sidebar{
+            width:250px;
+            height:100vh;
+            position:fixed;
+            background:#212529;
+            color:white;
+            padding-top:20px;
+        }
+
+        .sidebar a{
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:15px 20px;
+            transition:0.3s;
+        }
+
+        .sidebar a:hover{
+            background:#343a40;
+        }
+
+        .content{
+            margin-left:250px;
+            padding:30px;
+        }
+
+        .card-dashboard{
+            border:none;
+            border-radius:15px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .menu-active{
+            background:#0d6efd;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+    window.location.href = "/login.html";
+}
+
+if(user.role !== "ADMIN"){
+    window.location.href = "/index.html";
+}
+
+</script>
+
+<div class="sidebar">
+
+    <h3 class="text-center mb-4">
+        TellMe Admin
+    </h3>
+
+    <a href="#" class="menu-link menu-active" onclick="setMenu(event,'dashboard')">
+        Dashboard
+    </a>
+
+    <a href="#" class="menu-link" onclick="setMenu(event,'aspirasi')">
+        Kelola Aspirasi
+    </a>
+
+    <a href="#" class="menu-link" onclick="setMenu(event,'forum')">
+        Kelola Forum
+    </a>
+
+    <a href="#" class="menu-link" onclick="setMenu(event,'user')">
+        Kelola User
+    </a>
+
+    <a href="#" class="menu-link" onclick="setMenu(event,'statistik')">
+        Statistik
+    </a>
+
+    <a href="#" onclick="logout()">
+        Logout
+    </a>
+
+</div>
+
+<div class="content">
+
+    <h2 id="judulHalaman">
+        Dashboard
+    </h2>
+
+    <div id="contentArea"></div>
+
+</div>
+
+<script>
+
+const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
+const API_FORUM = "http://localhost:8080/api/forum";
+const API_USER = "http://localhost:8080/api/users";
+
+function logout(){
+
+    localStorage.removeItem("user");
+
+    window.location.href = "/login.html";
+}
+
+function setMenu(e, menu){
+
+    e.preventDefault();
+
+    document
+        .querySelectorAll(".menu-link")
+        .forEach(el => el.classList.remove("menu-active"));
+
+    e.target.classList.add("menu-active");
+
+    if(menu === "dashboard"){
+        loadDashboard();
+    }
+
+    if(menu === "aspirasi"){
+        loadAspirasi();
+    }
+
+    if(menu === "forum"){
+        loadForum();
+    }
+
+    if(menu === "user"){
+        loadUser();
+    }
+
+    if(menu === "statistik"){
+        loadStatistik();
+    }
+}
+
+async function loadDashboard(){
+
+    document.getElementById("judulHalaman").innerText =
+        "Dashboard";
+
+    const res = await fetch(API_ASPIRASI);
+
+    const data = await res.json();
+
+    const total = data.length;
+
+    const diproses =
+        data.filter(a => a.status?.id == 1 && a.kategori != null).length;
+
+    const selesai =
+        data.filter(a => a.status?.id == 2).length;
+
+    const ditolak =
+        data.filter(a => a.status?.id == 3).length;
+
+    document.getElementById("contentArea").innerHTML = `
+
+        <div class="row">
+
+            <div class="col-md-3 mb-3">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Total Aspirasi</h5>
+
+                        <h2>${total}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3 mb-3">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Diproses</h5>
+
+                        <h2>${diproses}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3 mb-3">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Selesai</h5>
+
+                        <h2>${selesai}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-3 mb-3">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Ditolak</h5>
+
+                        <h2>${ditolak}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+async function loadAspirasi(){
+
+    document.getElementById("judulHalaman").innerText =
+        "Kelola Aspirasi";
+
+    const res = await fetch(API_ASPIRASI);
+
+    const data = await res.json();
+
+    let html = "";
+
+    data.reverse().forEach(a => {
+
+        html += `
+
+        <div class="card mb-3">
+
+            <div class="card-body">
+
+                <h5>${a.isiAspirasi}</h5>
+
+                <p>User: ${a.user?.nama || 'Anonymous'}</p>
+
+                <p>Status: ${a.status?.namaStatus || '-'}</p>
+
+                <p>Kategori: ${a.kategori?.namaKategori || '-'}</p>
+
+                <p>Feedback: ${a.feedback || '-'}</p>
+
+                ${a.status?.id == 1 && a.kategori == null ? `
+
+                    <button
+                        class="btn btn-primary btn-sm"
+                        onclick="proses(${a.id},1)">
+
+                        Akademik
+
+                    </button>
+
+                    <button
+                        class="btn btn-success btn-sm"
+                        onclick="proses(${a.id},2)">
+
+                        Organisasi
+
+                    </button>
+
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="tolak(${a.id})">
+
+                        Tolak
+
+                    </button>
+
+                ` : ''}
+
+                ${a.status?.id == 1 && a.kategori != null ? `
+
+                    <button
+                        class="btn btn-warning btn-sm"
+                        onclick="selesai(${a.id})">
+
+                        Selesai
+
+                    </button>
+
+                ` : ''}
+
+            </div>
+
+        </div>
+
+        `;
+    });
+
+    document.getElementById("contentArea").innerHTML = html;
+}
+
+async function proses(id, kategoriId){
+
+    await fetch(`${API_ASPIRASI}/${id}/proses`,{
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            statusId:kategoriId
+        })
+
+    });
+
+    loadAspirasi();
+}
+
+async function selesai(id){
+
+    const feedback = prompt("Masukkan feedback");
+
+    if(!feedback) return;
+
+    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            statusId:2,
+
+            feedback:feedback
+
+        })
+
+    });
+
+    loadAspirasi();
+}
+
+async function tolak(id){
+
+    const alasan = prompt("Alasan penolakan");
+
+    if(!alasan) return;
+
+    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            statusId:3,
+
+            feedback:alasan
+
+        })
+
+    });
+
+    loadAspirasi();
+}
+
+async function loadForum(){
+
+    document.getElementById("judulHalaman").innerText =
+        "Kelola Forum";
+
+    const res = await fetch(API_FORUM);
+
+    const data = await res.json();
+
+    let html = "";
+
+    data.reverse().forEach(post => {
+
+        html += `
+
+        <div class="card mb-3">
+
+            <div class="card-body">
+
+                <h5>${post.isiPost}</h5>
+
+                <p>User: ${post.user?.nama}</p>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="hapusPost(${post.id})">
+
+                    Hapus
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+    });
+
+    document.getElementById("contentArea").innerHTML = html;
+}
+
+async function hapusPost(id){
+
+    if(!confirm("Hapus postingan?")) return;
+
+    await fetch(`${API_FORUM}/${id}`,{
+        method:"DELETE"
+    });
+
+    loadForum();
+}
+
+async function loadUser(){
+
+    document.getElementById("judulHalaman").innerText =
+        "Kelola User";
+
+    const res = await fetch(API_USER);
+
+    const data = await res.json();
+
+    let html = `
+
+        <div class="card mb-4">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+                    Tambah User
+                </h5>
+
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <input
+                            id="namaUser"
+                            class="form-control"
+                            placeholder="Nama">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input
+                            id="emailUser"
+                            class="form-control"
+                            placeholder="Email">
+                    </div>
+
+                    <div class="col-md-2">
+                        <input
+                            id="passwordUser"
+                            class="form-control"
+                            placeholder="Password">
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <select
+                            id="roleUser"
+                            class="form-control">
+
+                            <option value="MAHASISWA">
+                                MAHASISWA
+                            </option>
+
+                            <option value="ADMIN">
+                                ADMIN
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <button
+                            class="btn btn-primary w-100"
+                            onclick="tambahUser()">
+
+                            Tambah
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <table class="table table-bordered table-hover bg-white">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th width="200">Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+    `;
+
+    data.forEach(u => {
+
+        html += `
+
+            <tr>
+
+                <td>${u.nama}</td>
+
+                <td>${u.email}</td>
+
+                <td>${u.role}</td>
+
+                <td>
+
+                    <button
+                        class="btn btn-warning btn-sm"
+                        onclick="editUser(${u.id},
+                        '${u.nama}',
+                        '${u.email}',
+                        '${u.password}',
+                        '${u.role}')">
+
+                        Edit
+
+                    </button>
+
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="hapusUser(${u.id})">
+
+                        Hapus
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    `;
+
+    document.getElementById("contentArea").innerHTML = html;
+}
+
+async function loadStatistik(){
+
+    document.getElementById("judulHalaman").innerText =
+        "Statistik";
+
+    const res = await fetch(API_ASPIRASI);
+
+    const data = await res.json();
+
+    const akademik =
+        data.filter(a => a.kategori?.namaKategori === "Akademik").length;
+
+    const organisasi =
+        data.filter(a => a.kategori?.namaKategori === "Organisasi").length;
+
+    document.getElementById("contentArea").innerHTML = `
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Aspirasi Akademik</h5>
+
+                        <h2>${akademik}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Aspirasi Organisasi</h5>
+
+                        <h2>${organisasi}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
