@@ -1,42 +1,460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe - Profile</title>
+    <title>TellMe — Profile</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
 
-        body{
-            background:#f5f5f5;
+        :root{
+            --ink:#0d0d0d;
+            --paper:#f7f4ee;
+            --accent:#ff4d2e;
+            --accent2:#1a1aff;
+            --muted:#8f8f82;
+            --border:#e3dfd6;
+            --card:#ffffff;
         }
 
-        .card-custom{
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'DM Sans',sans-serif;
+            background:var(--paper);
+            color:var(--ink);
+            min-height:100vh;
+            overflow-x:hidden;
+        }
+
+        body::before{
+            content:'';
+            position:fixed;
+            inset:0;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(255,77,46,0.07) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(26,26,255,0.06) 0%, transparent 40%);
+            pointer-events:none;
+            z-index:0;
+        }
+
+        body::after{
+            content:'';
+            position:fixed;
+            inset:0;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size:28px 28px;
+            pointer-events:none;
+            z-index:0;
+        }
+
+        /* NAVBAR */
+
+        nav{
+            position:sticky;
+            top:0;
+            z-index:100;
+            height:64px;
+            padding:0 2rem;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            background:rgba(13,13,13,0.82);
+            backdrop-filter:blur(14px);
+            border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-brand{
+            font-family:'Syne',sans-serif;
+            font-size:1.4rem;
+            font-weight:800;
+            color:white;
+            text-decoration:none;
+            letter-spacing:-0.04em;
+        }
+
+        .nav-brand span{
+            color:var(--accent);
+        }
+
+        .nav-links{
+            display:flex;
+            align-items:center;
+            gap:.25rem;
+            list-style:none;
+        }
+
+        .nav-links a{
+            text-decoration:none;
+            color:#999;
+            font-size:.84rem;
+            padding:.45rem .8rem;
+            border-radius:8px;
+            transition:.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active{
+            background:rgba(255,255,255,0.08);
+            color:white;
+        }
+
+        .nav-links a.active{
+            color:var(--accent);
+        }
+
+        .nav-right{
+            display:flex;
+            align-items:center;
+            gap:1rem;
+        }
+
+        .nav-greeting{
+            font-size:.82rem;
+            color:#777;
+        }
+
+        .nav-greeting strong{
+            color:white;
+            font-weight:500;
+        }
+
+        .btn-logout{
             border:none;
-            border-radius:15px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+            background:var(--accent);
+            color:var(--ink);
+            font-family:'Syne',sans-serif;
+            font-size:.72rem;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+            padding:.55rem 1rem;
+            border-radius:8px;
+            cursor:pointer;
+            transition:.2s;
+        }
+
+        .btn-logout:hover{
+            transform:translateY(-2px);
+            opacity:.9;
+        }
+
+        /* MAIN */
+
+        main{
+            position:relative;
+            z-index:1;
+            max-width:720px;
+            margin:auto;
+            padding:4rem 1.5rem 5rem;
+        }
+
+        .page-header{
+            margin-bottom:3rem;
+            animation:fadeUp .5s ease forwards;
+        }
+
+        .page-eyebrow{
+            font-family:'Syne',sans-serif;
+            font-size:.72rem;
+            font-weight:800;
+            letter-spacing:.15em;
+            text-transform:uppercase;
+            color:var(--accent);
+            margin-bottom:.8rem;
+            display:flex;
+            align-items:center;
+            gap:.5rem;
+        }
+
+        .page-eyebrow::before{
+            content:'';
+            width:24px;
+            height:2px;
+            background:var(--accent);
+        }
+
+        .page-title{
+            font-family:'Syne',sans-serif;
+            font-size:clamp(2.5rem,6vw,4.5rem);
+            line-height:1;
+            letter-spacing:-0.05em;
+            font-weight:800;
+        }
+
+        .page-title em{
+            color:var(--accent2);
+            font-style:normal;
+        }
+
+        .page-subtitle{
+            margin-top:1rem;
+            max-width:520px;
+            color:var(--muted);
+            line-height:1.8;
+            font-size:.96rem;
+            font-weight:300;
+        }
+
+        /* PROFILE CARD */
+
+        .profile-card{
+            position:relative;
+            background:rgba(255,255,255,0.82);
+            backdrop-filter:blur(12px);
+            border:1.5px solid var(--border);
+            border-radius:28px;
+            padding:2.5rem;
+            overflow:hidden;
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.05),
+                0 2px 10px rgba(0,0,0,0.04);
+            animation:fadeUp .5s ease forwards;
+        }
+
+        .profile-card::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:3px;
+            background:linear-gradient(
+                90deg,
+                var(--accent),
+                var(--accent2)
+            );
+        }
+
+        .profile-top{
+            text-align:center;
+            margin-bottom:2.2rem;
         }
 
         .profile-avatar{
-            width:100px;
-            height:100px;
+            width:110px;
+            height:110px;
             border-radius:50%;
-            background:#0d6efd;
-            color:white;
+            background:linear-gradient(
+                135deg,
+                var(--accent),
+                var(--accent2)
+            );
             display:flex;
             justify-content:center;
             align-items:center;
-            font-size:40px;
-            margin:auto;
+            margin:auto auto 1.2rem;
+            box-shadow:
+                0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .profile-avatar span{
+            font-family:'Syne',sans-serif;
+            font-size:2.8rem;
+            font-weight:800;
+            color:white;
+        }
+
+        .profile-heading{
+            font-family:'Syne',sans-serif;
+            font-size:1.8rem;
+            font-weight:800;
+            letter-spacing:-0.03em;
+        }
+
+        .profile-sub{
+            color:var(--muted);
+            margin-top:.45rem;
+            font-size:.92rem;
+        }
+
+        /* FORM */
+
+        .field-group{
+            margin-bottom:1.4rem;
+        }
+
+        .field-label{
+            display:block;
+            margin-bottom:.6rem;
+            font-family:'Syne',sans-serif;
+            font-size:.72rem;
+            font-weight:700;
+            letter-spacing:.12em;
+            text-transform:uppercase;
+            color:var(--muted);
+        }
+
+        .input{
+            width:100%;
+            border:none;
+            outline:none;
+            background:var(--paper);
+            border:1.5px solid var(--border);
+            border-radius:14px;
+            padding:1rem 1.1rem;
+            font-family:'DM Sans',sans-serif;
+            font-size:.95rem;
+            color:var(--ink);
+            transition:.2s;
+        }
+
+        .input:focus{
+            border-color:var(--accent2);
+            box-shadow:
+                0 0 0 3px rgba(26,26,255,0.08);
+        }
+
+        .btn-save{
+            width:100%;
+            border:none;
+            border-radius:14px;
+            padding:1rem;
+            margin-top:.6rem;
+            background:var(--ink);
+            color:white;
+            font-family:'Syne',sans-serif;
+            font-size:.95rem;
+            font-weight:700;
+            cursor:pointer;
+            transition:.25s;
+            position:relative;
+            overflow:hidden;
+        }
+
+        .btn-save::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(
+                90deg,
+                var(--accent),
+                var(--accent2)
+            );
+            opacity:0;
+            transition:.3s;
+        }
+
+        .btn-save span{
+            position:relative;
+            z-index:1;
+        }
+
+        .btn-save:hover::before{
+            opacity:1;
+        }
+
+        .btn-save:hover{
+            transform:translateY(-2px);
+        }
+
+        /* MESSAGE */
+
+        .message{
+            margin-top:1.3rem;
+            padding:1rem;
+            border-radius:14px;
+            font-size:.9rem;
+            display:none;
+            text-align:center;
+            animation:fadeUp .3s ease;
+        }
+
+        .message.success{
+            display:block;
+            background:#e4f7ea;
+            color:#18794e;
+            border:1px solid #ccefd7;
+        }
+
+        .message.error{
+            display:block;
+            background:#ffe4e4;
+            color:#c62828;
+            border:1px solid #ffd0d0;
+        }
+
+        /* BLOBS */
+
+        .blob{
+            position:fixed;
+            border-radius:50%;
+            filter:blur(90px);
+            opacity:.16;
+            pointer-events:none;
+            z-index:0;
+        }
+
+        .blob1{
+            width:260px;
+            height:260px;
+            background:var(--accent);
+            top:-80px;
+            right:-80px;
+        }
+
+        .blob2{
+            width:240px;
+            height:240px;
+            background:var(--accent2);
+            bottom:-100px;
+            left:-80px;
+        }
+
+        @keyframes fadeUp{
+
+            from{
+                opacity:0;
+                transform:translateY(20px);
+            }
+
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+
+        }
+
+        @media(max-width:768px){
+
+            nav{
+                padding:0 1rem;
+            }
+
+            .nav-links{
+                display:none;
+            }
+
+            main{
+                padding:2.5rem 1rem 4rem;
+            }
+
+            .profile-card{
+                padding:1.8rem 1.4rem;
+                border-radius:22px;
+            }
+
+            .page-title{
+                font-size:3rem;
+            }
+
         }
 
     </style>
-
 </head>
 
 <body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
 
 <script>
 
@@ -64,157 +482,176 @@ window.onload = function(){
 
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav>
 
-    <div class="container">
+    <a href="#" class="nav-brand">
+        Tell<span>Me</span>
+    </a>
 
-        <a class="navbar-brand">
-            TellMe
-        </a>
+    <ul class="nav-links">
 
-        <div class="navbar-nav">
-
-            <a class="nav-link" href="/index.html">
+        <li>
+            <a href="/index.html">
                 Beranda
             </a>
+        </li>
 
-            <a class="nav-link" href="/aspirasi.html">
+        <li>
+            <a href="/aspirasi.html">
                 Buat Aspirasi
             </a>
+        </li>
 
-            <a class="nav-link" href="/forum.html">
+        <li>
+            <a href="/forum.html">
                 Forum
             </a>
+        </li>
 
-            <a class="nav-link" href="/riwayat.html">
-                Riwayat Aspirasi Saya
+        <li>
+            <a href="/riwayat.html">
+                Riwayat
             </a>
+        </li>
 
-            <a class="nav-link active" href="/profile.html">
+        <li>
+            <a href="/profile.html" class="active">
                 Profile
             </a>
+        </li>
 
-        </div>
+    </ul>
 
-        <div class="d-flex align-items-center text-white">
+    <div class="nav-right">
 
-            <span class="me-3">
-                Halo, <span class="namaUser"></span>
-            </span>
+        <span class="nav-greeting">
+            Halo,
+            <strong class="namaUser"></strong>
+        </span>
 
-            <button
-                class="btn btn-danger btn-sm"
-                onclick="logout()">
+        <button
+            class="btn-logout"
+            onclick="logout()">
 
-                Logout
+            Logout
 
-            </button>
-
-        </div>
+        </button>
 
     </div>
 
 </nav>
 
-<div class="container mt-5">
+<main>
 
-    <div class="row justify-content-center">
+    <div class="page-header">
 
-        <div class="col-md-6">
+        <div class="page-eyebrow">
+            Akun Pengguna
+        </div>
 
-            <div class="card card-custom">
+        <h1 class="page-title">
+            My<br>
+            <em>Profile</em>
+        </h1>
 
-                <div class="card-body p-4">
+        <p class="page-subtitle">
+            Kelola informasi akun dan perbarui data profilmu dengan tampilan yang modern dan simpel.
+        </p>
 
-                    <div class="text-center mb-4">
+    </div>
 
-                        <div class="profile-avatar">
+    <div class="profile-card">
 
-                            <span id="avatarHuruf">
-                                U
-                            </span>
+        <div class="profile-top">
 
-                        </div>
+            <div class="profile-avatar">
 
-                    </div>
-
-                    <h3 class="text-center mb-4">
-                        Profile Saya
-                    </h3>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Nama
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nama"
-                            class="form-control">
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            NIM
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nim"
-                            class="form-control">
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Email
-                        </label>
-
-                        <input
-                            type="email"
-                            id="email"
-                            class="form-control">
-
-                    </div>
-
-                    <div class="mb-4">
-
-                        <label class="form-label">
-                            Password
-                        </label>
-
-                        <input
-                            type="password"
-                            id="password"
-                            class="form-control">
-
-                    </div>
-
-                    <button
-                        class="btn btn-primary w-100"
-                        onclick="updateProfile()">
-
-                        Simpan Perubahan
-
-                    </button>
-
-                    <div
-                        id="message"
-                        class="mt-3 text-center"></div>
-
-                </div>
+                <span id="avatarHuruf">
+                    U
+                </span>
 
             </div>
 
+            <h2 class="profile-heading">
+                Profile Saya
+            </h2>
+
+            <p class="profile-sub">
+                Informasi akun pribadi TellMe
+            </p>
+
+        </div>
+
+        <div class="field-group">
+
+            <label class="field-label">
+                Nama Lengkap
+            </label>
+
+            <input
+                type="text"
+                id="nama"
+                class="input">
+
+        </div>
+
+        <div class="field-group">
+
+            <label class="field-label">
+                NIM
+            </label>
+
+            <input
+                type="text"
+                id="nim"
+                class="input">
+
+        </div>
+
+        <div class="field-group">
+
+            <label class="field-label">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                class="input">
+
+        </div>
+
+        <div class="field-group">
+
+            <label class="field-label">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                class="input">
+
+        </div>
+
+        <button
+            class="btn-save"
+            onclick="updateProfile()">
+
+            <span>
+                Simpan Perubahan
+            </span>
+
+        </button>
+
+        <div
+            id="message"
+            class="message">
         </div>
 
     </div>
 
-</div>
+</main>
 
 <script>
 
@@ -260,6 +697,9 @@ async function updateProfile(){
     const password =
         document.getElementById("password").value;
 
+    const message =
+        document.getElementById("message");
+
     try{
 
         const res = await fetch(`${API}/${user.id}`,{
@@ -273,33 +713,37 @@ async function updateProfile(){
             body:JSON.stringify({
 
                 nama:nama,
-
                 nim:nim,
-
                 email:email,
-
                 password:password,
-
                 role:user.role
 
             })
 
         });
 
-        const updatedUser = await res.json();
+        const updatedUser =
+            await res.json();
 
         localStorage.setItem(
             "user",
             JSON.stringify(updatedUser)
         );
 
-        document.getElementById("message").innerHTML =
-            "<span class='text-success'>Profile berhasil diperbarui</span>";
+        message.className =
+            "message success";
+
+        message.innerHTML =
+            "Profile berhasil diperbarui";
 
     }catch(err){
 
-        document.getElementById("message").innerHTML =
-            "<span class='text-danger'>Gagal memperbarui profile</span>";
+        message.className =
+            "message error";
+
+        message.innerHTML =
+            "Gagal memperbarui profile";
+
     }
 }
 

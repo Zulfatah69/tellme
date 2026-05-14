@@ -1,111 +1,547 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe Admin Panel</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>TellMe — Admin Panel</title>
 
-    <style>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-        body{
-            background:#f5f5f5;
-        }
+<style>
 
-        .sidebar{
-            width:250px;
-            height:100vh;
-            position:fixed;
-            background:#212529;
-            color:white;
-            padding-top:20px;
-        }
+:root{
+    --bg:#f6f4ef;
+    --sidebar:#111111;
+    --card:rgba(255,255,255,0.78);
 
-        .sidebar a{
-            display:block;
-            color:white;
-            text-decoration:none;
-            padding:15px 20px;
-            transition:0.3s;
-        }
+    --line:#e8e3d8;
 
-        .sidebar a:hover{
-            background:#343a40;
-        }
+    --text:#111111;
+    --muted:#7c7b72;
 
-        .content{
-            margin-left:250px;
-            padding:30px;
-        }
+    --accent:#ff5a36;
+    --accent2:#2a4bff;
 
-        .card-dashboard{
-            border:none;
-            border-radius:15px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        }
+    --shadow:
+        0 10px 30px rgba(0,0,0,.06),
+        0 2px 10px rgba(0,0,0,.04);
+}
 
-        .menu-active{
-            background:#0d6efd;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    </style>
+body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+}
 
+/* background */
+
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+
+    background-image:
+        linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+
+    background-size:32px 32px;
+
+    z-index:-2;
+}
+
+/* glow */
+
+.glow{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.15;
+    pointer-events:none;
+    z-index:-1;
+}
+
+.glow.one{
+    width:320px;
+    height:320px;
+    background:var(--accent);
+    top:-100px;
+    right:-100px;
+}
+
+.glow.two{
+    width:280px;
+    height:280px;
+    background:var(--accent2);
+    bottom:-120px;
+    left:-80px;
+}
+
+/* sidebar */
+
+.sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:270px;
+    height:100vh;
+
+    background:rgba(17,17,17,.92);
+
+    backdrop-filter:blur(14px);
+
+    border-right:1px solid rgba(255,255,255,.06);
+
+    padding:2rem 1.2rem;
+
+    display:flex;
+    flex-direction:column;
+
+    z-index:100;
+}
+
+.logo{
+    font-family:'Syne',sans-serif;
+    font-size:2rem;
+    font-weight:800;
+    letter-spacing:-0.05em;
+
+    margin-bottom:2.5rem;
+
+    color:white;
+}
+
+.logo span{
+    color:var(--accent);
+}
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+}
+
+.menu-link{
+    text-decoration:none;
+
+    color:#c8c8c2;
+
+    padding:1rem 1.1rem;
+
+    border-radius:16px;
+
+    transition:.25s ease;
+
+    font-size:.95rem;
+    font-weight:500;
+}
+
+.menu-link:hover{
+    background:rgba(255,255,255,.06);
+    color:white;
+}
+
+.menu-active{
+    background:linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent2)
+    );
+
+    color:white;
+}
+
+.logout{
+    margin-top:auto;
+}
+
+/* content */
+
+.content{
+    margin-left:270px;
+    padding:2.5rem;
+}
+
+/* topbar */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:2rem;
+}
+
+.page-title{
+    font-family:'Syne',sans-serif;
+    font-size:2rem;
+    font-weight:800;
+    letter-spacing:-0.05em;
+}
+
+.user-badge{
+    background:rgba(255,255,255,.7);
+
+    border:1px solid var(--line);
+
+    padding:.8rem 1rem;
+
+    border-radius:16px;
+
+    box-shadow:var(--shadow);
+
+    font-size:.92rem;
+}
+
+/* dashboard cards */
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:1.2rem;
+
+    margin-bottom:2rem;
+}
+
+.dashboard-card{
+    background:var(--card);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(14px);
+
+    border-radius:24px;
+
+    padding:1.5rem;
+
+    box-shadow:var(--shadow);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.dashboard-card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+
+    background:linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent2)
+    );
+}
+
+.card-label{
+    font-size:.8rem;
+    color:var(--muted);
+    margin-bottom:.8rem;
+
+    text-transform:uppercase;
+    letter-spacing:.12em;
+
+    font-family:'Syne',sans-serif;
+}
+
+.card-value{
+    font-size:2rem;
+    font-weight:700;
+}
+
+/* main panel */
+
+.panel{
+    background:var(--card);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    backdrop-filter:blur(14px);
+
+    border-radius:28px;
+
+    padding:1.8rem;
+
+    box-shadow:var(--shadow);
+}
+
+.panel-title{
+    font-family:'Syne',sans-serif;
+    font-size:1.25rem;
+    font-weight:700;
+
+    margin-bottom:1.5rem;
+}
+
+/* form */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:1rem;
+}
+
+.input,
+.select{
+    width:100%;
+
+    padding:1rem;
+
+    border-radius:16px;
+
+    border:1.5px solid var(--line);
+
+    background:white;
+
+    outline:none;
+
+    transition:.25s;
+
+    font-size:.95rem;
+}
+
+.input:focus,
+.select:focus{
+    border-color:var(--accent2);
+
+    box-shadow:
+        0 0 0 4px rgba(42,75,255,.08);
+}
+
+.button{
+    border:none;
+
+    padding:1rem;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    font-family:'Syne',sans-serif;
+    font-weight:700;
+
+    color:white;
+
+    background:#111;
+
+    transition:.25s;
+
+    position:relative;
+    overflow:hidden;
+}
+
+.button::before{
+    content:'';
+
+    position:absolute;
+    inset:0;
+
+    background:linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent2)
+    );
+
+    opacity:0;
+
+    transition:.3s;
+}
+
+.button span{
+    position:relative;
+    z-index:2;
+}
+
+.button:hover::before{
+    opacity:1;
+}
+
+.button:hover{
+    transform:translateY(-2px);
+}
+
+/* table placeholder */
+
+.empty-state{
+    margin-top:1.5rem;
+
+    padding:2rem;
+
+    border-radius:20px;
+
+    background:#faf9f6;
+
+    border:1px dashed #d8d3c8;
+
+    text-align:center;
+
+    color:var(--muted);
+}
+
+/* mobile */
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:100%;
+        height:auto;
+        position:relative;
+    }
+
+    .content{
+        margin-left:0;
+        padding:1.5rem;
+    }
+
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:1rem;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
+<div class="glow one"></div>
+<div class="glow two"></div>
+
 <script>
 
-const user = JSON.parse(localStorage.getItem("user"));
+const user =
+    JSON.parse(localStorage.getItem("user"));
 
 if(!user){
-    window.location.href = "/login.html";
+
+    window.location.href =
+        "/login.html";
+
 }
 
-if(user.role !== "ADMIN"){
-    window.location.href = "/index.html";
+const role =
+    (user.role || "").toUpperCase();
+
+if(role !== "ADMIN" && role !== "PENGELOLA"){
+
+    window.location.href =
+        "/index.html";
+
 }
 
 </script>
 
+<!-- SIDEBAR -->
+
 <div class="sidebar">
 
-    <h3 class="text-center mb-4">
-        TellMe Admin
-    </h3>
+    <div class="logo">
+        Tell<span>Me</span>
+    </div>
 
-    <a href="#" class="menu-link menu-active" onclick="setMenu(event,'dashboard')">
-        Dashboard
-    </a>
+    <div class="sidebar-menu">
 
-    <a href="#" class="menu-link" onclick="setMenu(event,'aspirasi')">
-        Kelola Aspirasi
-    </a>
+        <a
+            href="#"
+            class="menu-link menu-active"
+            onclick="setMenu(event,'dashboard')">
 
-    <a href="#" class="menu-link" onclick="setMenu(event,'forum')">
-        Kelola Forum
-    </a>
+            Dashboard
 
-    <a href="#" class="menu-link" onclick="setMenu(event,'user')">
-        Kelola User
-    </a>
+        </a>
 
-    <a href="#" class="menu-link" onclick="setMenu(event,'statistik')">
-        Statistik
-    </a>
+        <a
+            href="#"
+            class="menu-link"
+            onclick="setMenu(event,'aspirasi')">
 
-    <a href="#" onclick="logout()">
-        Logout
-    </a>
+            Kelola Aspirasi
+
+        </a>
+
+        <a
+            href="#"
+            class="menu-link"
+            onclick="setMenu(event,'forum')">
+
+            Kelola Forum
+
+        </a>
+
+        <a
+            href="#"
+            class="menu-link"
+            onclick="setMenu(event,'user')">
+
+            Kelola User
+
+        </a>
+
+        <a
+            href="#"
+            class="menu-link"
+            onclick="setMenu(event,'statistik')">
+
+            Statistik
+
+        </a>
+
+        <a
+            href="#"
+            class="menu-link"
+            onclick="setMenu(event,'status')">
+
+            Kelola Status
+
+        </a>
+
+        <a
+            href="#"
+            class="menu-link logout"
+            onclick="logout()">
+
+            Logout
+
+        </a>
+
+    </div>
 
 </div>
 
+<!-- CONTENT -->
+
 <div class="content">
 
-    <h2 id="judulHalaman">
-        Dashboard
-    </h2>
+    <div class="topbar">
+
+        <h1
+            id="judulHalaman"
+            class="page-title">
+
+            Dashboard
+
+        </h1>
+
+       <div class="user-badge">
+
+        Login sebagai
+        <b id="ADMIN"></b>
+
+        </div>
+    </div>
 
     <div id="contentArea"></div>
 
@@ -113,18 +549,32 @@ if(user.role !== "ADMIN"){
 
 <script>
 
-const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
-const API_FORUM = "http://localhost:8080/api/forum";
-const API_USER = "http://localhost:8080/api/users";
+const API_ASPIRASI =
+    "http://localhost:8080/api/aspirasi";
+
+const API_FORUM =
+    "http://localhost:8080/api/forum";
+
+const API_USER =
+    "http://localhost:8080/api/users";
+
+const API_STATUS =
+    "http://localhost:8080/api/status";
+
+/* logout */
 
 function logout(){
 
     localStorage.removeItem("user");
 
-    window.location.href = "/login.html";
+    window.location.href =
+        "/login.html";
+
 }
 
-function setMenu(e, menu){
+/* menu */
+
+function setMenu(e,menu){
 
     e.preventDefault();
 
@@ -134,525 +584,392 @@ function setMenu(e, menu){
 
     e.target.classList.add("menu-active");
 
-    if(menu === "dashboard"){
+    if(menu === "dashboard")
         loadDashboard();
-    }
 
-    if(menu === "aspirasi"){
+    if(menu === "aspirasi")
         loadAspirasi();
-    }
 
-    if(menu === "forum"){
+    if(menu === "forum")
         loadForum();
-    }
 
-    if(menu === "user"){
+    if(menu === "user")
         loadUser();
-    }
 
-    if(menu === "statistik"){
+    if(menu === "statistik")
         loadStatistik();
-    }
+
+    if(menu === "status")
+        loadStatus();
+
 }
+
+/* dashboard */
 
 async function loadDashboard(){
 
-    document.getElementById("judulHalaman").innerText =
-        "Dashboard";
+    document.getElementById("judulHalaman")
+        .innerText = "Dashboard";
 
-    const res = await fetch(API_ASPIRASI);
+    document.getElementById("contentArea")
+        .innerHTML = `
 
-    const data = await res.json();
+        <div class="dashboard-grid">
 
-    const total = data.length;
+            <div class="dashboard-card">
 
-    const diproses =
-        data.filter(a => a.status?.id == 1 && a.kategori != null).length;
+                <div class="card-label">
+                    Total User
+                </div>
 
-    const selesai =
-        data.filter(a => a.status?.id == 2).length;
-
-    const ditolak =
-        data.filter(a => a.status?.id == 3).length;
-
-    document.getElementById("contentArea").innerHTML = `
-
-        <div class="row">
-
-            <div class="col-md-3 mb-3">
-
-                <div class="card card-dashboard">
-
-                    <div class="card-body">
-
-                        <h5>Total Aspirasi</h5>
-
-                        <h2>${total}</h2>
-
-                    </div>
-
+                <div class="card-value">
+                    128
                 </div>
 
             </div>
 
-            <div class="col-md-3 mb-3">
+            <div class="dashboard-card">
 
-                <div class="card card-dashboard">
+                <div class="card-label">
+                    Total Aspirasi
+                </div>
 
-                    <div class="card-body">
-
-                        <h5>Diproses</h5>
-
-                        <h2>${diproses}</h2>
-
-                    </div>
-
+                <div class="card-value">
+                    54
                 </div>
 
             </div>
 
-            <div class="col-md-3 mb-3">
+            <div class="dashboard-card">
 
-                <div class="card card-dashboard">
+                <div class="card-label">
+                    Forum Aktif
+                </div>
 
-                    <div class="card-body">
-
-                        <h5>Selesai</h5>
-
-                        <h2>${selesai}</h2>
-
-                    </div>
-
+                <div class="card-value">
+                    17
                 </div>
 
             </div>
 
-            <div class="col-md-3 mb-3">
+            <div class="dashboard-card">
 
-                <div class="card card-dashboard">
-
-                    <div class="card-body">
-
-                        <h5>Ditolak</h5>
-
-                        <h2>${ditolak}</h2>
-
-                    </div>
-
+                <div class="card-label">
+                    Status Pending
                 </div>
 
+                <div class="card-value">
+                    8
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <div class="panel-title">
+                Selamat Datang
+            </div>
+
+            <p style="color:var(--muted); line-height:1.8;">
+                Selamat datang,
+                <b>${user.nama || 'Admin'}</b>.
+                Kelola seluruh data aspirasi, forum, pengguna,
+                dan statistik sistem melalui dashboard modern TellMe.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+/* aspirasi */
+
+async function loadAspirasi(){
+
+    document.getElementById("judulHalaman")
+        .innerText = "Kelola Aspirasi";
+
+    document.getElementById("contentArea")
+        .innerHTML = `
+            <div class="panel">
+
+                <div class="panel-title">
+                    Data Aspirasi
+                </div>
+
+                <div id="aspirasiList">
+                    Memuat data...
+                </div>
+
+            </div>
+        `;
+
+    try{
+
+        const res = await fetch(API_ASPIRASI);
+
+        const data = await res.json();
+
+        if(data.length === 0){
+
+            document.getElementById("aspirasiList")
+                .innerHTML = `
+                    <div class="empty-state">
+                        Belum ada aspirasi.
+                    </div>
+                `;
+
+            return;
+        }
+
+        let html = `
+            <div style="overflow:auto">
+
+            <table style="
+                width:100%;
+                border-collapse:collapse;
+                margin-top:1rem;
+            ">
+
+                <thead>
+
+                    <tr style="
+                        background:#f8f8f8;
+                        text-align:left;
+                    ">
+
+                        <th style="padding:14px">
+                            Judul
+                        </th>
+
+                        <th style="padding:14px">
+                            Pengirim
+                        </th>
+
+                        <th style="padding:14px">
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+        `;
+
+        data.forEach(item => {
+
+            html += `
+
+                <tr style="
+                    border-top:1px solid #eee;
+                ">
+
+                    <td style="padding:14px">
+                        ${item.judul || '-'}
+                    </td>
+
+                    <td style="padding:14px">
+                        ${item.user?.nama || '-'}
+                    </td>
+
+                    <td style="padding:14px">
+                        ${item.status?.nama || 'Pending'}
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        html += `
+                </tbody>
+            </table>
+            </div>
+        `;
+
+        document.getElementById("aspirasiList")
+            .innerHTML = html;
+
+    }catch(err){
+
+        document.getElementById("aspirasiList")
+            .innerHTML = `
+                <div class="empty-state">
+                    Gagal memuat data aspirasi.
+                </div>
+            `;
+
+        console.error(err);
+
+    }
+
+}
+
+/* forum */
+
+async function loadForum(){
+
+    document.getElementById("judulHalaman")
+        .innerText = "Kelola Forum";
+
+    document.getElementById("contentArea")
+        .innerHTML = `
+
+        <div class="panel">
+
+            <div class="panel-title">
+                Data Forum
+            </div>
+
+            <div class="empty-state">
+                Data forum akan tampil di sini.
             </div>
 
         </div>
 
     `;
+
 }
 
-async function loadAspirasi(){
+/* user */
 
-    document.getElementById("judulHalaman").innerText =
-        "Kelola Aspirasi";
+async function loadUser(){
 
-    const res = await fetch(API_ASPIRASI);
+    document.getElementById("judulHalaman")
+        .innerText = "Kelola User";
 
-    const data = await res.json();
+    document.getElementById("contentArea")
+        .innerHTML = `
 
-    let html = "";
+        <div class="panel">
 
-    data.reverse().forEach(a => {
-
-        html += `
-
-        <div class="card mb-3">
-
-            <div class="card-body">
-
-                <h5>${a.isiAspirasi}</h5>
-
-                <p>User: ${a.user?.nama || 'Anonymous'}</p>
-
-                <p>Status: ${a.status?.namaStatus || '-'}</p>
-
-                <p>Kategori: ${a.kategori?.namaKategori || '-'}</p>
-
-                <p>Feedback: ${a.feedback || '-'}</p>
-
-                ${a.status?.id == 1 && a.kategori == null ? `
-
-                    <button
-                        class="btn btn-primary btn-sm"
-                        onclick="proses(${a.id},1)">
-
-                        Akademik
-
-                    </button>
-
-                    <button
-                        class="btn btn-success btn-sm"
-                        onclick="proses(${a.id},2)">
-
-                        Organisasi
-
-                    </button>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="tolak(${a.id})">
-
-                        Tolak
-
-                    </button>
-
-                ` : ''}
-
-                ${a.status?.id == 1 && a.kategori != null ? `
-
-                    <button
-                        class="btn btn-warning btn-sm"
-                        onclick="selesai(${a.id})">
-
-                        Selesai
-
-                    </button>
-
-                ` : ''}
-
+            <div class="panel-title">
+                Tambah User
             </div>
 
-        </div>
+            <div class="form-grid">
 
-        `;
-    });
+                <input
+                    id="namaUser"
+                    class="input"
+                    placeholder="Nama">
 
-    document.getElementById("contentArea").innerHTML = html;
-}
+                <input
+                    id="emailUser"
+                    class="input"
+                    placeholder="Email">
 
-async function proses(id, kategoriId){
+                <input
+                    id="passwordUser"
+                    class="input"
+                    placeholder="Password">
 
-    await fetch(`${API_ASPIRASI}/${id}/proses`,{
+                <select
+                    id="roleUser"
+                    class="select">
 
-        method:"PUT",
+                    <option value="MAHASISWA">
+                        MAHASISWA
+                    </option>
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+                    <option value="PENGELOLA">
+                        PENGELOLA
+                    </option>
 
-        body:JSON.stringify({
-            statusId:kategoriId
-        })
+                    <option value="ADMIN">
+                        ADMIN
+                    </option>
 
-    });
-
-    loadAspirasi();
-}
-
-async function selesai(id){
-
-    const feedback = prompt("Masukkan feedback");
-
-    if(!feedback) return;
-
-    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            statusId:2,
-
-            feedback:feedback
-
-        })
-
-    });
-
-    loadAspirasi();
-}
-
-async function tolak(id){
-
-    const alasan = prompt("Alasan penolakan");
-
-    if(!alasan) return;
-
-    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            statusId:3,
-
-            feedback:alasan
-
-        })
-
-    });
-
-    loadAspirasi();
-}
-
-async function loadForum(){
-
-    document.getElementById("judulHalaman").innerText =
-        "Kelola Forum";
-
-    const res = await fetch(API_FORUM);
-
-    const data = await res.json();
-
-    let html = "";
-
-    data.reverse().forEach(post => {
-
-        html += `
-
-        <div class="card mb-3">
-
-            <div class="card-body">
-
-                <h5>${post.isiPost}</h5>
-
-                <p>User: ${post.user?.nama}</p>
+                </select>
 
                 <button
-                    class="btn btn-danger btn-sm"
-                    onclick="hapusPost(${post.id})">
+                    class="button"
+                    onclick="tambahUser()">
 
-                    Hapus
+                    <span>
+                        Tambah User
+                    </span>
 
                 </button>
 
             </div>
 
-        </div>
-
-        `;
-    });
-
-    document.getElementById("contentArea").innerHTML = html;
-}
-
-async function hapusPost(id){
-
-    if(!confirm("Hapus postingan?")) return;
-
-    await fetch(`${API_FORUM}/${id}`,{
-        method:"DELETE"
-    });
-
-    loadForum();
-}
-
-async function loadUser(){
-
-    document.getElementById("judulHalaman").innerText =
-        "Kelola User";
-
-    const res = await fetch(API_USER);
-
-    const data = await res.json();
-
-    let html = `
-
-        <div class="card mb-4">
-
-            <div class="card-body">
-
-                <h5 class="mb-3">
-                    Tambah User
-                </h5>
-
-                <div class="row">
-
-                    <div class="col-md-3">
-                        <input
-                            id="namaUser"
-                            class="form-control"
-                            placeholder="Nama">
-                    </div>
-
-                    <div class="col-md-3">
-                        <input
-                            id="emailUser"
-                            class="form-control"
-                            placeholder="Email">
-                    </div>
-
-                    <div class="col-md-2">
-                        <input
-                            id="passwordUser"
-                            class="form-control"
-                            placeholder="Password">
-                    </div>
-
-                    <div class="col-md-2">
-
-                        <select
-                            id="roleUser"
-                            class="form-control">
-
-                            <option value="MAHASISWA">
-                                MAHASISWA
-                            </option>
-
-                            <option value="ADMIN">
-                                ADMIN
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        <button
-                            class="btn btn-primary w-100"
-                            onclick="tambahUser()">
-
-                            Tambah
-
-                        </button>
-
-                    </div>
-
-                </div>
-
+            <div class="empty-state">
+                Data user akan tampil di sini.
             </div>
 
         </div>
 
-        <table class="table table-bordered table-hover bg-white">
-
-            <thead class="table-dark">
-
-                <tr>
-
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th width="200">Aksi</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
     `;
 
-    data.forEach(u => {
-
-        html += `
-
-            <tr>
-
-                <td>${u.nama}</td>
-
-                <td>${u.email}</td>
-
-                <td>${u.role}</td>
-
-                <td>
-
-                    <button
-                        class="btn btn-warning btn-sm"
-                        onclick="editUser(${u.id},
-                        '${u.nama}',
-                        '${u.email}',
-                        '${u.password}',
-                        '${u.role}')">
-
-                        Edit
-
-                    </button>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="hapusUser(${u.id})">
-
-                        Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-        `;
-    });
-
-    html += `
-            </tbody>
-        </table>
-    `;
-
-    document.getElementById("contentArea").innerHTML = html;
 }
+
+/* statistik */
 
 async function loadStatistik(){
 
-    document.getElementById("judulHalaman").innerText =
-        "Statistik";
+    document.getElementById("judulHalaman")
+        .innerText = "Statistik";
 
-    const res = await fetch(API_ASPIRASI);
+    document.getElementById("contentArea")
+        .innerHTML = `
 
-    const data = await res.json();
+        <div class="panel">
 
-    const akademik =
-        data.filter(a => a.kategori?.namaKategori === "Akademik").length;
-
-    const organisasi =
-        data.filter(a => a.kategori?.namaKategori === "Organisasi").length;
-
-    document.getElementById("contentArea").innerHTML = `
-
-        <div class="row">
-
-            <div class="col-md-6">
-
-                <div class="card card-dashboard">
-
-                    <div class="card-body">
-
-                        <h5>Aspirasi Akademik</h5>
-
-                        <h2>${akademik}</h2>
-
-                    </div>
-
-                </div>
-
+            <div class="panel-title">
+                Statistik Sistem
             </div>
 
-            <div class="col-md-6">
-
-                <div class="card card-dashboard">
-
-                    <div class="card-body">
-
-                        <h5>Aspirasi Organisasi</h5>
-
-                        <h2>${organisasi}</h2>
-
-                    </div>
-
-                </div>
-
+            <div class="empty-state">
+                Statistik akan tampil di sini.
             </div>
 
         </div>
 
     `;
+
 }
+
+/* status */
+
+async function loadStatus(){
+
+    document.getElementById("judulHalaman")
+        .innerText = "Kelola Status";
+
+    document.getElementById("contentArea")
+        .innerHTML = `
+
+        <div class="panel">
+
+            <div class="panel-title">
+                Status Aspirasi
+            </div>
+
+            <div class="empty-state">
+                Kelola status akan tampil di sini.
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+/* tambah user */
+
+function tambahUser(){
+
+    alert("Fungsi tambah user dipanggil.");
+
+}
+
+/* first load */
 
 loadDashboard();
 
