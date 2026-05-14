@@ -48,13 +48,60 @@
         .menu-active{
             background:#0d6efd;
         }
+        .comment-box{
+            background:#f8f9fa;
+            border-radius:10px;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        .reply-box{
+            margin-left:40px;
+            border-left:3px solid #dee2e6;
+            padding-left:15px;
+            margin-top:10px;
+        }
 
     </style>
 
 </head>
 
 <body>
+<div
+    class="modal fade"
+    id="diskusiModal"
+    tabindex="-1">
 
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Diskusi Forum
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div id="modalKomentar"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -89,10 +136,6 @@ if(user.role !== "ADMIN"){
 
     <a href="#" class="menu-link" onclick="setMenu(event,'user')">
         Kelola User
-    </a>
-
-    <a href="#" class="menu-link" onclick="setMenu(event,'statistik')">
-        Statistik
     </a>
 
     <a href="#" onclick="logout()">
@@ -148,11 +191,7 @@ function setMenu(e, menu){
 
     if(menu === "user"){
         loadUser();
-    }
-
-    if(menu === "statistik"){
-        loadStatistik();
-    }
+    }   
 }
 
 async function loadDashboard(){
@@ -174,6 +213,12 @@ async function loadDashboard(){
 
     const ditolak =
         data.filter(a => a.status?.id == 3).length;
+
+    const akademik =
+        data.filter(a => a.kategori?.namaKategori === "Akademik").length;
+
+    const organisasi =
+        data.filter(a => a.kategori?.namaKategori === "Organisasi").length;
 
     document.getElementById("contentArea").innerHTML = `
 
@@ -245,10 +290,50 @@ async function loadDashboard(){
 
         </div>
 
+        <div class="row mt-2">
+
+            <div class="col-md-6 mb-3">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Aspirasi Akademik</h5>
+
+                        <h2>${akademik}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body">
+
+                        <h5>Aspirasi Organisasi</h5>
+
+                        <h2>${organisasi}</h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     `;
 }
 
-async function loadAspirasi(){
+let filterAspirasi = "baru";
+
+async function loadAspirasi(filter = "baru"){
+
+    filterAspirasi = filter;
 
     document.getElementById("judulHalaman").innerText =
         "Kelola Aspirasi";
@@ -257,9 +342,104 @@ async function loadAspirasi(){
 
     const data = await res.json();
 
-    let html = "";
+    let filtered = [];
 
-    data.reverse().forEach(a => {
+    if(filter === "baru"){
+
+        filtered = data.filter(a =>
+            a.status?.id == 1 &&
+            a.kategori == null
+        );
+    }
+
+    if(filter === "diproses"){
+
+        filtered = data.filter(a =>
+            a.status?.id == 1 &&
+            a.kategori != null
+        );
+    }
+
+    if(filter === "selesai"){
+
+        filtered = data.filter(a =>
+            a.status?.id == 2
+        );
+    }
+
+    if(filter === "ditolak"){
+
+        filtered = data.filter(a =>
+            a.status?.id == 3
+        );
+    }
+
+    let html = `
+
+    <div class="mb-4 d-flex gap-2 flex-wrap">
+
+        <button
+            class="btn ${filter === 'baru'
+                ? 'btn-primary'
+                : 'btn-outline-primary'}"
+
+            onclick="loadAspirasi('baru')">
+
+            Baru
+
+        </button>
+
+        <button
+            class="btn ${filter === 'diproses'
+                ? 'btn-warning'
+                : 'btn-outline-warning'}"
+
+            onclick="loadAspirasi('diproses')">
+
+            Diproses
+
+        </button>
+
+        <button
+            class="btn ${filter === 'selesai'
+                ? 'btn-success'
+                : 'btn-outline-success'}"
+
+            onclick="loadAspirasi('selesai')">
+
+            Selesai
+
+        </button>
+
+        <button
+            class="btn ${filter === 'ditolak'
+                ? 'btn-danger'
+                : 'btn-outline-danger'}"
+
+            onclick="loadAspirasi('ditolak')">
+
+            Ditolak
+
+        </button>
+
+    </div>
+
+    `;
+
+    if(filtered.length === 0){
+
+        html += `
+
+        <div class="alert alert-light">
+
+            Tidak ada aspirasi
+
+        </div>
+
+        `;
+    }
+
+    filtered.reverse().forEach(a => {
 
         html += `
 
@@ -267,15 +447,47 @@ async function loadAspirasi(){
 
             <div class="card-body">
 
-                <h5>${a.isiAspirasi}</h5>
+                <div class="d-flex justify-content-between">
 
-                <p>User: ${a.user?.nama || 'Anonymous'}</p>
+                    <div>
 
-                <p>Status: ${a.status?.namaStatus || '-'}</p>
+                        <h5>
+                            ${a.isiAspirasi}
+                        </h5>
 
-                <p>Kategori: ${a.kategori?.namaKategori || '-'}</p>
+                        <small class="text-muted">
 
-                <p>Feedback: ${a.feedback || '-'}</p>
+                            ${a.user?.nama || 'Anonymous'}
+
+                        </small>
+
+                    </div>
+
+                    <span class="badge bg-secondary">
+
+                        ${a.status?.namaStatus || '-'}
+
+                    </span>
+
+                </div>
+
+                <hr>
+
+                <p>
+
+                    <strong>Kategori:</strong>
+
+                    ${a.kategori?.namaKategori || '-'}
+
+                </p>
+
+                <p>
+
+                    <strong>Feedback:</strong>
+
+                    ${a.feedback || '-'}
+
+                </p>
 
                 ${a.status?.id == 1 && a.kategori == null ? `
 
@@ -289,7 +501,7 @@ async function loadAspirasi(){
 
                     <button
                         class="btn btn-success btn-sm"
-                        onclick="proses(${a.id},2)">
+                        onclick="proses(${a.id},3)">
 
                         Organisasi
 
@@ -324,81 +536,97 @@ async function loadAspirasi(){
         `;
     });
 
-    document.getElementById("contentArea").innerHTML = html;
+    document.getElementById("contentArea").innerHTML =
+        html;
 }
 
 async function proses(id, kategoriId){
 
-    await fetch(`${API_ASPIRASI}/${id}/proses`,{
+    await fetch(
+        `${API_ASPIRASI}/${id}/proses`,
+        {
 
-        method:"PUT",
+            method:"PUT",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+            headers:{
+                "Content-Type":"application/json"
+            },
 
-        body:JSON.stringify({
-            statusId:kategoriId
-        })
+            body:JSON.stringify({
 
-    });
+                statusId:kategoriId
 
-    loadAspirasi();
+            })
+
+        }
+    );
+
+    loadAspirasi(filterAspirasi);
 }
 
 async function selesai(id){
 
-    const feedback = prompt("Masukkan feedback");
+    const feedback =
+        prompt("Masukkan feedback");
 
-    if(!feedback) return;
+    if(feedback == null) return;
 
-    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
+    await fetch(
+        `${API_ASPIRASI}/${id}/feedback`,
+        {
 
-        method:"PUT",
+            method:"PUT",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+            headers:{
+                "Content-Type":"application/json"
+            },
 
-        body:JSON.stringify({
+            body:JSON.stringify({
 
-            statusId:2,
+                statusId:2,
 
-            feedback:feedback
+                feedback:feedback
 
-        })
+            })
 
-    });
+        }
+    );
 
-    loadAspirasi();
+    loadAspirasi(filterAspirasi);
 }
 
 async function tolak(id){
 
-    const alasan = prompt("Alasan penolakan");
+    const feedback =
+        prompt("Alasan penolakan");
 
-    if(!alasan) return;
+    if(feedback == null) return;
 
-    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
+    await fetch(
+        `${API_ASPIRASI}/${id}/feedback`,
+        {
 
-        method:"PUT",
+            method:"PUT",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+            headers:{
+                "Content-Type":"application/json"
+            },
 
-        body:JSON.stringify({
+            body:JSON.stringify({
 
-            statusId:3,
+                statusId:3,
 
-            feedback:alasan
+                feedback:feedback
 
-        })
+            })
 
-    });
+        }
+    );
 
-    loadAspirasi();
+    loadAspirasi(filterAspirasi);
 }
+
+let currentPostId = null;
 
 async function loadForum(){
 
@@ -419,15 +647,41 @@ async function loadForum(){
 
             <div class="card-body">
 
-                <h5>${post.isiPost}</h5>
+                <div class="d-flex justify-content-between">
 
-                <p>User: ${post.user?.nama}</p>
+                    <div>
+
+                        <h5>
+                            ${post.user?.nama}
+                        </h5>
+
+                        <small class="text-muted">
+                            ${formatTanggal(post.tanggal)}
+                        </small>
+
+                    </div>
+
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="hapusPost(${post.id})">
+
+                        Hapus
+
+                    </button>
+
+                </div>
+
+                <hr>
+
+                <p>
+                    ${post.isiPost}
+                </p>
 
                 <button
-                    class="btn btn-danger btn-sm"
-                    onclick="hapusPost(${post.id})">
+                    class="btn btn-outline-primary btn-sm"
+                    onclick="bukaDiskusi(${post.id})">
 
-                    Hapus
+                    Lihat Diskusi
 
                 </button>
 
@@ -438,7 +692,294 @@ async function loadForum(){
         `;
     });
 
-    document.getElementById("contentArea").innerHTML = html;
+    document.getElementById("contentArea").innerHTML =
+        html;
+}
+
+async function bukaDiskusi(postId){
+
+    currentPostId = postId;
+
+    const modal =
+        new bootstrap.Modal(
+            document.getElementById("diskusiModal")
+        );
+
+    modal.show();
+
+    loadKomentar(postId);
+}
+
+async function loadKomentar(postId){
+
+    try{
+
+        const res =
+            await fetch(
+                `http://localhost:8080/api/forum-comment/${postId}`
+            );
+
+        const data = await res.json();
+
+        let html = `
+
+            <textarea
+                id="komentarUtama"
+                class="form-control mb-2"
+                placeholder="Tulis komentar..."></textarea>
+
+            <button
+                class="btn btn-primary btn-sm mb-4"
+                onclick="kirimKomentar()">
+
+                Kirim Komentar
+
+            </button>
+
+        `;
+
+        if(data.length === 0){
+
+            html += `
+
+                <div class="text-center text-muted">
+
+                    Belum ada komentar
+
+                </div>
+
+            `;
+        }
+
+        data.forEach(comment => {
+
+            html += renderComment(comment,0);
+
+        });
+
+        document.getElementById(
+            "modalKomentar"
+        ).innerHTML = html;
+
+    }catch(err){
+
+        console.log(err);
+
+        document.getElementById(
+            "modalKomentar"
+        ).innerHTML = `
+
+            <div class="alert alert-danger">
+
+                Gagal memuat komentar
+
+            </div>
+
+        `;
+    }
+}
+
+function renderComment(comment, level){
+
+    let marginLeft = level * 30;
+
+    let html = `
+
+    <div
+        class="comment-box"
+        style="margin-left:${marginLeft}px">
+
+        <div class="d-flex justify-content-between">
+
+            <div>
+
+                <strong>
+                    ${comment.namaUser}
+                </strong>
+
+                <br>
+
+                <small class="text-muted">
+                    ${formatTanggal(comment.tanggal)}
+                </small>
+
+            </div>
+
+            <button
+                class="btn btn-danger btn-sm"
+                onclick="hapusKomentar(${comment.id})">
+
+                Hapus
+
+            </button>
+
+        </div>
+
+        <p class="mt-2">
+            ${comment.isiKomentar}
+        </p>
+
+        <div class="d-flex gap-3">
+
+            <button
+                class="btn btn-link btn-sm p-0"
+                onclick="showReply(${comment.id})">
+
+                Balas
+
+            </button>
+
+            <small class="text-muted">
+
+                ${comment.totalReply} balasan
+
+            </small>
+
+        </div>
+
+        <div
+            id="reply-form-${comment.id}"
+            class="mt-2"></div>
+
+    `;
+
+    if(comment.replies && comment.replies.length > 0){
+
+        comment.replies.forEach(reply => {
+
+            html += renderComment(
+                reply,
+                level + 1
+            );
+
+        });
+    }
+
+    html += `</div>`;
+
+    return html;
+}
+
+function showReply(commentId){
+
+    document.getElementById(
+        `reply-form-${commentId}`
+    ).innerHTML = `
+
+        <textarea
+            id="reply-${commentId}"
+            class="form-control mb-2"
+            placeholder="Tulis balasan..."></textarea>
+
+        <button
+            class="btn btn-primary btn-sm"
+            onclick="kirimReply(${commentId})">
+
+            Kirim Balasan
+
+        </button>
+
+    `;
+}
+
+async function kirimKomentar(){
+
+    const isiKomentar =
+        document.getElementById(
+            "komentarUtama"
+        ).value;
+
+    if(!isiKomentar) return;
+
+    await fetch(
+        "http://localhost:8080/api/forum-comment",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                isiKomentar:isiKomentar,
+
+                post:{
+                    id:currentPostId
+                },
+
+                user:{
+                    id:user.id
+                }
+
+            })
+
+        }
+    );
+
+    loadKomentar(currentPostId);
+}
+
+async function kirimReply(commentId){
+
+    const isiKomentar =
+        document.getElementById(
+            `reply-${commentId}`
+        ).value;
+
+    if(!isiKomentar) return;
+
+    await fetch(
+        "http://localhost:8080/api/forum-comment",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                isiKomentar:isiKomentar,
+
+                post:{
+                    id:currentPostId
+                },
+
+                user:{
+                    id:user.id
+                },
+
+                parentComment:{
+                    id:commentId
+                }
+
+            })
+
+        }
+    );
+
+    loadKomentar(currentPostId);
+}
+
+async function hapusKomentar(id){
+
+    await fetch(
+        `http://localhost:8080/api/forum-comment/${id}`,
+        {
+            method:"DELETE"
+        }
+    );
+
+    loadKomentar(currentPostId);
+}
+
+function formatTanggal(tanggal){
+
+    return new Date(tanggal)
+        .toLocaleString("id-ID");
 }
 
 async function hapusPost(id){
@@ -472,6 +1013,13 @@ async function loadUser(){
                 </h5>
 
                 <div class="row">
+
+                    <div class="col-md-2">
+                        <input
+                            id="nimUser"
+                            class="form-control"
+                            placeholder="NIM">
+                    </div>
 
                     <div class="col-md-3">
                         <input
@@ -535,7 +1083,8 @@ async function loadUser(){
             <thead class="table-dark">
 
                 <tr>
-
+                    
+                    <th>NIM</th>
                     <th>Nama</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -554,6 +1103,8 @@ async function loadUser(){
         html += `
 
             <tr>
+
+                <td>${u.nim || '-'}</td>
 
                 <td>${u.nama}</td>
 
@@ -598,50 +1149,206 @@ async function loadUser(){
     document.getElementById("contentArea").innerHTML = html;
 }
 
-async function loadStatistik(){
+async function tambahUser(){
 
-    document.getElementById("judulHalaman").innerText =
-        "Statistik";
+    const nim =
+        document.getElementById("nimUser").value;
 
-    const res = await fetch(API_ASPIRASI);
+    const nama =
+        document.getElementById("namaUser").value;
 
-    const data = await res.json();
+    const email =
+        document.getElementById("emailUser").value;
 
-    const akademik =
-        data.filter(a => a.kategori?.namaKategori === "Akademik").length;
+    const password =
+        document.getElementById("passwordUser").value;
 
-    const organisasi =
-        data.filter(a => a.kategori?.namaKategori === "Organisasi").length;
+    const role =
+        document.getElementById("roleUser").value;
 
-    document.getElementById("contentArea").innerHTML = `
+    if(!nim || !nama || !email || !password){
 
-        <div class="row">
+        alert("Lengkapi data");
 
-            <div class="col-md-6">
+        return;
+    }
 
-                <div class="card card-dashboard">
+    await fetch(API_USER,{
 
-                    <div class="card-body">
+        method:"POST",
 
-                        <h5>Aspirasi Akademik</h5>
+        headers:{
+            "Content-Type":"application/json"
+        },
 
-                        <h2>${akademik}</h2>
+        body:JSON.stringify({
+
+            nim:nim,
+
+            nama:nama,
+
+            email:email,
+
+            password:password,
+
+            role:role
+
+        })
+
+    });
+
+    loadUser();
+}
+
+async function hapusUser(id){
+
+    if(!confirm("Hapus user?")) return;
+
+    await fetch(`${API_USER}/${id}`,{
+        method:"DELETE"
+    });
+
+    loadUser();
+}
+
+async function editUser(id){
+
+    const res =
+        await fetch(`${API_USER}/${id}`);
+
+    const u = await res.json();
+
+    const html = `
+
+        <div
+            class="modal fade"
+            id="editUserModal"
+            tabindex="-1">
+
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+                            Edit User
+                        </h5>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
 
                     </div>
 
-                </div>
+                    <div class="modal-body">
 
-            </div>
+                        <div class="mb-3">
 
-            <div class="col-md-6">
+                            <label class="form-label">
+                                NIM
+                            </label>
 
-                <div class="card card-dashboard">
+                            <input
+                                type="text"
+                                id="editNim"
+                                class="form-control"
+                                value="${u.nim || ''}">
 
-                    <div class="card-body">
+                        </div>
 
-                        <h5>Aspirasi Organisasi</h5>
+                        <div class="mb-3">
 
-                        <h2>${organisasi}</h2>
+                            <label class="form-label">
+                                Nama
+                            </label>
+
+                            <input
+                                type="text"
+                                id="editNama"
+                                class="form-control"
+                                value="${u.nama}">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="editEmail"
+                                class="form-control"
+                                value="${u.email}">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Password
+                            </label>
+
+                            <input
+                                type="text"
+                                id="editPassword"
+                                class="form-control"
+                                value="${u.password}">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Role
+                            </label>
+
+                            <select
+                                id="editRole"
+                                class="form-control">
+
+                                <option
+                                    value="MAHASISWA"
+                                    ${u.role == 'MAHASISWA' ? 'selected' : ''}>
+
+                                    MAHASISWA
+
+                                </option>
+
+                                <option
+                                    value="ADMIN"
+                                    ${u.role == 'ADMIN' ? 'selected' : ''}>
+
+                                    ADMIN
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                            Batal
+
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="saveEditUser(${id})">
+
+                            Simpan
+
+                        </button>
 
                     </div>
 
@@ -652,6 +1359,73 @@ async function loadStatistik(){
         </div>
 
     `;
+
+    const oldModal =
+        document.getElementById("editUserModal");
+
+    if(oldModal){
+        oldModal.remove();
+    }
+
+    document.body.insertAdjacentHTML(
+        "beforeend",
+        html
+    );
+
+    const modal =
+        new bootstrap.Modal(
+            document.getElementById("editUserModal")
+        );
+
+    modal.show();
+}
+
+async function saveEditUser(id){
+
+    const nim =
+        document.getElementById("editNim").value;
+
+    const nama =
+        document.getElementById("editNama").value;
+
+    const email =
+        document.getElementById("editEmail").value;
+
+    const password =
+        document.getElementById("editPassword").value;
+
+    const role =
+        document.getElementById("editRole").value;
+
+    await fetch(`${API_USER}/${id}`,{
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            nim:nim,
+
+            nama:nama,
+
+            email:email,
+
+            password:password,
+
+            role:role
+
+        })
+
+    });
+
+    bootstrap.Modal.getInstance(
+        document.getElementById("editUserModal")
+    ).hide();
+
+    loadUser();
 }
 
 loadDashboard();
