@@ -2,6 +2,8 @@ package com.tellme.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,11 +26,31 @@ public class ForumComment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonIgnoreProperties({
+        "hibernateLazyInitializer",
+        "handler"
+    })
     private ForumPost post;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({
+        "password",
+        "hibernateLazyInitializer",
+        "handler"
+    })
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_comment_id")
+    @JsonIgnoreProperties({
+        "post",
+        "parentComment",
+        "user",
+        "hibernateLazyInitializer",
+        "handler"
+    })
+    private ForumComment parentComment;
 
     public Long getId() {
         return id;
@@ -64,5 +86,13 @@ public class ForumComment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public ForumComment getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(ForumComment parentComment) {
+        this.parentComment = parentComment;
     }
 }

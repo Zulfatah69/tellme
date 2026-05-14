@@ -169,7 +169,7 @@ public class AspirasiServiceImpl implements AspirasiService {
         }
 
         if (kategori.getNamaKategori().equalsIgnoreCase("Organisasi")) {
-            emailTujuan = "poke11333@gmail.com";
+            emailTujuan = "poke113333@gmail.com";
         }
 
         aspirasi.setKategori(kategori);

@@ -18,12 +18,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
 
-        if(userRepository.findByEmail(user.getEmail()) != null){
-            throw new RuntimeException("Email sudah digunakan");
+        if(userRepository.findByEmail(
+                user.getEmail()
+        ) != null){
+
+            throw new RuntimeException(
+                    "Email sudah digunakan"
+            );
         }
 
-        if(userRepository.findByNim(user.getNim()) != null){
-            throw new RuntimeException("NIM sudah digunakan");
+        if(userRepository.findByNim(
+                user.getNim()
+        ) != null){
+
+            throw new RuntimeException(
+                    "NIM sudah digunakan"
+            );
         }
 
         return userRepository.save(user);
@@ -72,10 +82,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String identifier, String password) {
+    public User login(
+            String identifier,
+            String password) {
 
         User user =
-                userRepository.findByEmailAndPassword(
+                userRepository
+                .findByEmailAndPassword(
                         identifier,
                         password
                 );
@@ -83,7 +96,8 @@ public class UserServiceImpl implements UserService {
         if(user == null){
 
             user =
-                    userRepository.findByNimAndPassword(
+                    userRepository
+                    .findByNimAndPassword(
                             identifier,
                             password
                     );

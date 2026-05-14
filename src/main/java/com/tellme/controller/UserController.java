@@ -1,6 +1,7 @@
 package com.tellme.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,16 +25,21 @@ public class UserController {
 
     @GetMapping
     public List<User> getAll() {
+
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getById(@PathVariable Long id) {
+    public User getById(
+            @PathVariable Long id) {
+
         return userService.getById(id);
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
+    public User create(
+            @RequestBody User user) {
+
         return userService.createUser(user);
     }
 
@@ -42,11 +48,32 @@ public class UserController {
             @PathVariable Long id,
             @RequestBody User user) {
 
-        return userService.updateUser(id, user);
+        return userService.updateUser(
+                id,
+                user
+        );
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(
+            @PathVariable Long id) {
+
         userService.deleteById(id);
+    }
+
+    @PostMapping("/login")
+    public User login(
+            @RequestBody Map<String, String> req) {
+
+        String identifier =
+                req.get("identifier");
+
+        String password =
+                req.get("password");
+
+        return userService.login(
+                identifier,
+                password
+        );
     }
 }

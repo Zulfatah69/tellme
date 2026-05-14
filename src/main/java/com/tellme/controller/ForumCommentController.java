@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tellme.dto.ForumCommentResponse;
 import com.tellme.model.ForumComment;
 import com.tellme.service.interfaces.ForumCommentService;
 
@@ -22,17 +23,23 @@ public class ForumCommentController {
     private ForumCommentService forumCommentService;
 
     @PostMapping
-    public ForumComment createComment(@RequestBody ForumComment comment) {
+    public ForumComment createComment(
+            @RequestBody ForumComment comment) {
+
         return forumCommentService.createComment(comment);
     }
 
     @GetMapping("/{postId}")
-    public List<ForumComment> getByPost(@PathVariable Long postId) {
+    public List<ForumCommentResponse> getByPost(
+            @PathVariable Long postId) {
+
         return forumCommentService.getByPost(postId);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteComment(@PathVariable Long id) {
+    public void deleteComment(
+            @PathVariable Long id) {
+
         forumCommentService.deleteComment(id);
     }
 }
