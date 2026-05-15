@@ -1,1122 +1,538 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe — Forum</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
-    <style>
-
-        :root{
-            --ink:#0d0d0d;
-            --paper:#f7f4ee;
-            --accent:#ff4d2e;
-            --accent2:#1a1aff;
-            --muted:#8f8f82;
-            --border:#e3dfd6;
-            --card:#ffffff;
-        }
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
-
-        body{
-            font-family:'DM Sans',sans-serif;
-            background:var(--paper);
-            color:var(--ink);
-            min-height:100vh;
-            overflow-x:hidden;
-        }
-
-        body::before{
-            content:'';
-            position:fixed;
-            inset:0;
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(255,77,46,0.07) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(26,26,255,0.06) 0%, transparent 40%);
-            pointer-events:none;
-            z-index:0;
-        }
-
-        body::after{
-            content:'';
-            position:fixed;
-            inset:0;
-            background-image:
-                linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-            background-size:28px 28px;
-            pointer-events:none;
-            z-index:0;
-        }
-
-        /* NAVBAR */
-
-        nav{
-            position:sticky;
-            top:0;
-            z-index:100;
-            height:64px;
-            padding:0 2rem;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            background:rgba(13,13,13,0.82);
-            backdrop-filter:blur(14px);
-            border-bottom:1px solid rgba(255,255,255,0.05);
-        }
-
-        .nav-brand{
-            font-family:'Syne',sans-serif;
-            font-size:1.4rem;
-            font-weight:800;
-            color:white;
-            text-decoration:none;
-            letter-spacing:-0.04em;
-        }
-
-        .nav-brand span{
-            color:var(--accent);
-        }
-
-        .nav-links{
-            display:flex;
-            align-items:center;
-            gap:.25rem;
-            list-style:none;
-        }
-
-        .nav-links a{
-            text-decoration:none;
-            color:#999;
-            font-size:.84rem;
-            padding:.45rem .8rem;
-            border-radius:8px;
-            transition:.2s;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active{
-            background:rgba(255,255,255,0.08);
-            color:white;
-        }
-
-        .nav-links a.active{
-            color:var(--accent);
-        }
-
-        .nav-right{
-            display:flex;
-            align-items:center;
-            gap:1rem;
-        }
-
-        .nav-greeting{
-            font-size:.82rem;
-            color:#777;
-        }
-
-        .nav-greeting strong{
-            color:white;
-            font-weight:500;
-        }
-
-        .btn-logout{
-            border:none;
-            background:var(--accent);
-            color:var(--ink);
-            font-family:'Syne',sans-serif;
-            font-size:.72rem;
-            font-weight:800;
-            text-transform:uppercase;
-            letter-spacing:.08em;
-            padding:.55rem 1rem;
-            border-radius:8px;
-            cursor:pointer;
-            transition:.2s;
-        }
-
-        .btn-logout:hover{
-            transform:translateY(-2px);
-            opacity:.9;
-        }
-
-        /* MAIN */
-
-        main{
-            position:relative;
-            z-index:1;
-            max-width:850px;
-            margin:auto;
-            padding:4rem 1.2rem 5rem;
-        }
-
-        .page-header{
-            margin-bottom:3rem;
-            animation:fadeUp .5s ease forwards;
-        }
-
-        .eyebrow{
-            font-family:'Syne',sans-serif;
-            font-size:.72rem;
-            font-weight:800;
-            letter-spacing:.15em;
-            text-transform:uppercase;
-            color:var(--accent);
-            margin-bottom:.8rem;
-            display:flex;
-            align-items:center;
-            gap:.5rem;
-        }
-
-        .eyebrow::before{
-            content:'';
-            width:24px;
-            height:2px;
-            background:var(--accent);
-        }
-
-        .page-title{
-            font-family:'Syne',sans-serif;
-            font-size:clamp(2.4rem,6vw,4rem);
-            line-height:1;
-            letter-spacing:-0.05em;
-            font-weight:800;
-        }
-
-        .page-title em{
-            color:var(--accent2);
-            font-style:normal;
-        }
-
-        .page-subtitle{
-            margin-top:1rem;
-            max-width:500px;
-            color:var(--muted);
-            line-height:1.7;
-            font-size:.95rem;
-            font-weight:300;
-        }
-
-        /* CARD */
-
-        .card{
-            position:relative;
-            background:rgba(255,255,255,0.8);
-            backdrop-filter:blur(12px);
-            border:1.5px solid var(--border);
-            border-radius:22px;
-            padding:2rem;
-            overflow:hidden;
-            box-shadow:
-                0 10px 30px rgba(0,0,0,0.05),
-                0 2px 10px rgba(0,0,0,0.04);
-            margin-bottom:1.5rem;
-            animation:fadeUp .5s ease forwards;
-        }
-
-        .card::before{
-            content:'';
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            height:3px;
-            background:linear-gradient(90deg,var(--accent),var(--accent2));
-        }
-
-        .field-label{
-            font-family:'Syne',sans-serif;
-            font-size:.72rem;
-            text-transform:uppercase;
-            letter-spacing:.1em;
-            color:var(--muted);
-            margin-bottom:.7rem;
-            display:block;
-        }
-
-        textarea{
-            width:100%;
-            border:none;
-            outline:none;
-            resize:none;
-            border-radius:14px;
-            background:var(--paper);
-            border:1.5px solid var(--border);
-            padding:1rem 1.2rem;
-            font-family:'DM Sans',sans-serif;
-            font-size:.95rem;
-            line-height:1.7;
-            color:var(--ink);
-            transition:.2s;
-            box-shadow:inset 0 1px 2px rgba(0,0,0,0.04);
-        }
-
-        textarea:focus{
-            border-color:var(--accent2);
-            box-shadow:0 0 0 3px rgba(26,26,255,0.08);
-        }
-
-        textarea::placeholder{
-            color:#bbb;
-        }
-
-        .btn-primary{
-            width:100%;
-            border:none;
-            background:var(--ink);
-            color:white;
-            padding:1rem;
-            border-radius:14px;
-            font-family:'Syne',sans-serif;
-            font-weight:700;
-            font-size:.95rem;
-            cursor:pointer;
-            transition:.25s;
-            margin-top:1rem;
-            position:relative;
-            overflow:hidden;
-            box-shadow:
-                0 10px 20px rgba(255,77,46,0.15),
-                0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .btn-primary::before{
-            content:'';
-            position:absolute;
-            inset:0;
-            background:linear-gradient(90deg,var(--accent),var(--accent2));
-            opacity:0;
-            transition:.3s;
-        }
-
-        .btn-primary span{
-            position:relative;
-            z-index:1;
-        }
-
-        .btn-primary:hover::before{
-            opacity:1;
-        }
-
-        .btn-primary:hover{
-            transform:translateY(-2px);
-        }
-
-        /* POST */
-
-        .post-top{
-            display:flex;
-            justify-content:space-between;
-            gap:1rem;
-        }
-
-        .user-name{
-            font-family:'Syne',sans-serif;
-            font-weight:700;
-            font-size:1rem;
-        }
-
-        .post-date{
-            font-size:.76rem;
-            color:var(--muted);
-            margin-top:.2rem;
-        }
-
-        .btn-delete{
-            border:none;
-            background:#ffe4df;
-            color:var(--accent);
-            padding:.55rem .9rem;
-            border-radius:10px;
-            cursor:pointer;
-            font-size:.76rem;
-            font-weight:700;
-            transition:.2s;
-            height:fit-content;
-        }
-
-        .btn-delete:hover{
-            background:var(--accent);
-            color:white;
-        }
-
-        .divider{
-            height:1px;
-            background:var(--border);
-            margin:1.4rem 0;
-        }
-
-        .post-content{
-            font-size:.97rem;
-            line-height:1.8;
-            color:#222;
-            white-space:pre-wrap;
-        }
-
-        /* COMMENT */
-
-        .comment-box{
-            background:#f8f6f1;
-            border:1px solid var(--border);
-            border-radius:16px;
-            padding:1rem;
-            margin-top:1rem;
-        }
-
-        .comment-header{
-            display:flex;
-            justify-content:space-between;
-            gap:1rem;
-        }
-
-        .comment-content{
-            margin-top:.8rem;
-            line-height:1.7;
-            font-size:.92rem;
-        }
-
-        .comment-input{
-            margin-top:1.5rem;
-        }
-
-        .btn-comment{
-            border:none;
-            background:var(--accent2);
-            color:white;
-            padding:.7rem 1rem;
-            border-radius:10px;
-            margin-top:.8rem;
-            cursor:pointer;
-            font-size:.8rem;
-            font-weight:700;
-            transition:.2s;
-        }
-
-        .btn-comment:hover{
-            transform:translateY(-2px);
-        }
-
-        .blob{
-            position:fixed;
-            border-radius:50%;
-            filter:blur(90px);
-            opacity:.16;
-            pointer-events:none;
-            z-index:0;
-        }
-
-        .blob1{
-            width:250px;
-            height:250px;
-            background:var(--accent);
-            top:-80px;
-            right:-80px;
-        }
-
-        .blob2{
-            width:230px;
-            height:230px;
-            background:var(--accent2);
-            bottom:-80px;
-            left:-80px;
-        }
-
-        @keyframes fadeUp{
-            from{
-                opacity:0;
-                transform:translateY(20px);
-            }
-            to{
-                opacity:1;
-                transform:translateY(0);
-            }
-        }
-
-        @media(max-width:768px){
-
-            nav{
-                padding:0 1rem;
-            }
-
-            .nav-links{
-                display:none;
-            }
-
-            .card{
-                padding:1.4rem;
-            }
-
-            .page-title{
-                font-size:2.8rem;
-            }
-
-        }
-
-        .reply-box{
-            margin-left:40px;
-            border-left:3px solid #dee2e6;
-            padding-left:15px;
-            margin-top:10px;
-        }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TellMe - Forum</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+    /* ── LIGHT THEME (default) ── */
+    :root,
+    [data-theme="light"] {
+        --navy: #0f1f3d;
+        --teal: #0e9f8e;
+        --teal-light: #12b5a2;
+        --cream: #f7f6f2;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --bg: #f7f6f2;
+        --surface: #ffffff;
+        --surface2: #f3f4f6;
+        --text: #1f2937;
+        --text-soft: #374151;
+        --nav-bg: #ffffff;
+        --nav-shadow: 0 1px 8px rgba(15,31,61,0.06);
+        --card-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        --toggle-track: #e5e7eb;
+        --toggle-thumb: #0e9f8e;
+        --toggle-pos: 2px;
+    }
+
+    /* ── DARK THEME ── */
+    [data-theme="dark"] {
+        --navy: #e2e8f0;
+        --teal: #2dd4bf;
+        --teal-light: #5eead4;
+        --cream: #0a0a0f;
+        --muted: #7a7a9a;
+        --border: rgba(255,255,255,0.08);
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --surface2: #1a1a24;
+        --text: #f0eff8;
+        --text-soft: #cbd5e1;
+        --nav-bg: rgba(17,17,24,0.92);
+        --nav-shadow: 0 1px 8px rgba(0,0,0,0.35);
+        --card-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        --toggle-track: #22222f;
+        --toggle-thumb: #6c63ff;
+        --toggle-pos: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    /* ── NAV ── */
+    .tm-nav {
+        background: var(--nav-bg);
+        border-bottom: 1px solid var(--border);
+        position: sticky; top: 0; z-index: 100;
+        box-shadow: var(--nav-shadow);
+        backdrop-filter: blur(16px);
+        transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .tm-nav .inner {
+        display: flex; align-items: center; height: 64px;
+        max-width: 1200px; margin: auto; padding: 0 24px; gap: 0;
+    }
+    .tm-brand {
+        font-family: 'Sora', sans-serif; font-size: 1.35rem; font-weight: 700;
+        color: var(--navy); text-decoration: none; letter-spacing: -0.02em;
+        margin-right: 40px; flex-shrink: 0;
+        transition: color 0.35s ease;
+    }
+    .tm-brand span { color: var(--teal); }
+    .tm-links { display: flex; align-items: center; gap: 2px; flex: 1; }
+    .tm-links a {
+        color: var(--muted); text-decoration: none; font-size: 0.87rem;
+        font-weight: 500; padding: 7px 13px; border-radius: 8px;
+        transition: color 0.15s, background 0.15s; white-space: nowrap;
+    }
+    .tm-links a:hover { color: var(--navy); background: var(--surface2); }
+    .tm-links a.active { color: var(--teal); background: rgba(14,159,142,0.09); font-weight: 600; }
+    [data-theme="dark"] .tm-links a:hover { color: var(--text); }
+    [data-theme="dark"] .tm-links a.active { background: rgba(45,212,191,0.1); }
+
+    .tm-user { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .tm-hello { font-size: 0.84rem; color: var(--muted); transition: color 0.35s ease; }
+    .tm-hello strong { color: var(--navy); transition: color 0.35s ease; }
+    .btn-logout {
+        background: transparent; border: 1.5px solid var(--border);
+        border-radius: 8px; padding: 6px 14px; font-size: 0.82rem;
+        font-weight: 600; color: var(--muted); cursor: pointer;
+        transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+    }
+    .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle { display: flex; align-items: center; gap: .5rem; cursor: pointer; user-select: none; flex-shrink: 0; }
+    .theme-toggle-label { font-size: 0.8rem; font-weight: 600; color: var(--muted); transition: color 0.2s; white-space: nowrap; }
+    .toggle-track {
+        position: relative; width: 44px; height: 22px;
+        background: var(--toggle-track); border: 1px solid var(--border);
+        border-radius: 100px; transition: all 0.3s ease; flex-shrink: 0;
+    }
+    .toggle-thumb {
+        position: absolute; top: 2px; left: var(--toggle-pos);
+        width: 16px; height: 16px; border-radius: 50%;
+        background: var(--toggle-thumb); box-shadow: 0 0 6px rgba(14,159,142,0.4);
+        transition: left 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease, box-shadow 0.3s ease;
+        display: flex; align-items: center; justify-content: center; font-size: 0.55rem;
+    }
+    [data-theme="dark"] .toggle-thumb { box-shadow: 0 0 8px rgba(108,99,255,0.5); }
+
+    /* ── PAGE ── */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 60px; }
+    .page-header { margin-bottom: 24px; }
+    .page-header h2 {
+        font-family: 'Sora', sans-serif; font-size: 1.7rem; font-weight: 700;
+        color: var(--navy); letter-spacing: -0.02em; margin-bottom: 4px;
+        transition: color 0.35s ease;
+    }
+    .page-header p { color: var(--muted); font-size: 0.88rem; margin: 0; transition: color 0.35s ease; }
+
+    /* ── CARD ── */
+    .card-tm {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow);
+        transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .card-tm .card-header {
+        padding: 18px 22px; border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: space-between;
+        background: var(--surface);
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    .card-tm .card-header h5 {
+        font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+        color: var(--navy); margin: 0; transition: color 0.35s ease;
+    }
+    .card-tm .card-body { padding: 20px 22px; background: var(--surface); transition: background 0.35s ease; }
+
+    /* ── COMPOSE ── */
+    .compose-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; padding: 20px 22px; margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    .compose-label {
+        font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700;
+        color: var(--navy); margin-bottom: 12px; transition: color 0.35s ease;
+    }
+    .form-control {
+        width: 100%; padding: 12px 16px;
+        background: var(--surface2); border: 1.5px solid var(--border);
+        border-radius: 10px; color: var(--text);
+        font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+        outline: none; resize: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.35s ease, color 0.35s ease;
+    }
+    .form-control::placeholder { color: var(--muted); }
+    .form-control:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(14,159,142,0.12);
+        background: var(--surface);
+    }
+    .btn-post {
+        background: var(--teal); color: #fff; border: none; border-radius: 8px;
+        padding: 9px 20px; font-family: 'Sora', sans-serif; font-weight: 600;
+        font-size: 0.85rem; cursor: pointer; transition: background 0.2s; margin-top: 10px;
+    }
+    .btn-post:hover { background: var(--teal-light); }
+
+    /* ── POST CARD ── */
+    .post-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; margin-bottom: 14px; overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .post-card:hover { box-shadow: 0 4px 16px rgba(15,31,61,0.08); }
+    [data-theme="dark"] .post-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+    .post-header {
+        padding: 14px 18px; display: flex; align-items: center;
+        justify-content: space-between; border-bottom: 1px solid var(--border);
+        background: var(--surface2);
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    .post-user { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+        width: 34px; height: 34px; border-radius: 50%;
+        background: var(--navy); color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 700;
+        flex-shrink: 0; transition: background 0.35s ease;
+    }
+    [data-theme="dark"] .avatar { background: #22222f; color: var(--teal); }
+    .post-name { font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 600; color: var(--navy); transition: color 0.35s ease; }
+    .post-date { font-size: 0.76rem; color: var(--muted); transition: color 0.35s ease; }
+
+    .btn-del {
+        background: transparent; border: 1px solid #fecaca; border-radius: 6px;
+        padding: 4px 10px; font-size: 0.75rem; color: #ef4444; cursor: pointer;
+        font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+    }
+    .btn-del:hover { background: #fef2f2; }
+    [data-theme="dark"] .btn-del { border-color: rgba(239,68,68,0.3); }
+    [data-theme="dark"] .btn-del:hover { background: rgba(239,68,68,0.08); }
+
+    .post-body { padding: 16px 18px; font-size: 0.9rem; color: var(--text-soft); line-height: 1.65; transition: color 0.35s ease; }
+
+    /* ── COMMENTS ── */
+    .post-footer {
+        padding: 14px 18px; border-top: 1px solid var(--border);
+        background: var(--surface); transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    .comment-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .comment-input-row .form-control { flex: 1; padding: 9px 14px; }
+    .btn-comment {
+        background: transparent; border: 1.5px solid var(--border); border-radius: 8px;
+        padding: 8px 16px; font-size: 0.8rem; font-weight: 600; color: var(--teal);
+        cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+    }
+    .btn-comment:hover { background: rgba(14,159,142,0.08); border-color: var(--teal); }
+
+    .comment-item { display: flex; gap: 8px; padding: 10px 0; border-top: 1px solid var(--border); transition: border-color 0.35s ease; }
+    .comment-item:first-child { border-top: none; }
+    .comment-avatar {
+        width: 26px; height: 26px; border-radius: 50%;
+        background: var(--surface2); color: var(--navy);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Sora', sans-serif; font-size: 0.66rem; font-weight: 700;
+        flex-shrink: 0; transition: background 0.35s ease, color 0.35s ease;
+    }
+    [data-theme="dark"] .comment-avatar { background: #22222f; color: var(--teal); }
+    .comment-body { flex: 1; min-width: 0; }
+    .comment-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .comment-name { font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 600; color: var(--navy); transition: color 0.35s ease; }
+    .comment-del { background: transparent; border: none; font-size: 0.72rem; color: var(--muted); cursor: pointer; padding: 0; font-family: 'DM Sans', sans-serif; transition: color 0.15s; }
+    .comment-del:hover { color: #ef4444; }
+    .comment-text { font-size: 0.83rem; color: var(--text-soft); line-height: 1.5; transition: color 0.35s ease; }
+
+    /* ── SIDEBAR ── */
+    .stat-row { display: flex; gap: 10px; }
+    .stat-chip {
+        flex: 1; background: var(--surface2); border: 1px solid var(--border);
+        border-radius: 12px; padding: 14px 10px; text-align: center;
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    .stat-chip-num { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); line-height: 1; transition: color 0.35s ease; }
+    .stat-chip-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; transition: color 0.35s ease; }
+
+    .nav-quick a {
+        display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+        border-radius: 10px; text-decoration: none; font-size: 0.88rem; font-weight: 500;
+        color: var(--navy); border: 1px solid var(--border); margin-bottom: 8px;
+        background: var(--surface2); transition: all 0.15s;
+    }
+    .nav-quick a:last-child { margin-bottom: 0; }
+    .nav-quick a:hover { background: var(--surface); border-color: var(--teal); color: var(--teal); }
+
+    .info-card {
+        background: linear-gradient(135deg, rgba(14,159,142,0.06), rgba(14,159,142,0.02));
+        border: 1px solid rgba(14,159,142,0.15); border-radius: 16px; padding: 18px; margin-top: 12px;
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    [data-theme="dark"] .info-card {
+        background: linear-gradient(135deg, rgba(45,212,191,0.06), rgba(45,212,191,0.02));
+        border-color: rgba(45,212,191,0.15);
+    }
+    .info-card h6 { font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; transition: color 0.35s ease; }
+    .info-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin: 0; transition: color 0.35s ease; }
+
+    /* ── EMPTY ── */
+    .empty-state { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.88rem; }
+    .empty-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+    /* ── TOAST ── */
+    .toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 9999; pointer-events: none; }
+    .toast {
+        padding: 11px 17px; border-radius: 12px; font-size: 0.85rem;
+        font-weight: 600; display: flex; align-items: center; gap: 7px;
+        transform: translateY(60px); opacity: 0;
+        transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+        font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+    .toast.error   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    [data-theme="dark"] .toast.success { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.25); color: #86efac; }
+    [data-theme="dark"] .toast.error   { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25); color: #fca5a5; }
+</style>
 </head>
-
 <body>
 
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
+<div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
 <script>
-
+(function() {
+    const saved = localStorage.getItem('tellme-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
+</script>
+<script>
 const user = JSON.parse(localStorage.getItem("user"));
-
-if(!user){
-    window.location.href = "/login.html";
-}
-
-window.onload = function(){
-
-    const namaElements =
-        document.querySelectorAll(".namaUser");
-
-    namaElements.forEach(el => {
-        el.innerText = user.nama;
-    });
-}
-
+if (!user) window.location.href = "/login.html";
+window.onload = function() {
+    document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
+    applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
+};
 </script>
 
-<nav>
-
-    <a href="#" class="nav-brand">
-        Tell<span>Me</span>
-    </a>
-
-    <ul class="nav-links">
-
-        <li>
-            <a href="/index.html">
-                Beranda
-            </a>
-        </li>
-
-        <li>
-            <a href="/aspirasi.html">
-                Buat Aspirasi
-            </a>
-        </li>
-
-        <li>
-            <a href="/forum.html" class="active">
-                Forum
-            </a>
-        </li>
-
-        <li>
-            <a href="/riwayat.html">
-                Riwayat
-            </a>
-        </li>
-
-        <li>
-            <a href="/profile.html">
-                Profile
-            </a>
-        </li>
-
-    </ul>
-
-    <div class="nav-right">
-
-            <span class="me-3">
-                Halo, <span id="namaUser"></span>
-            </span>
-
-        <button
-            class="btn-logout"
-            onclick="logout()">
-
-            Logout
-
-        </button>
-
+<!-- NAV -->
+<nav class="tm-nav">
+    <div class="inner">
+        <a class="tm-brand" href="/index.html">Tell<span>Me</span></a>
+        <div class="tm-links">
+            <a href="/index.html">Beranda</a>
+            <a href="/aspirasi.html">Buat Aspirasi</a>
+            <a href="/forum.html" class="active">Forum</a>
+            <a href="/riwayat.html">Riwayat Aspirasi</a>
+            <a href="/profile.html">Profil</a>
+        </div>
+        <div class="tm-user">
+            <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
+                <div class="toggle-track">
+                    <div class="toggle-thumb" id="toggleThumb"><span id="toggleIcon">☀️</span></div>
+                </div>
+                <span class="theme-toggle-label" id="themeLabel">Terang</span>
+            </div>
+            <div class="tm-hello">Halo, <strong class="namaUser"></strong></div>
+            <button class="btn-logout" onclick="logout()">Keluar</button>
+        </div>
     </div>
-
 </nav>
 
-<main>
-
+<!-- CONTENT -->
+<div class="page-wrap">
     <div class="page-header">
+        <h2>Forum Diskusi</h2>
+        <p>Diskusi bebas dengan sesama mahasiswa — semua suara didengar.</p>
+    </div>
 
-        <div class="eyebrow">
-            Diskusi Publik
+    <div class="row g-4">
+        <!-- Main -->
+        <div class="col-md-8">
+            <div class="compose-card">
+                <div class="compose-label">💬 Apa yang sedang kamu pikirkan?</div>
+                <textarea id="isiPost" class="form-control" rows="3" placeholder="Tulis postinganmu di sini…"></textarea>
+                <button class="btn-post" onclick="buatPost()">Posting →</button>
+            </div>
+            <div id="listPost">
+                <div class="empty-state"><span class="empty-icon">⏳</span>Memuat postingan…</div>
+            </div>
         </div>
 
-        <h1 class="page-title">
-            Forum<br>
-            <em>TellMe</em>
-        </h1>
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="card-tm mb-3">
+                <div class="card-header"><h5>📊 Statistik Forum</h5></div>
+                <div class="card-body">
+                    <div class="stat-row">
+                        <div class="stat-chip">
+                            <div class="stat-chip-num" id="statPost">—</div>
+                            <div class="stat-chip-label">Postingan</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="stat-chip-num" id="statKomentar">—</div>
+                            <div class="stat-chip-label">Komentar</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <p class="page-subtitle">
-            Bagikan opini, ide, dan diskusi bersama pengguna lainnya secara terbuka.
-        </p>
+            <div class="card-tm">
+                <div class="card-header"><h5>🔗 Navigasi Cepat</h5></div>
+                <div class="card-body nav-quick">
+                    <a href="/aspirasi.html">📢 Buat Aspirasi</a>
+                    <a href="/riwayat.html">📋 Riwayat Aspirasi</a>
+                    <a href="/profile.html">👤 Profil Saya</a>
+                </div>
+            </div>
 
-    </div>
-
-    <div class="card">
-
-        <label class="field-label">
-            Buat Postingan
-        </label>
-
-        <textarea
-            id="isiPost"
-            rows="4"
-            placeholder="Apa yang sedang kamu pikirkan?"></textarea>
-
-        <button
-            class="btn-primary"
-            onclick="buatPost()">
-
-            <span>Posting Sekarang</span>
-
-        </button>
-
-    </div>
-
-    <div id="listPost"></div>
-
+            <div class="info-card">
+                <h6>ℹ️ Panduan Forum</h6>
+                <p>Jaga kesopanan dalam berdiskusi. Dilarang memposting konten yang bersifat SARA, hoaks, atau melanggar aturan kampus.</p>
+            </div>
         </div>
-
     </div>
-
 </div>
 
 <script>
+const POST_API    = "http://localhost:8080/api/forum";
+const COMMENT_API = "http://localhost:8080/api/forum-comment";
 
-const POST_API =
-    "http://localhost:8080/api/forum";
+function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
 
-const COMMENT_API =
-    "http://localhost:8080/api/forum-comment";
-
-let currentPostId = null;
-
-function logout(){
-
-    localStorage.removeItem("user");
-
-    window.location.href = "/login.html";
+function applyThemeUI(theme) {
+    const isLight = theme === 'light';
+    document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
+    document.getElementById('toggleIcon').textContent = isLight ? '☀️' : '🌙';
+}
+function toggleTheme() {
+    const html    = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next    = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('tellme-theme', next);
+    applyThemeUI(next);
 }
 
-async function loadPost(){
+function showToast(msg, type = "success") {
+    const t = document.getElementById("toast");
+    t.textContent = (type === "success" ? "✓ " : "✗ ") + msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.className = "toast", 3200);
+}
+function formatTgl(t) {
+    if (!t) return '';
+    return new Date(t).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+function initial(nama) { return (nama || "?").charAt(0).toUpperCase(); }
 
-    const res = await fetch(POST_API);
-
-    const data = await res.json();
-
-    let html = "";
-
-    data.reverse().forEach(post => {
-
-        html += `
-
-        <div class="card">
-
-            <div class="post-top">
-
-                <div>
-
-                    <div class="user-name">
-                        ${post.user?.nama}
+async function loadPost() {
+    try {
+        const data = await fetch(POST_API).then(r => r.json());
+        document.getElementById("statPost").textContent = data.length;
+        const container = document.getElementById("listPost");
+        if (!data.length) {
+            container.innerHTML = `<div class="empty-state"><span class="empty-icon">💬</span>Belum ada postingan. Jadilah yang pertama!</div>`;
+            return;
+        }
+        container.innerHTML = [...data].reverse().map(post => {
+            const canDel = post.user?.id == user.id || user.role === 'ADMIN';
+            return `<div class="post-card" id="post-${post.id}">
+                <div class="post-header">
+                    <div class="post-user">
+                        <div class="avatar">${initial(post.user?.nama)}</div>
+                        <div>
+                            <div class="post-name">${post.user?.nama || 'Anonim'}</div>
+                            <div class="post-date">${formatTgl(post.tanggal)}</div>
+                        </div>
                     </div>
-
-                    <div class="post-date">
-                        ${formatTanggal(post.tanggal)}
+                    ${canDel ? `<button class="btn-del" onclick="hapusPost(${post.id})">Hapus</button>` : ''}
+                </div>
+                <div class="post-body">${post.isiPost}</div>
+                <div class="post-footer">
+                    <div class="comment-input-row">
+                        <textarea id="komentar-${post.id}" class="form-control" rows="1" placeholder="Tulis komentar…"></textarea>
+                        <button class="btn-comment" onclick="kirimKomentar(${post.id})">Kirim</button>
                     </div>
-
+                    <div class="comment-list" id="comment-list-${post.id}"></div>
                 </div>
+            </div>`;
+        }).join('');
+        data.forEach(post => loadKomentar(post.id));
+    } catch {
+        document.getElementById("listPost").innerHTML = `<div class="empty-state"><span class="empty-icon">❌</span>Gagal memuat postingan.</div>`;
+        showToast("Gagal memuat forum", "error");
+    }
+}
 
-                ${post.user?.id == user.id || user.role == 'ADMIN' ? `
+async function buatPost() {
+    const isiPost = document.getElementById("isiPost").value.trim();
+    if (!isiPost) { showToast("Isi postingan dulu", "error"); return; }
+    try {
+        await fetch(POST_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isiPost, user: { id: user.id } }) });
+        document.getElementById("isiPost").value = "";
+        showToast("Postingan berhasil dibuat");
+        loadPost();
+    } catch { showToast("Gagal membuat postingan", "error"); }
+}
 
-                    <button
-                        class="btn-delete"
-                        onclick="hapusPost(${post.id})">
+async function hapusPost(id) {
+    if (!confirm("Hapus postingan ini?")) return;
+    try {
+        await fetch(`${POST_API}/${id}`, { method: "DELETE" });
+        showToast("Postingan dihapus");
+        loadPost();
+    } catch { showToast("Gagal menghapus postingan", "error"); }
+}
 
-                        Hapus
+async function kirimKomentar(postId) {
+    const el = document.getElementById(`komentar-${postId}`);
+    const isiKomentar = el.value.trim();
+    if (!isiKomentar) { showToast("Isi komentar dulu", "error"); return; }
+    try {
+        await fetch(COMMENT_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isiKomentar, post: { id: postId }, user: { id: user.id } }) });
+        el.value = "";
+        showToast("Komentar terkirim");
+        loadKomentar(postId);
+    } catch { showToast("Gagal mengirim komentar", "error"); }
+}
 
-                    </button>
-
-                ` : ''}
-
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="post-content">
-                ${post.isiPost}
-            </div>
-
-                <div class="mt-3">
-
-                    <textarea
-                        id="komentar-${post.id}"
-                        class="form-control mb-2"
-                        rows="2"
-                        placeholder="Tulis komentar..."></textarea>
-
-                    <button
-                        class="btn btn-sm btn-primary"
-                        onclick="kirimKomentar(${post.id})">
-
-                        Kirim Komentar
-
-                </button>
-
+async function loadKomentar(postId) {
+    try {
+        const data = await fetch(`${COMMENT_API}/${postId}`).then(r => r.json());
+        const list = document.getElementById(`comment-list-${postId}`);
+        if (!list) return;
+        list.innerHTML = data.map(c => {
+            const canDel = c.user?.id == user.id || user.role === 'ADMIN';
+            return `<div class="comment-item">
+                <div class="comment-avatar">${initial(c.user?.nama)}</div>
+                <div class="comment-body">
+                    <div class="comment-top">
+                        <span class="comment-name">${c.user?.nama || 'Anonim'}</span>
+                        ${canDel ? `<button class="comment-del" onclick="hapusKomentar(${c.id},${postId})">Hapus</button>` : ''}
+                    </div>
+                    <div class="comment-text">${c.isiKomentar}</div>
                 </div>
-
-                <div
-                    id="comment-list-${post.id}"
-                    class="mt-3"></div>
-
-            </div>
-
-        </div>
-
-        `;
-    });
-
-    document.getElementById("listPost").innerHTML =
-        html;
+            </div>`;
+        }).join('');
+        const total = document.querySelectorAll('.comment-item').length;
+        document.getElementById("statKomentar").textContent = total;
+    } catch {}
 }
 
-async function bukaDiskusi(postId){
-
-    currentPostId = postId;
-
-    const modal =
-        new bootstrap.Modal(
-            document.getElementById("diskusiModal")
-        );
-
-    modal.show();
-
-    loadKomentar(postId);
-}
-
-async function loadKomentar(postId){
-
-    const res =
-        await fetch(`${COMMENT_API}/${postId}`);
-
-    const data = await res.json();
-
-    let html = `
-
-        <textarea
-            id="komentarUtama"
-            class="form-control mb-2"
-            placeholder="Tulis komentar..."></textarea>
-
-        <button
-            class="btn btn-primary btn-sm mb-4"
-            onclick="kirimKomentar()">
-
-            Kirim Komentar
-
-        </button>
-
-    `;
-
-    if(data.length === 0){
-
-        html += `
-
-            <div class="text-center text-muted">
-
-                Belum ada komentar
-
-            </div>
-
-        `;
-    }
-
-    data.forEach(comment => {
-
-        html += renderComment(comment,0);
-
-    });
-
-    document.getElementById(
-        "modalKomentar"
-    ).innerHTML = html;
-}
-
-function renderComment(comment, level){
-
-    let marginLeft = level * 30;
-
-    let html = `
-
-    <div
-        class="comment-box"
-        style="margin-left:${marginLeft}px">
-
-        <div class="d-flex justify-content-between">
-
-            <div>
-
-                <strong>
-                    ${comment.namaUser}
-                </strong>
-
-                <br>
-
-                <small class="text-muted">
-                    ${formatTanggal(comment.tanggal)}
-                </small>
-
-            </div>
-
-            ${comment.userId == user.id || user.role == 'ADMIN' ? `
-
-                <button
-                    class="btn btn-danger btn-sm"
-                    onclick="hapusKomentar(${comment.id})">
-
-                    Hapus
-
-                </button>
-
-            ` : ''}
-
-        </div>
-
-        <p class="mt-2">
-            ${comment.isiKomentar}
-        </p>
-
-        <div class="d-flex gap-3">
-
-            <button
-                class="btn btn-link btn-sm p-0"
-                onclick="showReply(${comment.id})">
-
-                Balas
-
-            </button>
-
-            <small class="text-muted">
-
-                ${comment.totalReply} balasan
-
-            </small>
-
-        </div>
-
-        <div
-            id="reply-form-${comment.id}"
-            class="mt-2"></div>
-
-    `;
-
-    if(comment.replies && comment.replies.length > 0){
-
-        comment.replies.forEach(reply => {
-
-            html += renderComment(
-                reply,
-                level + 1
-            );
-
-        });
-    }
-
-    html += `</div>`;
-
-    return html;
-}
-
-function showReply(commentId){
-
-    document.getElementById(
-        `reply-form-${commentId}`
-    ).innerHTML = `
-
-        <textarea
-            id="reply-${commentId}"
-            class="form-control mb-2"
-            placeholder="Tulis balasan..."></textarea>
-
-        <button
-            class="btn btn-primary btn-sm"
-            onclick="kirimReply(${commentId})">
-
-            Kirim Balasan
-
-        </button>
-
-    `;
-}
-
-async function kirimKomentar(){
-
-    const isiKomentar =
-        document.getElementById(
-            "komentarUtama"
-        ).value;
-
-    if(!isiKomentar) return;
-
-    await fetch(COMMENT_API,{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            isiKomentar:isiKomentar,
-
-            post:{
-                id:currentPostId
-            },
-
-            user:{
-                id:user.id
-            }
-
-        })
-
-    });
-
-    loadKomentar(currentPostId);
-}
-
-async function kirimReply(commentId){
-
-    const isiKomentar =
-        document.getElementById(
-            `reply-${commentId}`
-        ).value;
-
-    if(!isiKomentar) return;
-
-    await fetch(COMMENT_API,{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            isiKomentar:isiKomentar,
-
-            post:{
-                id:currentPostId
-            },
-
-            user:{
-                id:user.id
-            },
-
-            parentComment:{
-                id:commentId
-            }
-
-        })
-
-    });
-
-    loadKomentar(currentPostId);
-}
-
-async function buatPost(){
-
-    const isiPost =
-        document.getElementById("isiPost").value;
-
-    if(!isiPost){
-
-        alert("Isi postingan dulu");
-
-        return;
-    }
-
-    await fetch(POST_API,{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            isiPost:isiPost,
-
-            user:{
-                id:user.id
-            }
-
-        })
-
-    });
-
-    document.getElementById("isiPost").value = "";
-
-    loadPost();
-}
-
-async function hapusPost(id){
-
-    if(!confirm("Hapus postingan?")) return;
-
-    await fetch(`${POST_API}/${id}`,{
-        method:"DELETE"
-    });
-
-    loadPost();
-}
-
-async function kirimKomentar(postId){
-
-    const isiKomentar =
-        document.getElementById(
-            `komentar-${postId}`
-        ).value;
-
-    if(!isiKomentar){
-
-        alert("Isi komentar dulu");
-
-        return;
-    }
-
-    await fetch(COMMENT_API,{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            isiKomentar:isiKomentar,
-
-            post:{
-                id:postId
-            },
-
-            user:{
-                id:user.id
-            }
-
-        })
-
-    });
-
-    document.getElementById(
-        `komentar-${postId}`
-    ).value = "";
-
-    loadKomentar(postId);
-}
-
-async function loadKomentar(postId){
-
-    const res =
-        await fetch(`${COMMENT_API}/${postId}`);
-
-    const data = await res.json();
-
-    let html = "";
-
-    data.forEach(comment => {
-
-        html += `
-
-        <div class="comment-box">
-
-            <div class="d-flex justify-content-between">
-
-                <div>
-
-                    <strong>
-                        ${comment.user?.nama}
-                    </strong>
-
-                    <br>
-
-                    <small class="text-muted">
-                        ${formatTanggal(comment.tanggal)}
-                    </small>
-
-                </div>
-
-                ${comment.user?.id == user.id || user.role == 'ADMIN' ? `
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="hapusKomentar(${comment.id}, ${postId})">
-
-                        Hapus
-
-                    </button>
-
-                ` : ''}
-
-            </div>
-
-            <hr>
-
-            <p class="mb-0">
-                ${comment.isiKomentar}
-            </p>
-
-        </div>
-
-        `;
-    });
-
-    document.getElementById(
-        `comment-list-${postId}`
-    ).innerHTML = html;
-}
-
-async function hapusKomentar(id, postId){
-
-    if(!confirm("Hapus komentar?")) return;
-
-    await fetch(`${COMMENT_API}/${id}`,{
-        method:"DELETE"
-    });
-
-    loadKomentar(currentPostId);
-}
-
-function formatTanggal(tanggal){
-
-    return new Date(tanggal)
-        .toLocaleString("id-ID");
+async function hapusKomentar(id, postId) {
+    if (!confirm("Hapus komentar ini?")) return;
+    try {
+        await fetch(`${COMMENT_API}/${id}`, { method: "DELETE" });
+        showToast("Komentar dihapus");
+        loadKomentar(postId);
+    } catch { showToast("Gagal menghapus komentar", "error"); }
 }
 
 loadPost();
-
 </script>
-
 </body>
 </html>

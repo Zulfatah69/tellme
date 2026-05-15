@@ -1,335 +1,408 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe — Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - TellMe</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+    /* ── LIGHT THEME (default) ── */
+    :root,
+    [data-theme="light"] {
+        --navy: #0f1f3d;
+        --teal: #0e9f8e;
+        --teal-light: #12b5a2;
+        --cream: #f7f6f2;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --bg: #f7f6f2;
+        --surface: #ffffff;
+        --surface2: #f3f4f6;
+        --text: #1f2937;
+        --text-soft: #374151;
+        --nav-bg: #ffffff;
+        --nav-shadow: 0 1px 8px rgba(15,31,61,0.06);
+        --hero-gradient: linear-gradient(135deg, var(--navy) 0%, #1a3560 100%);
+        --hero-orb: rgba(14,159,142,0.12);
+        --card-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        --toggle-track: #e5e7eb;
+        --toggle-thumb: #0e9f8e;
+        --toggle-pos: 2px;
+        --left-panel-bg: var(--navy);
+        --left-panel-text: rgba(255,255,255,0.4);
+        --left-panel-orb1: rgba(255,255,255,0.06);
+        --left-panel-orb2: rgba(14,159,142,0.2);
+        --left-panel-orb3: rgba(14,159,142,0.1);
+        --feature-icon-bg: rgba(14,159,142,0.15);
+        --right-bg: var(--cream);
+        --card-border-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 8px 32px rgba(15,31,61,0.07);
+        --input-bg: #ffffff;
+        --btn-login-shadow: 0 4px 14px rgba(14,159,142,0.25);
+        --btn-login-shadow-hover: 0 6px 20px rgba(14,159,142,0.35);
+    }
 
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    /* ── DARK THEME ── */
+    [data-theme="dark"] {
+        --navy: #e2e8f0;
+        --teal: #2dd4bf;
+        --teal-light: #5eead4;
+        --cream: #0a0a0f;
+        --muted: #7a7a9a;
+        --border: rgba(255,255,255,0.08);
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --surface2: #1a1a24;
+        --text: #f0eff8;
+        --text-soft: #cbd5e1;
+        --nav-bg: rgba(17,17,24,0.92);
+        --nav-shadow: 0 1px 8px rgba(0,0,0,0.35);
+        --hero-gradient: linear-gradient(135deg, #0d1b33 0%, #0f1f3d 100%);
+        --hero-orb: rgba(45,212,191,0.1);
+        --card-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        --toggle-track: #22222f;
+        --toggle-thumb: #6c63ff;
+        --toggle-pos: 24px;
+        --left-panel-bg: #0d1b33;
+        --left-panel-text: rgba(255,255,255,0.3);
+        --left-panel-orb1: rgba(255,255,255,0.04);
+        --left-panel-orb2: rgba(45,212,191,0.15);
+        --left-panel-orb3: rgba(45,212,191,0.08);
+        --feature-icon-bg: rgba(45,212,191,0.12);
+        --right-bg: var(--bg);
+        --card-border-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        --input-bg: #16161f;
+        --btn-login-shadow: 0 4px 14px rgba(45,212,191,0.15);
+        --btn-login-shadow-hover: 0 6px 20px rgba(45,212,191,0.25);
+    }
 
-    <style>
-        :root{
-            --ink:#0d0d0d;
-            --paper:#f7f4ee;
-            --accent:#ff4d2e;
-            --accent2:#1a1aff;
-            --muted:#8f8f82;
-            --border:#e3dfd6;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        transition: background 0.35s ease, color 0.35s ease;
+        color: var(--text);
+    }
 
-        body{
-            font-family:'DM Sans',sans-serif;
-            background:var(--paper);
-            min-height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            overflow:hidden;
-            position:relative;
-            color:var(--ink);
-        }
+    /* ── LEFT PANEL ── */
+    .left-panel {
+        width: 44%;
+        background: var(--left-panel-bg);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 60px 56px;
+        position: relative;
+        overflow: hidden;
+        transition: background 0.35s ease;
+    }
+    .left-panel::before {
+        content: '';
+        position: absolute;
+        top: -80px; right: -80px;
+        width: 320px; height: 320px;
+        border: 1px solid var(--left-panel-orb1);
+        border-radius: 50%;
+        transition: border-color 0.35s ease;
+    }
+    .left-panel::after {
+        content: '';
+        position: absolute;
+        bottom: -60px; left: -60px;
+        width: 240px; height: 240px;
+        border: 1px solid var(--left-panel-orb2);
+        border-radius: 50%;
+        transition: border-color 0.35s ease;
+    }
+    .left-panel .orb {
+        position: absolute;
+        top: 40%; right: 10%;
+        width: 160px; height: 160px;
+        border: 1px solid var(--left-panel-orb3);
+        border-radius: 50%;
+        pointer-events: none;
+        transition: border-color 0.35s ease;
+    }
 
-        body::before{
-            content:'';
-            position:absolute;
-            inset:0;
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(255,77,46,0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(26,26,255,0.07) 0%, transparent 40%);
-            z-index:0;
-        }
+    .brand-logo {
+        font-family: 'Sora', sans-serif;
+        font-size: 2.4rem; font-weight: 700;
+        color: #fff; letter-spacing: -0.02em;
+        margin-bottom: 6px;
+        transition: color 0.35s ease;
+    }
+    [data-theme="dark"] .brand-logo { color: var(--text); }
+    .brand-logo span { color: var(--teal); }
 
-        body::after{
-            content:'';
-            position:absolute;
-            inset:0;
-            background-image:
-                linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-            background-size:28px 28px;
-            z-index:0;
-        }
+    .brand-tagline {
+        color: var(--left-panel-text);
+        font-size: 0.88rem;
+        margin-bottom: 52px;
+        line-height: 1.5;
+        transition: color 0.35s ease;
+    }
 
-        .blob{
-            position:absolute;
-            border-radius:50%;
-            filter:blur(90px);
-            opacity:.16;
-            pointer-events:none;
-            z-index:0;
-        }
+    .panel-feature {
+        display: flex; align-items: flex-start; gap: 16px;
+        margin-bottom: 26px;
+    }
+    .feature-icon {
+        width: 42px; height: 42px; border-radius: 10px;
+        background: var(--feature-icon-bg);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; font-size: 1.1rem;
+        transition: background 0.35s ease;
+    }
+    .feature-text h6 {
+        color: #fff; font-family: 'Sora', sans-serif;
+        font-weight: 600; font-size: 0.88rem; margin-bottom: 3px;
+        transition: color 0.35s ease;
+    }
+    [data-theme="dark"] .feature-text h6 { color: var(--text); }
+    .feature-text p {
+        color: var(--left-panel-text);
+        font-size: 0.81rem; line-height: 1.5; margin: 0;
+        transition: color 0.35s ease;
+    }
 
-        .blob1{
-            width:260px;
-            height:260px;
-            background:var(--accent);
-            top:-80px;
-            right:-80px;
-        }
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+        flex: 1;
+        display: flex; align-items: center; justify-content: center;
+        padding: 40px;
+        background: var(--right-bg);
+        transition: background 0.35s ease;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-        .blob2{
-            width:240px;
-            height:240px;
-            background:var(--accent2);
-            bottom:-100px;
-            left:-80px;
-        }
+    /* ── THEME TOGGLE (top-right of right panel) ── */
+    .right-panel-top {
+        width: 100%;
+        max-width: 380px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
 
-        .login-wrap{
-            position:relative;
-            z-index:1;
-            width:100%;
-            max-width:430px;
-            padding:1rem;
-        }
+    .theme-toggle {
+        display: flex; align-items: center; gap: .5rem;
+        cursor: pointer; user-select: none;
+    }
+    .theme-toggle-label {
+        font-size: 0.8rem; font-weight: 600; color: var(--muted);
+        transition: color 0.2s; white-space: nowrap;
+    }
+    .toggle-track {
+        position: relative; width: 44px; height: 22px;
+        background: var(--toggle-track);
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        transition: all 0.3s ease; flex-shrink: 0;
+    }
+    .toggle-thumb {
+        position: absolute; top: 2px; left: var(--toggle-pos);
+        width: 16px; height: 16px; border-radius: 50%;
+        background: var(--toggle-thumb);
+        box-shadow: 0 0 6px rgba(14,159,142,0.4);
+        transition: left 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease, box-shadow 0.3s ease;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.55rem;
+    }
+    [data-theme="dark"] .toggle-thumb { box-shadow: 0 0 8px rgba(108,99,255,0.5); }
 
-        .login-card{
-            position:relative;
-            background:rgba(255,255,255,0.82);
-            backdrop-filter:blur(12px);
-            border:1.5px solid var(--border);
-            border-radius:28px;
-            padding:2.5rem;
-            overflow:hidden;
-            box-shadow:
-                0 10px 30px rgba(0,0,0,0.05),
-                0 2px 10px rgba(0,0,0,0.04);
-            animation:fadeUp .5s ease forwards;
-        }
+    .login-box { width: 100%; max-width: 380px; }
 
-        .login-card::before{
-            content:'';
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            height:3px;
-            background:linear-gradient(
-                90deg,
-                var(--accent),
-                var(--accent2)
-            );
-        }
+    .mobile-brand {
+        display: none;
+        font-family: 'Sora', sans-serif;
+        font-size: 1.5rem; font-weight: 700;
+        color: var(--navy); letter-spacing: -0.02em;
+        margin-bottom: 28px;
+        transition: color 0.35s ease;
+    }
+    .mobile-brand span { color: var(--teal); }
 
-        .brand{
-            font-family:'Syne',sans-serif;
-            font-size:1.8rem;
-            font-weight:800;
-            letter-spacing:-0.05em;
-            text-align:center;
-            margin-bottom:.5rem;
-        }
+    .login-box h2 {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.8rem; font-weight: 700;
+        color: var(--navy); margin-bottom: 6px; letter-spacing: -0.02em;
+        transition: color 0.35s ease;
+    }
+    .login-box .subtitle {
+        color: var(--muted); font-size: 0.88rem; margin-bottom: 32px;
+        transition: color 0.35s ease;
+    }
 
-        .brand span{
-            color:var(--accent);
-        }
+    .form-label {
+        display: block; font-size: 0.75rem; font-weight: 600;
+        color: var(--navy); margin-bottom: 6px;
+        letter-spacing: 0.07em; text-transform: uppercase;
+        transition: color 0.35s ease;
+    }
+    .form-control {
+        border: 1.5px solid var(--border); border-radius: 10px;
+        padding: 12px 16px; font-size: 0.92rem; color: var(--navy);
+        background: var(--input-bg); width: 100%;
+        font-family: 'DM Sans', sans-serif;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.35s ease, color 0.35s ease;
+        outline: none;
+    }
+    .form-control::placeholder { color: var(--muted); }
+    .form-control:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(14,159,142,0.12);
+        background: var(--input-bg);
+    }
+    [data-theme="dark"] .form-control { color: var(--text); }
+    [data-theme="dark"] .form-control:focus { box-shadow: 0 0 0 3px rgba(45,212,191,0.1); }
 
-        .subtitle{
-            text-align:center;
-            color:var(--muted);
-            font-size:.92rem;
-            line-height:1.7;
-            margin-bottom:2rem;
-            font-weight:300;
-        }
+    .mb-3 { margin-bottom: 1rem; }
+    .mb-4 { margin-bottom: 1.5rem; }
 
-        .field-group{
-            margin-bottom:1.2rem;
-        }
+    .btn-login {
+        background: var(--teal); color: #fff; border: none;
+        border-radius: 10px; padding: 13px; font-family: 'Sora', sans-serif;
+        font-weight: 600; font-size: 0.92rem; width: 100%; cursor: pointer;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: var(--btn-login-shadow);
+    }
+    .btn-login:hover {
+        background: var(--teal-light);
+        transform: translateY(-1px);
+        box-shadow: var(--btn-login-shadow-hover);
+    }
+    .btn-login:active { transform: translateY(0); }
 
-        .field-label{
-            display:block;
-            margin-bottom:.6rem;
-            font-family:'Syne',sans-serif;
-            font-size:.72rem;
-            font-weight:700;
-            letter-spacing:.12em;
-            text-transform:uppercase;
-            color:var(--muted);
-        }
+    .divider {
+        display: flex; align-items: center; gap: 12px;
+        margin: 22px 0; color: var(--muted); font-size: 0.8rem;
+        transition: color 0.35s ease;
+    }
+    .divider::before, .divider::after {
+        content: ''; flex: 1; height: 1px;
+        background: var(--border);
+        transition: background 0.35s ease;
+    }
 
-        .input{
-            width:100%;
-            border:none;
-            outline:none;
-            background:var(--paper);
-            border:1.5px solid var(--border);
-            border-radius:14px;
-            padding:1rem 1.1rem;
-            font-family:'DM Sans',sans-serif;
-            font-size:.95rem;
-            color:var(--ink);
-            transition:.2s;
-            box-shadow:
-                inset 0 1px 2px rgba(0,0,0,0.04);
-        }
+    .register-link {
+        text-align: center; font-size: 0.87rem; color: var(--muted);
+        transition: color 0.35s ease;
+    }
+    .register-link a {
+        color: var(--teal); font-weight: 600; text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .register-link a:hover { color: var(--teal-light); }
 
-        .input:focus{
-            border-color:var(--accent2);
-            box-shadow:
-                0 0 0 3px rgba(26,26,255,0.08);
-        }
+    .error-msg {
+        background: #fef2f2; border: 1px solid #fecaca;
+        border-radius: 8px; padding: 10px 14px;
+        color: #dc2626; font-size: 0.83rem;
+        margin-bottom: 14px; display: none;
+        font-weight: 500;
+    }
+    .error-msg.show { display: flex; align-items: center; gap: 7px; }
+    [data-theme="dark"] .error-msg {
+        background: rgba(220,38,38,0.1);
+        border-color: rgba(220,38,38,0.2);
+        color: #f87171;
+    }
 
-        .input::placeholder{
-            color:#bbb;
-        }
+    .login-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 36px 32px;
+        box-shadow: var(--card-border-shadow);
+        transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
 
-        .btn-login{
-            width:100%;
-            border:none;
-            border-radius:14px;
-            padding:1rem;
-            margin-top:.5rem;
-            background:var(--ink);
-            color:white;
-            font-family:'Syne',sans-serif;
-            font-size:.95rem;
-            font-weight:700;
-            cursor:pointer;
-            transition:.25s;
-            position:relative;
-            overflow:hidden;
-            box-shadow:
-                0 10px 20px rgba(255,77,46,0.15),
-                0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .btn-login::before{
-            content:'';
-            position:absolute;
-            inset:0;
-            background:linear-gradient(
-                90deg,
-                var(--accent),
-                var(--accent2)
-            );
-            opacity:0;
-            transition:.3s;
-        }
-
-        .btn-login span{
-            position:relative;
-            z-index:1;
-        }
-
-        .btn-login:hover::before{
-            opacity:1;
-        }
-
-        .btn-login:hover{
-            transform:translateY(-2px);
-        }
-
-        .error{
-            color:var(--accent);
-            text-align:center;
-            font-size:.84rem;
-            margin-top:1rem;
-            min-height:20px;
-        }
-
-        .register-link{
-            margin-top:1.8rem;
-            text-align:center;
-            font-size:.9rem;
-            color:var(--muted);
-        }
-
-        .register-link a{
-            color:var(--accent2);
-            text-decoration:none;
-            font-weight:600;
-            transition:.2s;
-        }
-
-        .register-link a:hover{
-            opacity:.7;
-        }
-
-        .deco-number{
-            position:absolute;
-            top:1.2rem;
-            right:1.5rem;
-            font-family:'Syne',sans-serif;
-            font-size:5rem;
-            font-weight:800;
-            color:#ece7dc;
-            line-height:1;
-            pointer-events:none;
-            letter-spacing:-0.05em;
-        }
-
-        @keyframes fadeUp{
-            from{
-                opacity:0;
-                transform:translateY(20px);
-            }
-            to{
-                opacity:1;
-                transform:translateY(0);
-            }
-        }
-
-        @media(max-width:480px){
-            .login-card{
-                padding:2rem 1.4rem;
-                border-radius:22px;
-            }
-
-            .brand{
-                font-size:1.6rem;
-            }
-        }
-    </style>
+    @media (max-width: 768px) {
+        .left-panel { display: none; }
+        .right-panel { padding: 24px; }
+        .mobile-brand { display: block; }
+        .login-card { padding: 28px 22px; }
+    }
+</style>
 </head>
 <body>
 
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
+<!-- Theme init before render to avoid flash -->
+<script>
+(function() {
+    const saved = localStorage.getItem('tellme-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
+</script>
 
-<div class="login-wrap">
-    <div class="login-card">
-        <div class="deco-number">01</div>
+<!-- Left: branding -->
+<div class="left-panel">
+    <div class="orb"></div>
+    <div class="brand-logo">Tell<span>Me</span></div>
+    <p class="brand-tagline">Platform aspirasi & diskusi kampus mahasiswa.</p>
 
-        <h1 class="brand">Tell<span>Me</span></h1>
-
-        <p class="subtitle">
-            Masuk untuk mulai berdiskusi dan menyampaikan aspirasi kampus secara modern dan terbuka.
-        </p>
-
-        <div class="field-group">
-            <label class="field-label">Email atau NIM</label>
-            <input
-                type="text"
-                id="email"
-                class="input"
-                placeholder="Masukkan email atau NIM">
+    <div class="panel-feature">
+        <div class="feature-icon">📢</div>
+        <div class="feature-text">
+            <h6>Sampaikan Aspirasi</h6>
+            <p>Kirim saran dan kritik ke pihak kampus, anonim atau tidak.</p>
         </div>
-
-        <div class="field-group">
-            <label class="field-label">Password</label>
-            <input
-                type="password"
-                id="password"
-                class="input"
-                placeholder="Masukkan password">
+    </div>
+    <div class="panel-feature">
+        <div class="feature-icon">💬</div>
+        <div class="feature-text">
+            <h6>Forum Mahasiswa</h6>
+            <p>Diskusi bebas dengan sesama mahasiswa dalam satu tempat.</p>
         </div>
+    </div>
+    <div class="panel-feature">
+        <div class="feature-icon">📋</div>
+        <div class="feature-text">
+            <h6>Pantau Status</h6>
+            <p>Lihat perkembangan aspirasi kamu secara real-time.</p>
+        </div>
+    </div>
+</div>
 
-        <button class="btn-login" onclick="login()">
-            <span>Login</span>
-        </button>
+<!-- Right: form -->
+<div class="right-panel">
+    <!-- Theme toggle -->
+    <div class="right-panel-top">
+        <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
+            <div class="toggle-track">
+                <div class="toggle-thumb" id="toggleThumb">
+                    <span id="toggleIcon">☀️</span>
+                </div>
+            </div>
+            <span class="theme-toggle-label" id="themeLabel">Terang</span>
+        </div>
+    </div>
 
-        <p id="error" class="error"></p>
+    <div class="login-box">
+        <div class="mobile-brand">Tell<span>Me</span></div>
 
-        <div class="register-link">
-            Belum punya akun?
-            <a href="/register.html">Register</a>
+        <div class="login-card">
+            <h2>Selamat Datang</h2>
+            <p class="subtitle">Masuk ke akun TellMe kamu</p>
+
+            <div class="mb-3">
+                <label class="form-label">Email atau NIM</label>
+                <input type="email" id="email" class="form-control" placeholder="email@mhs.ac.id">
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="••••••••">
+            </div>
+
+            <div id="error" class="error-msg">✗ Email atau password salah. Coba lagi.</div>
+            <button class="btn-login" onclick="login()">Masuk →</button>
+
+            <div class="divider">atau</div>
+            <div class="register-link">Belum punya akun? <a href="/register.html">Daftar sekarang</a></div>
         </div>
     </div>
 </div>
@@ -337,59 +410,55 @@
 <script>
 const API = "http://localhost:8080/api/auth/login";
 
+/* ── THEME ── */
+function applyThemeUI(theme) {
+    const isLight = theme === 'light';
+    document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
+    document.getElementById('toggleIcon').textContent  = isLight ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+    const html    = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next    = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('tellme-theme', next);
+    applyThemeUI(next);
+}
+
+// Init UI on load
+applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
+
+/* ── LOGIN ── */
 async function login() {
     const identifier = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const password   = document.getElementById("password").value;
+    const errEl      = document.getElementById("error");
+    errEl.classList.remove("show");
+
+    if (!identifier || !password) {
+        errEl.textContent = "✗ Email dan password wajib diisi.";
+        errEl.classList.add("show");
+        return;
+    }
 
     try {
         const res = await fetch(API, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                identifier: identifier,
-                password: password
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ identifier, password })
         });
-
-        if (!res.ok) {
-            throw new Error("Login gagal");
-        }
-
+        if (!res.ok) throw new Error();
         const user = await res.json();
-
-        // Simpan data user
         localStorage.setItem("user", JSON.stringify(user));
-
-        // Ambil role dan ubah ke huruf besar
-        const role = (user.role || "").toUpperCase();
-
-        // Redirect berdasarkan role
-        if (role === "ADMIN") {
-            window.location.href = "/admin.html";
-        } else if (role === "PENGELOLA") {
-            window.location.href = "/pengelola.html";
-        } else if (role === "MAHASISWA") {
-            window.location.href = "/index.html";
-        } else {
-            // Default jika role tidak dikenali
-            window.location.href = "/index.html";
-        }
-
-    } catch (err) {
-        document.getElementById("error").innerText =
-            "Email atau password salah";
+        window.location.href = user.role === "ADMIN" ? "/admin.html" : "/index.html";
+    } catch {
+        errEl.textContent = "✗ Email atau password salah. Coba lagi.";
+        errEl.classList.add("show");
     }
 }
 
-// Enter untuk login
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        login();
-    }
-});
+document.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
 </script>
-
 </body>
 </html>

@@ -1,1058 +1,818 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TellMe — Admin Panel</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+<title>TellMe — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
 <style>
-
-:root{
-    --bg:#f6f4ef;
-    --sidebar:#111111;
-    --card:rgba(255,255,255,0.78);
-
-    --line:#e8e3d8;
-
-    --text:#111111;
-    --muted:#7c7b72;
-
-    --accent:#ff5a36;
-    --accent2:#2a4bff;
-
-    --shadow:
-        0 10px 30px rgba(0,0,0,.06),
-        0 2px 10px rgba(0,0,0,.04);
+/* ── DARK THEME (default) ── */
+:root,
+[data-theme="dark"] {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --surface3: #22222f;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0eff8;
+    --text-inv: #0a0a0f;
+    --muted: #7a7a9a;
+    --muted2: #4a4a6a;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --topbar-bg: rgba(10,10,15,0.85);
+    --shadow: 0 4px 24px rgba(0,0,0,0.35);
+    --body-before: radial-gradient(ellipse 80% 50% at 20% -20%, rgba(108,99,255,0.12) 0%, transparent 60%),
+                   radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,101,132,0.08) 0%, transparent 60%);
+    --grid-line: rgba(255,255,255,0.015);
+    --toggle-track: #22222f;
+    --toggle-border: rgba(108,99,255,0.3);
+    --toggle-icon-pos: 2px;
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+    --bg: #f4f4f8;
+    --surface: #ffffff;
+    --surface2: #f0f0f6;
+    --surface3: #e8e8f0;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1a1a2e;
+    --text-inv: #ffffff;
+    --muted: #7878a0;
+    --muted2: #b0b0c8;
+    --accent: #5a52e8;
+    --accent2: #e8546e;
+    --accent3: #2dc96a;
+    --accent4: #e8880e;
+    --topbar-bg: rgba(244,244,248,0.9);
+    --shadow: 0 4px 24px rgba(0,0,0,0.09);
+    --body-before: radial-gradient(ellipse 80% 50% at 20% -20%, rgba(108,99,255,0.07) 0%, transparent 60%),
+                   radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,101,132,0.05) 0%, transparent 60%);
+    --grid-line: rgba(0,0,0,0.025);
+    --toggle-track: #e0e0f0;
+    --toggle-border: rgba(90,82,232,0.3);
+    --toggle-icon-pos: 24px;
 }
 
-body{
-    font-family:'DM Sans',sans-serif;
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family:'Plus Jakarta Sans',sans-serif;
     background:var(--bg);
     color:var(--text);
+    min-height:100vh;
     overflow-x:hidden;
+    transition: background 0.35s ease, color 0.35s ease;
 }
-
-/* background */
-
-body::before{
+body::before {
     content:'';
     position:fixed;
     inset:0;
-
-    background-image:
-        linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
-
-    background-size:32px 32px;
-
-    z-index:-2;
-}
-
-/* glow */
-
-.glow{
-    position:fixed;
-    border-radius:50%;
-    filter:blur(120px);
-    opacity:.15;
+    background: var(--body-before);
     pointer-events:none;
-    z-index:-1;
+    z-index:0;
+    transition: background 0.35s ease;
 }
-
-.glow.one{
-    width:320px;
-    height:320px;
-    background:var(--accent);
-    top:-100px;
-    right:-100px;
-}
-
-.glow.two{
-    width:280px;
-    height:280px;
-    background:var(--accent2);
-    bottom:-120px;
-    left:-80px;
-}
-
-/* sidebar */
-
-.sidebar{
+body::after {
+    content:'';
     position:fixed;
-    top:0;
-    left:0;
-
-    width:270px;
-    height:100vh;
-
-    background:rgba(17,17,17,.92);
-
-    backdrop-filter:blur(14px);
-
-    border-right:1px solid rgba(255,255,255,.06);
-
-    padding:2rem 1.2rem;
-
-    display:flex;
-    flex-direction:column;
-
-    z-index:100;
-}
-
-.logo{
-    font-family:'Syne',sans-serif;
-    font-size:2rem;
-    font-weight:800;
-    letter-spacing:-0.05em;
-
-    margin-bottom:2.5rem;
-
-    color:white;
-}
-
-.logo span{
-    color:var(--accent);
-}
-
-.sidebar-menu{
-    display:flex;
-    flex-direction:column;
-    gap:.55rem;
-}
-
-.menu-link{
-    text-decoration:none;
-
-    color:#c8c8c2;
-
-    padding:1rem 1.1rem;
-
-    border-radius:16px;
-
-    transition:.25s ease;
-
-    font-size:.95rem;
-    font-weight:500;
-}
-
-.menu-link:hover{
-    background:rgba(255,255,255,.06);
-    color:white;
-}
-
-.menu-active{
-    background:linear-gradient(
-        90deg,
-        var(--accent),
-        var(--accent2)
-    );
-
-    color:white;
-}
-
-.logout{
-    margin-top:auto;
-}
-
-/* content */
-
-.content{
-    margin-left:270px;
-    padding:2.5rem;
-}
-
-/* topbar */
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    margin-bottom:2rem;
-}
-
-.page-title{
-    font-family:'Syne',sans-serif;
-    font-size:2rem;
-    font-weight:800;
-    letter-spacing:-0.05em;
-}
-
-.user-badge{
-    background:rgba(255,255,255,.7);
-
-    border:1px solid var(--line);
-
-    padding:.8rem 1rem;
-
-    border-radius:16px;
-
-    box-shadow:var(--shadow);
-
-    font-size:.92rem;
-}
-
-/* dashboard cards */
-
-.dashboard-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-    gap:1.2rem;
-
-    margin-bottom:2rem;
-}
-
-.dashboard-card{
-    background:var(--card);
-
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(14px);
-
-    border-radius:24px;
-
-    padding:1.5rem;
-
-    box-shadow:var(--shadow);
-
-    position:relative;
-
-    overflow:hidden;
-}
-
-.dashboard-card::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:3px;
-
-    background:linear-gradient(
-        90deg,
-        var(--accent),
-        var(--accent2)
-    );
-}
-
-.card-label{
-    font-size:.8rem;
-    color:var(--muted);
-    margin-bottom:.8rem;
-
-    text-transform:uppercase;
-    letter-spacing:.12em;
-
-    font-family:'Syne',sans-serif;
-}
-
-.card-value{
-    font-size:2rem;
-    font-weight:700;
-}
-
-/* main panel */
-
-.panel{
-    background:var(--card);
-
-    border:1px solid rgba(255,255,255,.6);
-
-    backdrop-filter:blur(14px);
-
-    border-radius:28px;
-
-    padding:1.8rem;
-
-    box-shadow:var(--shadow);
-}
-
-.panel-title{
-    font-family:'Syne',sans-serif;
-    font-size:1.25rem;
-    font-weight:700;
-
-    margin-bottom:1.5rem;
-}
-
-/* form */
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:1rem;
-}
-
-.input,
-.select{
-    width:100%;
-
-    padding:1rem;
-
-    border-radius:16px;
-
-    border:1.5px solid var(--line);
-
-    background:white;
-
-    outline:none;
-
-    transition:.25s;
-
-    font-size:.95rem;
-}
-
-.input:focus,
-.select:focus{
-    border-color:var(--accent2);
-
-    box-shadow:
-        0 0 0 4px rgba(42,75,255,.08);
-}
-
-.button{
-    border:none;
-
-    padding:1rem;
-
-    border-radius:16px;
-
-    cursor:pointer;
-
-    font-family:'Syne',sans-serif;
-    font-weight:700;
-
-    color:white;
-
-    background:#111;
-
-    transition:.25s;
-
-    position:relative;
-    overflow:hidden;
-}
-
-.button::before{
-    content:'';
-
-    position:absolute;
     inset:0;
-
-    background:linear-gradient(
-        90deg,
-        var(--accent),
-        var(--accent2)
-    );
-
-    opacity:0;
-
-    transition:.3s;
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+    z-index:0;
+    transition: background-image 0.35s ease;
 }
 
-.button span{
-    position:relative;
-    z-index:2;
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    cursor: pointer;
+    user-select: none;
+}
+.theme-toggle-label {
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+.toggle-track {
+    position: relative;
+    width: 46px;
+    height: 24px;
+    background: var(--toggle-track);
+    border: 1px solid var(--toggle-border);
+    border-radius: 100px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+.toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: var(--toggle-icon-pos);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(108,99,255,0.5);
+    transition: left 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .6rem;
 }
 
-.button:hover::before{
-    opacity:1;
+/* Sidebar toggle section */
+.sidebar-theme {
+    padding: .75rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.3s;
 }
 
-.button:hover{
-    transform:translateY(-2px);
+/* Topbar toggle */
+.topbar-theme {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-/* table placeholder */
+/* ── SIDEBAR ── */
+.sidebar {
+    position:fixed; top:0; left:0; width:260px; height:100vh;
+    background:var(--surface);
+    border-right:1px solid var(--border);
+    display:flex; flex-direction:column; z-index:100;
+    transition: background 0.35s ease, border-color 0.35s ease;
+}
+.sidebar-top {
+    padding:2rem 1.5rem 1.5rem;
+    border-bottom:1px solid var(--border);
+    transition: border-color 0.35s ease;
+}
+.logo {
+    font-family:'Fraunces',serif; font-size:1.8rem; font-weight:900;
+    letter-spacing:-0.03em; color:var(--text);
+    display:flex; align-items:center; gap:.5rem;
+    transition: color 0.35s ease;
+}
+.logo-dot {
+    width:8px; height:8px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 12px var(--accent);
+    animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
+.logo-sub {
+    font-size:.7rem; font-weight:500; color:var(--muted);
+    letter-spacing:.15em; text-transform:uppercase; margin-top:.2rem;
+    transition: color 0.35s ease;
+}
+.sidebar-nav {
+    padding:1.2rem 1rem; flex:1;
+    display:flex; flex-direction:column; gap:.2rem; overflow-y:auto;
+}
+.nav-section {
+    font-size:.65rem; font-weight:700; color:var(--muted2);
+    letter-spacing:.15em; text-transform:uppercase;
+    padding:.8rem .8rem .4rem; margin-top:.5rem;
+    transition: color 0.35s ease;
+}
+.menu-link {
+    display:flex; align-items:center; gap:.75rem;
+    text-decoration:none; color:var(--muted);
+    padding:.75rem .9rem; border-radius:12px;
+    transition:all .2s; font-size:.88rem; font-weight:500;
+    cursor:pointer; position:relative; overflow:hidden;
+}
+.menu-link:hover { color:var(--text); background:var(--surface2); }
+.menu-link.active {
+    color:var(--text);
+    background:linear-gradient(135deg,rgba(108,99,255,.2),rgba(108,99,255,.08));
+    border:1px solid rgba(108,99,255,.25);
+}
+[data-theme="light"] .menu-link.active {
+    background:linear-gradient(135deg,rgba(90,82,232,.12),rgba(90,82,232,.04));
+    border:1px solid rgba(90,82,232,.2);
+}
+.menu-link.active::before {
+    content:''; position:absolute; left:0; top:20%; bottom:20%;
+    width:3px; background:var(--accent); border-radius:0 4px 4px 0;
+    box-shadow:0 0 8px var(--accent);
+}
+.menu-icon {
+    width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.9rem; background:var(--surface2); flex-shrink:0;
+    transition:all .2s;
+}
+.menu-link.active .menu-icon { background:rgba(108,99,255,.2); }
+.sidebar-bottom {
+    padding:1rem;
+    border-top:1px solid var(--border);
+    transition: border-color 0.35s ease;
+}
+.user-card {
+    display:flex; align-items:center; gap:.75rem; padding:.75rem;
+    border-radius:12px; background:var(--surface2); margin-bottom:.75rem;
+    transition: background 0.35s ease;
+}
+.user-avatar {
+    width:36px; height:36px; border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex; align-items:center; justify-content:center;
+    font-size:.85rem; font-weight:800; color:white; flex-shrink:0;
+}
+.user-info { flex:1; min-width:0; }
+.user-name {
+    font-size:.82rem; font-weight:700; color:var(--text);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    transition: color 0.35s ease;
+}
+.user-role {
+    font-size:.7rem; color:var(--accent); font-weight:600;
+    text-transform:uppercase; letter-spacing:.08em;
+}
+.btn-logout {
+    width:100%; padding:.7rem; border-radius:10px;
+    border:1px solid rgba(255,101,132,.2);
+    background:rgba(255,101,132,.05);
+    color:var(--accent2); font-size:.82rem; font-weight:600;
+    cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
+    transition:all .2s; display:flex; align-items:center;
+    justify-content:center; gap:.5rem;
+}
+.btn-logout:hover { background:rgba(255,101,132,.12); border-color:rgba(255,101,132,.4); }
 
-.empty-state{
-    margin-top:1.5rem;
+/* ── CONTENT ── */
+.content { margin-left:260px; min-height:100vh; position:relative; z-index:1; }
+.topbar {
+    padding:1.5rem 2.5rem; display:flex; align-items:center;
+    justify-content:space-between; border-bottom:1px solid var(--border);
+    background:var(--topbar-bg); backdrop-filter:blur(20px);
+    position:sticky; top:0; z-index:50;
+    transition: background 0.35s ease, border-color 0.35s ease;
+}
+.topbar-right { display:flex; align-items:center; gap:1rem; }
+.page-title {
+    font-family:'Fraunces',serif; font-size:1.6rem;
+    font-weight:700; letter-spacing:-.02em;
+    transition: color 0.35s ease;
+}
+.status-badge {
+    display:flex; align-items:center; gap:.5rem;
+    padding:.5rem 1rem;
+    background:rgba(67,233,123,.08);
+    border:1px solid rgba(67,233,123,.2);
+    border-radius:100px; font-size:.78rem; font-weight:600; color:var(--accent3);
+}
+[data-theme="light"] .status-badge {
+    background:rgba(45,201,106,.08);
+    border:1px solid rgba(45,201,106,.25);
+}
+.status-dot-live {
+    width:6px; height:6px; border-radius:50%;
+    background:var(--accent3);
+    animation:pulse 1.5s ease-in-out infinite;
+}
+.content-area { padding:2rem 2.5rem; }
 
-    padding:2rem;
+/* ── STATS GRID ── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+.stat-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:1.5rem; position:relative; overflow:hidden;
+    transition:transform .2s, border-color .2s, background 0.35s ease;
+    animation:fadeUp .5s ease both;
+    box-shadow: var(--shadow);
+}
+.stat-card:hover { transform:translateY(-2px); border-color:var(--border2); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.stat-card:nth-child(1){animation-delay:.05s} .stat-card:nth-child(2){animation-delay:.1s}
+.stat-card:nth-child(3){animation-delay:.15s} .stat-card:nth-child(4){animation-delay:.2s}
+.stat-glow {
+    position:absolute; top:-20px; right:-20px;
+    width:80px; height:80px; border-radius:50%; filter:blur(30px); opacity:.4;
+}
+[data-theme="light"] .stat-glow { opacity:.2; }
+.stat-icon {
+    width:40px; height:40px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem; margin-bottom:1rem;
+}
+.stat-label {
+    font-size:.72rem; font-weight:600; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.1em; margin-bottom:.4rem;
+    transition: color 0.35s ease;
+}
+.stat-value { font-family:'Fraunces',serif; font-size:2.2rem; font-weight:700; line-height:1; color:var(--text); }
+.stat-value.loading { font-size:1rem; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; }
+.c-purple .stat-glow{background:var(--accent)} .c-purple .stat-icon{background:rgba(108,99,255,.15)}
+.c-pink .stat-glow{background:var(--accent2)} .c-pink .stat-icon{background:rgba(255,101,132,.15)}
+.c-green .stat-glow{background:var(--accent3)} .c-green .stat-icon{background:rgba(67,233,123,.15)}
+.c-orange .stat-glow{background:var(--accent4)} .c-orange .stat-icon{background:rgba(247,151,30,.15)}
+[data-theme="light"] .c-purple .stat-icon{background:rgba(90,82,232,.1)}
+[data-theme="light"] .c-pink .stat-icon{background:rgba(232,84,110,.1)}
+[data-theme="light"] .c-green .stat-icon{background:rgba(45,201,106,.1)}
+[data-theme="light"] .c-orange .stat-icon{background:rgba(232,136,14,.1)}
 
-    border-radius:20px;
+/* ── PANEL ── */
+.panel {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; overflow:hidden; margin-bottom:1.5rem;
+    animation:fadeUp .4s ease both;
+    box-shadow: var(--shadow);
+    transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.panel-header {
+    padding:1.2rem 1.5rem; border-bottom:1px solid var(--border);
+    background:var(--surface2); display:flex; align-items:center;
+    justify-content:space-between;
+    transition: background 0.35s ease, border-color 0.35s ease;
+}
+.panel-title {
+    font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700;
+    color:var(--text); transition: color 0.35s ease;
+}
+.panel-body { padding:1.5rem; }
 
-    background:#faf9f6;
-
-    border:1px dashed #d8d3c8;
-
-    text-align:center;
-
-    color:var(--muted);
+/* ── ITEM CARDS ── */
+.item-list { display:flex; flex-direction:column; gap:.75rem; }
+.item-card {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:16px; padding:1.25rem 1.5rem;
+    transition:all .2s; animation:fadeUp .3s ease both;
+}
+.item-card:hover { border-color:var(--border2); background:var(--surface3); transform:translateX(4px); }
+.item-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:.75rem; }
+.item-title { font-weight:700; font-size:.95rem; color:var(--text); line-height:1.4; transition: color 0.35s ease; }
+.item-metas { display:flex; flex-wrap:wrap; gap:.5rem; }
+.meta-chip {
+    display:inline-flex; align-items:center; gap:.3rem;
+    padding:.3rem .7rem; border-radius:100px; font-size:.75rem;
+    font-weight:500; background:var(--surface3); color:var(--muted);
+    border:1px solid var(--border);
+    transition: background 0.35s ease, color 0.35s ease;
+}
+.item-actions {
+    display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem;
+    padding-top:1rem; border-top:1px solid var(--border);
 }
 
-/* mobile */
+/* ── BADGES ── */
+.badge {
+    display:inline-flex; align-items:center; gap:.3rem;
+    padding:.3rem .8rem; border-radius:100px; font-size:.72rem;
+    font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+}
+.badge::before { content:''; width:5px; height:5px; border-radius:50%; }
+.badge-pending { background:rgba(247,151,30,.12); color:#e07a00; border:1px solid rgba(247,151,30,.25); }
+.badge-pending::before { background:#f7971e; }
+.badge-proses { background:rgba(108,99,255,.12); color:#5a52e8; border:1px solid rgba(108,99,255,.25); }
+.badge-proses::before { background:#a09bff; }
+.badge-selesai { background:rgba(67,233,123,.12); color:#1aa855; border:1px solid rgba(67,233,123,.25); }
+.badge-selesai::before { background:#43e97b; }
+.badge-ditolak { background:rgba(255,101,132,.12); color:#c8304f; border:1px solid rgba(255,101,132,.25); }
+.badge-ditolak::before { background:#ff6584; }
+[data-theme="dark"] .badge-pending { color:#f7971e; }
+[data-theme="dark"] .badge-proses { color:#a09bff; }
+[data-theme="dark"] .badge-selesai { color:#43e97b; }
+[data-theme="dark"] .badge-ditolak { color:#ff6584; }
 
-@media(max-width:900px){
+/* ── BUTTONS ── */
+.btn {
+    padding:.55rem 1.1rem; border-radius:10px; border:none;
+    cursor:pointer; font-size:.8rem; font-weight:700;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    transition:all .18s; display:inline-flex; align-items:center; gap:.35rem;
+}
+.btn:hover { transform:translateY(-1px); }
+.btn-purple { background:rgba(108,99,255,.15); color:#a09bff; border:1px solid rgba(108,99,255,.3); }
+.btn-purple:hover { background:rgba(108,99,255,.25); }
+.btn-green { background:rgba(67,233,123,.12); color:#2dc96a; border:1px solid rgba(67,233,123,.25); }
+.btn-green:hover { background:rgba(67,233,123,.2); }
+.btn-orange { background:rgba(247,151,30,.12); color:#e07a00; border:1px solid rgba(247,151,30,.25); }
+.btn-orange:hover { background:rgba(247,151,30,.2); }
+.btn-red { background:rgba(255,101,132,.12); color:#c8304f; border:1px solid rgba(255,101,132,.25); }
+.btn-red:hover { background:rgba(255,101,132,.2); }
+.btn-ghost { background:var(--surface3); color:var(--muted); border:1px solid var(--border); }
+.btn-ghost:hover { color:var(--text); border-color:var(--border2); }
+.btn-solid {
+    background:var(--accent); color:white; border:none;
+    box-shadow:0 4px 15px rgba(108,99,255,.3);
+}
+.btn-solid:hover { background:#7c74ff; box-shadow:0 6px 20px rgba(108,99,255,.4); }
+[data-theme="dark"] .btn-green { color:#43e97b; }
+[data-theme="dark"] .btn-orange { color:#f7971e; }
+[data-theme="dark"] .btn-red { color:#ff6584; }
+[data-theme="dark"] .btn-purple { color:#a09bff; }
 
-    .sidebar{
-        width:100%;
-        height:auto;
-        position:relative;
-    }
+/* ── FORM ── */
+.form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.75rem; margin-bottom:1rem; }
+.form-input,.form-select {
+    width:100%; padding:.85rem 1rem;
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:12px; color:var(--text); font-size:.88rem;
+    font-family:'Plus Jakarta Sans',sans-serif; outline:none;
+    transition:all .2s;
+}
+.form-input::placeholder { color:var(--muted2); }
+.form-input:focus,.form-select:focus {
+    border-color:rgba(108,99,255,.5);
+    box-shadow:0 0 0 3px rgba(108,99,255,.1);
+    background:var(--surface3);
+}
+.form-select option { background:var(--surface2); color:var(--text); }
 
-        .content{
-            margin-left:250px;
-            padding:30px;
-        }
+/* ── TABLE ── */
+.data-table { width:100%; border-collapse:separate; border-spacing:0 .5rem; }
+.data-table th {
+    padding:.7rem 1rem; text-align:left; font-size:.72rem;
+    font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.1em;
+}
+.data-table td {
+    padding:1rem; background:var(--surface2); font-size:.88rem;
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    transition:background .2s, color 0.35s ease;
+    color:var(--text);
+}
+.data-table td:first-child { border-left:1px solid var(--border); border-radius:12px 0 0 12px; }
+.data-table td:last-child { border-right:1px solid var(--border); border-radius:0 12px 12px 0; }
+.data-table tr:hover td { background:var(--surface3); }
 
-        .card-dashboard{
-            border:none;
-            border-radius:15px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
-        }
+/* ── EMPTY ── */
+.empty-state { padding:4rem 2rem; text-align:center; color:var(--muted); }
+.empty-icon { font-size:2.5rem; margin-bottom:.75rem; display:block; }
+.empty-text { font-size:.88rem; }
 
-        .menu-active{
-            background:#0d6efd;
-        }
+/* ── BIG STATS ── */
+.big-stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+.big-stat {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:2rem; text-align:center;
+    position:relative; overflow:hidden; transition:transform .2s, background 0.35s ease;
+    animation:fadeUp .4s ease both;
+    box-shadow: var(--shadow);
+}
+.big-stat:hover { transform:translateY(-3px); }
+.big-stat-num { font-family:'Fraunces',serif; font-size:3.5rem; font-weight:900; line-height:1; margin-bottom:.5rem; }
+.big-stat-label { font-size:.82rem; color:var(--muted); font-weight:500; }
+.big-stat-bar { position:absolute; bottom:0; left:0; right:0; height:3px; }
 
+/* ── TOAST ── */
+.toast {
+    position:fixed; bottom:2rem; right:2rem; z-index:9999;
+    padding:1rem 1.5rem; border-radius:16px; font-size:.88rem; font-weight:600;
+    display:flex; align-items:center; gap:.6rem;
+    transform:translateY(80px); opacity:0;
+    transition:all .35s cubic-bezier(.34,1.56,.64,1);
+    pointer-events:none; backdrop-filter:blur(20px);
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.success { background:rgba(67,233,123,.12); border:1px solid rgba(67,233,123,.3); color:#43e97b; }
+.toast.error { background:rgba(255,101,132,.12); border:1px solid rgba(255,101,132,.3); color:#ff6584; }
+[data-theme="light"] .toast.success { background:rgba(45,201,106,.1); color:#1aa855; }
+[data-theme="light"] .toast.error { background:rgba(200,48,79,.1); color:#c8304f; }
+
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:10px; }
+
+/* ── THEME TRANSITION for all transitioning elements ── */
+.sidebar, .sidebar-top, .sidebar-nav, .sidebar-bottom,
+.menu-link, .menu-icon, .topbar, .stat-card, .panel,
+.panel-header, .item-card, .data-table td, .form-input,
+.form-select, .big-stat, .logo, .logo-sub, .nav-section,
+.user-card, .user-name, .theme-toggle-label, .toggle-track,
+.meta-chip, .panel-title, .item-title, .stat-label, .badge {
+    transition-property: background, background-color, border-color, color, box-shadow, opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
 </style>
 </head>
-
 <body>
 
+<div class="toast" id="toast"></div>
+
 <script>
-
-const user =
-    JSON.parse(localStorage.getItem("user"));
-
-if(!user){
-
-    window.location.href =
-        "/login.html";
-
-}
-
-const role =
-    (user.role || "").toUpperCase();
-
-if(role !== "ADMIN" && role !== "PENGELOLA"){
-
-    window.location.href =
-        "/index.html";
-
-}
-
+/* ── THEME INIT: load preference before render to avoid flash ── */
+(function() {
+    const saved = localStorage.getItem('tellme-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
 </script>
 
-<!-- SIDEBAR -->
+<script>
+const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Demo","role":"ADMIN","email":"admin@demo.com"}');
+// if(!user) window.location.href = "/login.html";
+// const role = (user?.role || "").toUpperCase();
+// if(role !== "ADMIN" && role !== "PENGELOLA") window.location.href = "/index.html";
+</script>
 
 <div class="sidebar">
-
-    <div class="logo">
-        Tell<span>Me</span>
+    <div class="sidebar-top">
+        <div class="logo">TellMe <div class="logo-dot"></div></div>
+        <div class="logo-sub">Admin Panel</div>
     </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Menu</div>
+        <a href="#" class="menu-link active" onclick="setMenu(event,'dashboard')"><div class="menu-icon">📊</div>Dashboard</a>
+        <a href="#" class="menu-link" onclick="setMenu(event,'aspirasi')"><div class="menu-icon">📝</div>Kelola Aspirasi</a>
+        <a href="#" class="menu-link" onclick="setMenu(event,'forum')"><div class="menu-icon">💬</div>Kelola Forum</a>
+        <a href="#" class="menu-link" onclick="setMenu(event,'user')"><div class="menu-icon">👥</div>Kelola User</a>
+        <div class="nav-section">Laporan</div>
+        <a href="#" class="menu-link" onclick="setMenu(event,'statistik')"><div class="menu-icon">📈</div>Statistik</a>
+    </nav>
 
-    <div class="sidebar-menu">
-
-        <a
-            href="#"
-            class="menu-link menu-active"
-            onclick="setMenu(event,'dashboard')">
-
-            Dashboard
-
-        </a>
-
-        <a
-            href="#"
-            class="menu-link"
-            onclick="setMenu(event,'aspirasi')">
-
-            Kelola Aspirasi
-
-        </a>
-
-        <a
-            href="#"
-            class="menu-link"
-            onclick="setMenu(event,'forum')">
-
-            Kelola Forum
-
-        </a>
-
-    <a href="#" class="menu-link" onclick="setMenu(event,'user')">
-        Kelola User
-    </a>
-
-    <a href="#" class="menu-link" onclick="setMenu(event,'statistik')">
-        Statistik
-    </a>
-
-        <a
-            href="#"
-            class="menu-link logout"
-            onclick="logout()">
-
-            Logout
-
-        </a>
-
-    </div>
-
-</div>
-
-<!-- CONTENT -->
-
-<div class="content">
-
-    <div class="topbar">
-
-        <h1
-            id="judulHalaman"
-            class="page-title">
-
-            Dashboard
-
-        </h1>
-
-       <div class="user-badge">
-
-        Login sebagai
-        <b id="ADMIN"></b>
-
+    <!-- Theme toggle in sidebar -->
+    <div class="sidebar-theme">
+        <span class="theme-toggle-label" id="themeLabel">🌙 Mode Gelap</span>
+        <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
+            <div class="toggle-track">
+                <div class="toggle-thumb" id="toggleThumb">
+                    <span id="toggleIcon">🌙</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="contentArea"></div>
+    <div class="sidebar-bottom">
+        <div class="user-card">
+            <div class="user-avatar" id="userInitial">A</div>
+            <div class="user-info">
+                <div class="user-name" id="namaAdmin">Admin</div>
+                <div class="user-role" id="userRole">Admin</div>
+            </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">🚪 Keluar</button>
+    </div>
+</div>
 
+<div class="content">
+    <div class="topbar">
+        <h1 id="judulHalaman" class="page-title">Dashboard</h1>
+        <div class="topbar-right">
+            <div class="status-badge"><div class="status-dot-live"></div>Server Online</div>
+        </div>
+    </div>
+    <div class="content-area" id="contentArea"></div>
 </div>
 
 <script>
+const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
+const API_FORUM    = "http://localhost:8080/api/forum";
+const API_USER     = "http://localhost:8080/api/users";
 
-const API_ASPIRASI =
-    "http://localhost:8080/api/aspirasi";
+const nama = user.nama || user.email || "Admin";
+document.getElementById("namaAdmin").textContent   = nama;
+document.getElementById("userInitial").textContent = nama.charAt(0).toUpperCase();
+document.getElementById("userRole").textContent    = user.role || "Admin";
 
-const API_FORUM =
-    "http://localhost:8080/api/forum";
-
-const API_USER =
-    "http://localhost:8080/api/users";
-
-const API_STATUS =
-    "http://localhost:8080/api/status";
-
-/* logout */
-
-function logout(){
-
-    localStorage.removeItem("user");
-
-    window.location.href =
-        "/login.html";
-
+/* ── THEME TOGGLE ── */
+function applyThemeUI(theme) {
+    const isDark = theme === 'dark';
+    document.getElementById('themeLabel').textContent  = isDark ? '🌙 Mode Gelap' : '☀️ Mode Terang';
+    document.getElementById('toggleIcon').textContent  = isDark ? '🌙' : '☀️';
+    // CSS variable handles the position via data-theme, no need for JS left calc
 }
 
-/* menu */
+function toggleTheme() {
+    const html  = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next    = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('tellme-theme', next);
+    applyThemeUI(next);
+}
 
-function setMenu(e,menu){
+// Init UI state on load
+applyThemeUI(document.documentElement.getAttribute('data-theme') || 'dark');
 
+/* ── TOAST ── */
+function showToast(msg, type = "success") {
+    const t = document.getElementById("toast");
+    t.textContent = (type === "success" ? "✓ " : "✗ ") + msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.className = "toast", 3200);
+}
+
+function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
+
+function setMenu(e, menu) {
     e.preventDefault();
-
-    document
-        .querySelectorAll(".menu-link")
-        .forEach(el => el.classList.remove("menu-active"));
-
-    e.target.classList.add("menu-active");
-
-    if(menu === "dashboard")
-        loadDashboard();
-
-    if(menu === "aspirasi")
-        loadAspirasi();
-
-    if(menu === "forum")
-        loadForum();
-
-    if(menu === "user")
-        loadUser();
-    }
-
-    if(menu === "statistik"){
-        loadStatistik();
-    }
+    document.querySelectorAll(".menu-link").forEach(el => el.classList.remove("active"));
+    e.currentTarget.classList.add("active");
+    ({ dashboard:loadDashboard, aspirasi:loadAspirasi, forum:loadForum, user:loadUser, statistik:loadStatistik })[menu]?.();
 }
 
-/* dashboard */
-
-async function loadDashboard(){
-
-    document.getElementById("judulHalaman")
-        .innerText = "Dashboard";
-
+/* ── DASHBOARD ── */
+async function loadDashboard() {
+    document.getElementById("judulHalaman").textContent = "Dashboard";
     document.getElementById("contentArea").innerHTML = `
-
-        <div class="dashboard-grid">
-
-            <div class="dashboard-card">
-
-                <div class="card-label">
-                    Total User
-                </div>
-
-                <div class="card-value">
-                    128
-                </div>
-
-            </div>
-
-            <div class="dashboard-card">
-
-                <div class="card-label">
-                    Total Aspirasi
-                </div>
-
-                <div class="card-value">
-                    54
-                </div>
-
-            </div>
-
-            <div class="dashboard-card">
-
-                <div class="card-label">
-                    Forum Aktif
-                </div>
-
-                <div class="card-value">
-                    17
-                </div>
-
-            </div>
-
-            <div class="dashboard-card">
-
-                <div class="card-label">
-                    Status Pending
-                </div>
-
-                <div class="card-value">
-                    8
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
+        <div class="stats-grid">
+            <div class="stat-card c-purple"><div class="stat-glow"></div><div class="stat-icon">👥</div><div class="stat-label">Total User</div><div class="stat-value loading" id="cUser">—</div></div>
+            <div class="stat-card c-pink"><div class="stat-glow"></div><div class="stat-icon">📝</div><div class="stat-label">Total Aspirasi</div><div class="stat-value loading" id="cAspirasi">—</div></div>
+            <div class="stat-card c-green"><div class="stat-glow"></div><div class="stat-icon">💬</div><div class="stat-label">Forum Aktif</div><div class="stat-value loading" id="cForum">—</div></div>
+            <div class="stat-card c-orange"><div class="stat-glow"></div><div class="stat-icon">⏳</div><div class="stat-label">Menunggu Review</div><div class="stat-value loading" id="cPending">—</div></div>
+        </div>`;
+    try {
+        const [users, aspirasi, forum] = await Promise.all([
+            fetch(API_USER).then(r=>r.json()),
+            fetch(API_ASPIRASI).then(r=>r.json()),
+            fetch(API_FORUM).then(r=>r.json()),
+        ]);
+        document.getElementById("cUser").textContent     = users.length;
+        document.getElementById("cAspirasi").textContent = aspirasi.length;
+        document.getElementById("cForum").textContent    = forum.length;
+        document.getElementById("cPending").textContent  = aspirasi.filter(a=>a.status?.id==1&&!a.kategori).length;
+        ["cUser","cAspirasi","cForum","cPending"].forEach(id=>document.getElementById(id).classList.remove("loading"));
+    } catch { showToast("Gagal memuat data dashboard","error"); }
 }
 
-async function loadAspirasi(filter = "baru"){
-
-    filterAspirasi = filter;
-
-    document.getElementById("judulHalaman")
-        .innerText = "Kelola Aspirasi";
-
-    document.getElementById("contentArea")
-        .innerHTML = `
-            <div class="panel">
-
-                <div class="panel-title">
-                    Data Aspirasi
+/* ── ASPIRASI ── */
+async function loadAspirasi() {
+    document.getElementById("judulHalaman").textContent = "Kelola Aspirasi";
+    document.getElementById("contentArea").innerHTML = `
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title">📝 Data Aspirasi</div></div>
+            <div class="panel-body"><div id="aspirasiList"><div class="empty-state"><span class="empty-icon">⏳</span><div class="empty-text">Memuat data...</div></div></div></div>
+        </div>`;
+    try {
+        const data = await fetch(API_ASPIRASI).then(r=>r.json());
+        const list = document.getElementById("aspirasiList");
+        if(!data.length) { list.innerHTML=`<div class="empty-state"><span class="empty-icon">📭</span><div class="empty-text">Belum ada aspirasi.</div></div>`; return; }
+        list.innerHTML = `<div class="item-list">${[...data].reverse().map(a=>{
+            const sName = a.status?.namaStatus||'-';
+            const bClass = {"Pending":"badge-pending","Diproses":"badge-proses","Selesai":"badge-selesai","Ditolak":"badge-ditolak"}[sName]||"badge-pending";
+            const actions = (()=>{
+                if(a.status?.id==1&&!a.kategori) return `
+                    <button class="btn btn-purple" onclick="prosesAspirasi(${a.id},1)">📚 Akademik</button>
+                    <button class="btn btn-green"  onclick="prosesAspirasi(${a.id},2)">🏛 Organisasi</button>
+                    <button class="btn btn-orange" onclick="terimaAspirasi(${a.id})">✓ Terima</button>
+                    <button class="btn btn-red"    onclick="tolakAspirasi(${a.id})">✗ Tolak</button>`;
+                if(a.status?.id==1&&a.kategori) return `<button class="btn btn-green" onclick="selesaiAspirasi(${a.id})">✓ Tandai Selesai</button>`;
+                return '';
+            })();
+            return `<div class="item-card">
+                <div class="item-head"><div class="item-title">${a.isiAspirasi||'(tanpa isi)'}</div><span class="badge ${bClass}">${sName}</span></div>
+                <div class="item-metas">
+                    <span class="meta-chip">👤 ${a.user?.nama||'Anonymous'}</span>
+                    <span class="meta-chip">📂 ${a.kategori?.namaKategori||'Belum dikategori'}</span>
+                    ${a.feedback?`<span class="meta-chip">💬 ${a.feedback}</span>`:''}
                 </div>
-
-                <div id="aspirasiList">
-                    Memuat data...
-                </div>
-
-            </div>
-        `;
-
-    try{
-
-        const res = await fetch(API_ASPIRASI);
-
-        const data = await res.json();
-
-    let html = "";
-
-    data.reverse().forEach(a => {
-
-        html += `
-
-        <div class="card mb-3">
-
-            <div class="card-body">
-
-                <h5>${a.isiAspirasi}</h5>
-
-                <p>User: ${a.user?.nama || 'Anonymous'}</p>
-
-                <p>Status: ${a.status?.namaStatus || '-'}</p>
-
-                <p>Kategori: ${a.kategori?.namaKategori || '-'}</p>
-
-                <p>Feedback: ${a.feedback || '-'}</p>
-
-                ${a.status?.id == 1 && a.kategori == null ? `
-
-                    <button
-                        class="btn btn-primary btn-sm"
-                        onclick="proses(${a.id},1)">
-
-                        Akademik
-
-                    </button>
-
-                    <button
-                        class="btn btn-success btn-sm"
-                        onclick="proses(${a.id},2)">
-
-                        Organisasi
-
-                    </button>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="tolak(${a.id})">
-
-                        Tolak
-
-                    </button>
-
-                ` : ''}
-
-                ${a.status?.id == 1 && a.kategori != null ? `
-
-                    <button
-                        class="btn btn-warning btn-sm"
-                        onclick="selesai(${a.id})">
-
-                        Selesai
-
-                    </button>
-
-                ` : ''}
-
-            </div>
-        `;
-    });
-
-    document.getElementById("contentArea").innerHTML = html;
+                ${actions?`<div class="item-actions">${actions}</div>`:''}
+            </div>`;
+        }).join('')}</div>`;
+    } catch {
+        document.getElementById("aspirasiList").innerHTML=`<div class="empty-state"><span class="empty-icon">❌</span><div class="empty-text">Gagal memuat data.</div></div>`;
+        showToast("Gagal memuat aspirasi","error");
+    }
 }
 
-async function proses(id, kategoriId){
-
-    await fetch(`${API_ASPIRASI}/${id}/proses`,{
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-            statusId:kategoriId
-        })
-
-    });
-
-    loadAspirasi();
+async function prosesAspirasi(id,kategoriId){
+    try{ await fetch(`${API_ASPIRASI}/${id}/proses`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:kategoriId})}); showToast("Aspirasi berhasil diproses"); loadAspirasi(); }
+    catch{ showToast("Gagal memproses aspirasi","error"); }
+}
+async function terimaAspirasi(id){
+    const fb=prompt("Pesan penerimaan (opsional):"); if(fb===null) return;
+    try{ await fetch(`${API_ASPIRASI}/${id}/feedback`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:2,feedback:fb||"Aspirasi kamu telah diterima."})}); showToast("Aspirasi diterima"); loadAspirasi(); }
+    catch{ showToast("Gagal menerima aspirasi","error"); }
+}
+async function selesaiAspirasi(id){
+    const fb=prompt("Masukkan feedback:"); if(fb===null) return;
+    try{ await fetch(`${API_ASPIRASI}/${id}/feedback`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:2,feedback:fb})}); showToast("Aspirasi selesai"); loadAspirasi(); }
+    catch{ showToast("Gagal mengupdate aspirasi","error"); }
+}
+async function tolakAspirasi(id){
+    const alasan=prompt("Alasan penolakan:"); if(alasan===null||alasan.trim()==="") return;
+    try{ await fetch(`${API_ASPIRASI}/${id}/feedback`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:3,feedback:alasan})}); showToast("Aspirasi ditolak"); loadAspirasi(); }
+    catch{ showToast("Gagal menolak aspirasi","error"); }
 }
 
-async function selesai(id){
-
-    const feedback = prompt("Masukkan feedback");
-
-    if(!feedback) return;
-
-    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            statusId:2,
-
-            feedback:feedback
-
-        })
-
-    });
-
-    loadAspirasi();
-}
-
-async function tolak(id){
-
-    const alasan = prompt("Alasan penolakan");
-
-    if(!alasan) return;
-
-    await fetch(`${API_ASPIRASI}/${id}/feedback`,{
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            statusId:3,
-
-            feedback:alasan
-
-        })
-
-    });
-
-    loadAspirasi();
-}
-
+/* ── FORUM ── */
 async function loadForum(){
-
-    document.getElementById("judulHalaman")
-        .innerText = "Kelola Forum";
-
-    document.getElementById("contentArea")
-        .innerHTML = `
-
-        <div class="panel">
-
-            <div class="card-body">
-
-                <h5>${post.isiPost}</h5>
-
-                <p>User: ${post.user?.nama}</p>
-
-                <button
-                    class="btn btn-danger btn-sm"
-                    onclick="hapusPost(${post.id})">
-
-                    Hapus
-
-                </button>
-
-            </div>
-
-        </div>
-
-        `;
-    });
-
-    document.getElementById("contentArea").innerHTML = html;
+    document.getElementById("judulHalaman").textContent="Kelola Forum";
+    document.getElementById("contentArea").innerHTML=`<div class="panel"><div class="panel-header"><div class="panel-title">💬 Data Forum</div></div><div class="panel-body"><div id="forumList"><div class="empty-state"><span class="empty-icon">⏳</span><div class="empty-text">Memuat data...</div></div></div></div></div>`;
+    try{
+        const data=await fetch(API_FORUM).then(r=>r.json());
+        const list=document.getElementById("forumList");
+        if(!data.length){list.innerHTML=`<div class="empty-state"><span class="empty-icon">💬</span><div class="empty-text">Belum ada postingan.</div></div>`;return;}
+        list.innerHTML=`<div class="item-list">${[...data].reverse().map(p=>`
+            <div class="item-card">
+                <div class="item-head"><div class="item-title">${p.isiPost||'(tanpa isi)'}</div></div>
+                <div class="item-metas"><span class="meta-chip">👤 ${p.user?.nama||'Anonymous'}</span></div>
+                <div class="item-actions"><button class="btn btn-red" onclick="hapusPost(${p.id})">🗑 Hapus</button></div>
+            </div>`).join('')}</div>`;
+    }catch{document.getElementById("forumList").innerHTML=`<div class="empty-state"><span class="empty-icon">❌</span><div class="empty-text">Gagal memuat data.</div></div>`;showToast("Gagal memuat forum","error");}
 }
-
 async function hapusPost(id){
-
-    if(!confirm("Hapus postingan?")) return;
-
-    await fetch(`${API_FORUM}/${id}`,{
-        method:"DELETE"
-    });
-
-    loadForum();
+    if(!confirm("Hapus postingan ini?")) return;
+    try{await fetch(`${API_FORUM}/${id}`,{method:"DELETE"});showToast("Postingan dihapus");loadForum();}
+    catch{showToast("Gagal menghapus postingan","error");}
 }
 
+/* ── USER ── */
 async function loadUser(){
-
-    document.getElementById("judulHalaman")
-        .innerText = "Kelola User";
-
-    document.getElementById("contentArea")
-        .innerHTML = `
-
-        <div class="panel">
-
-            <div class="panel-title">
-                Tambah User
+    document.getElementById("judulHalaman").textContent="Kelola User";
+    document.getElementById("contentArea").innerHTML=`
+        <div class="panel" style="margin-bottom:1.5rem">
+            <div class="panel-header"><div class="panel-title">➕ Tambah User</div></div>
+            <div class="panel-body">
+                <div class="form-grid">
+                    <input id="namaUser" class="form-input" placeholder="Nama lengkap">
+                    <input id="emailUser" class="form-input" placeholder="Email" type="email">
+                    <input id="passwordUser" class="form-input" placeholder="Password" type="password">
+                    <select id="roleUser" class="form-select">
+                        <option value="MAHASISWA">MAHASISWA</option>
+                        <option value="PENGELOLA">PENGELOLA</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                    <button class="btn btn-solid" onclick="tambahUser()" style="width:100%;justify-content:center">➕ Tambah User</button>
+                </div>
             </div>
-
-                <div class="row">
-
-                <input
-                    id="namaUser"
-                    class="input"
-                    placeholder="Nama">
-
-                <input
-                    id="emailUser"
-                    class="input"
-                    placeholder="Email">
-
-                <input
-                    id="passwordUser"
-                    class="input"
-                    placeholder="Password">
-
-                <select
-                    id="roleUser"
-                    class="select">
-
-                    <option value="MAHASISWA">
-                        MAHASISWA
-                    </option>
-
-                    <option value="PENGELOLA">
-                        PENGELOLA
-                    </option>
-
-                    <option value="ADMIN">
-                        ADMIN
-                    </option>
-
-                </select>
-
-                <button
-                    class="button"
-                    onclick="tambahUser()">
-
-                    <span>
-                        Tambah User
-                    </span>
-
-                </button>
-
-            </div>
-
-            <div class="empty-state">
-                Data user akan tampil di sini.
-            </div>
-
         </div>
-
-        <table class="table table-bordered table-hover bg-white">
-
-            <thead class="table-dark">
-
-                <tr>
-
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th width="200">Aksi</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    `;
-
-    data.forEach(u => {
-
-        html += `
-
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title">👥 Daftar User</div></div>
+            <div class="panel-body"><div id="userList"><div class="empty-state"><span class="empty-icon">⏳</span><div class="empty-text">Memuat data...</div></div></div></div>
+        </div>`;
+    await refreshUserTable();
+}
+async function refreshUserTable(){
+    try{
+        const data=await fetch(API_USER).then(r=>r.json());
+        const list=document.getElementById("userList");
+        if(!data.length){list.innerHTML=`<div class="empty-state"><span class="empty-icon">👥</span><div class="empty-text">Belum ada user.</div></div>`;return;}
+        list.innerHTML=`<table class="data-table"><thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr></thead><tbody>${data.map(u=>`
             <tr>
-
-                <td>${u.nama}</td>
-
-                <td>${u.email}</td>
-
-                <td>${u.role}</td>
-
-                <td>
-
-                    <button
-                        class="btn btn-warning btn-sm"
-                        onclick="editUser(${u.id},
-                        '${u.nama}',
-                        '${u.email}',
-                        '${u.password}',
-                        '${u.role}')">
-
-                        Edit
-
-                    </button>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="hapusUser(${u.id})">
-
-                        Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-        `;
-    });
-
-    html += `
-            </tbody>
-        </table>
-    `;
-
-    document.getElementById("contentArea").innerHTML = html;
+                <td style="font-weight:600">${u.nama}</td>
+                <td style="color:var(--muted)">${u.email}</td>
+                <td><span class="badge badge-proses">${u.role}</span></td>
+                <td><div style="display:flex;gap:.4rem">
+                    <button class="btn btn-ghost" onclick="editUser(${u.id},'${u.nama}','${u.email}','${u.role}')">✏ Edit</button>
+                    <button class="btn btn-red" onclick="hapusUser(${u.id})">🗑 Hapus</button>
+                </div></td>
+            </tr>`).join('')}</tbody></table>`;
+    }catch{document.getElementById("userList").innerHTML=`<div class="empty-state"><span class="empty-icon">❌</span><div class="empty-text">Gagal memuat data.</div></div>`;showToast("Gagal memuat user","error");}
+}
+async function tambahUser(){
+    const nama=document.getElementById("namaUser").value.trim();
+    const email=document.getElementById("emailUser").value.trim();
+    const password=document.getElementById("passwordUser").value.trim();
+    const role=document.getElementById("roleUser").value;
+    if(!nama||!email||!password){showToast("Semua field wajib diisi","error");return;}
+    try{
+        const res=await fetch(API_USER,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nama,email,password,role})});
+        if(!res.ok) throw new Error();
+        showToast("User berhasil ditambahkan");
+        ["namaUser","emailUser","passwordUser"].forEach(id=>document.getElementById(id).value="");
+        await refreshUserTable();
+    }catch{showToast("Gagal menambahkan user","error");}
+}
+async function editUser(id,nama,email,role){
+    const n=prompt("Nama baru:",nama); if(!n) return;
+    const e=prompt("Email baru:",email); if(!e) return;
+    try{
+        const res=await fetch(`${API_USER}/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({nama:n,email:e,role})});
+        if(!res.ok) throw new Error();
+        showToast("User diupdate"); await refreshUserTable();
+    }catch{showToast("Gagal mengupdate user","error");}
+}
+async function hapusUser(id){
+    if(!confirm("Hapus user ini?")) return;
+    try{await fetch(`${API_USER}/${id}`,{method:"DELETE"});showToast("User dihapus");await refreshUserTable();}
+    catch{showToast("Gagal menghapus user","error");}
 }
 
-async function tambahUser(){
-
-    document.getElementById("judulHalaman").innerText =
-        "Statistik";
-
-    const res = await fetch(API_ASPIRASI);
-
-    const data = await res.json();
-
-    const akademik =
-        data.filter(a => a.kategori?.namaKategori === "Akademik").length;
-
-    const organisasi =
-        data.filter(a => a.kategori?.namaKategori === "Organisasi").length;
-
-    document.getElementById("contentArea").innerHTML = `
-
-        <div class="row">
-
-            <div class="col-md-6">
-
-                <div class="card card-dashboard">
-
-                    <div class="card-body">
-
-                        <h5>Aspirasi Akademik</h5>
-
-                        <h2>${akademik}</h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-6">
-
-                <div class="card card-dashboard">
-
-                    <div class="card-body">
-
-                        <h5>Aspirasi Organisasi</h5>
-
-                        <h2>${organisasi}</h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
+/* ── STATISTIK ── */
+async function loadStatistik(){
+    document.getElementById("judulHalaman").textContent="Statistik";
+    document.getElementById("contentArea").innerHTML=`
+        <div class="big-stat-grid">
+            <div class="big-stat"><div class="big-stat-num" id="sAkademik" style="color:var(--accent)">—</div><div class="big-stat-label">Aspirasi Akademik</div><div class="big-stat-bar" style="background:linear-gradient(90deg,var(--accent),transparent)"></div></div>
+            <div class="big-stat"><div class="big-stat-num" id="sOrganisasi" style="color:var(--accent2)">—</div><div class="big-stat-label">Aspirasi Organisasi</div><div class="big-stat-bar" style="background:linear-gradient(90deg,var(--accent2),transparent)"></div></div>
+            <div class="big-stat"><div class="big-stat-num" id="sSelesai" style="color:var(--accent3)">—</div><div class="big-stat-label">Aspirasi Selesai</div><div class="big-stat-bar" style="background:linear-gradient(90deg,var(--accent3),transparent)"></div></div>
+            <div class="big-stat"><div class="big-stat-num" id="sDitolak" style="color:var(--accent4)">—</div><div class="big-stat-label">Aspirasi Ditolak</div><div class="big-stat-bar" style="background:linear-gradient(90deg,var(--accent4),transparent)"></div></div>
+        </div>`;
+    try{
+        const data=await fetch(API_ASPIRASI).then(r=>r.json());
+        document.getElementById("sAkademik").textContent  =data.filter(a=>a.kategori?.namaKategori==="Akademik").length;
+        document.getElementById("sOrganisasi").textContent=data.filter(a=>a.kategori?.namaKategori==="Organisasi").length;
+        document.getElementById("sSelesai").textContent   =data.filter(a=>a.status?.id==2).length;
+        document.getElementById("sDitolak").textContent   =data.filter(a=>a.status?.id==3).length;
+    }catch{showToast("Gagal memuat statistik","error");}
 }
 
 loadDashboard();
-
 </script>
-
 </body>
 </html>

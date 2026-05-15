@@ -1,747 +1,551 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe — Beranda</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+    <title>TellMe - Beranda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-
-        :root{
-            --ink:#0d0d0d;
-            --paper:#f7f4ee;
-            --accent:#ff4d2e;
-            --accent2:#1a1aff;
-            --muted:#8f8f82;
-            --border:#e3dfd6;
-            --card:#ffffff;
+        /* ── LIGHT THEME ── */
+        :root,
+        [data-theme="light"] {
+            --navy: #0f1f3d;
+            --teal: #0e9f8e;
+            --teal-light: #12b5a2;
+            --teal-glow: rgba(14,159,142,0.18);
+            --cream: #f7f6f2;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f0f2f7;
+            --bg2: #e8eaf0;
+            --surface: #ffffff;
+            --surface2: #f3f4f6;
+            --surface3: #eceef3;
+            --text: #1f2937;
+            --text-soft: #374151;
+            --nav-bg: rgba(255,255,255,0.88);
+            --nav-shadow: 0 1px 0 rgba(15,31,61,0.08);
+            --hero-gradient: linear-gradient(135deg, #0f1f3d 0%, #1a3560 55%, #0e3050 100%);
+            --hero-border: rgba(255,255,255,0.07);
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+            --card-hover-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --toggle-track: #dde0e8;
+            --toggle-thumb: #0e9f8e;
+            --toggle-pos: 2px;
+            --stat-color: #0e9f8e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-amber: #f59e0b;
+            --sidebar-divider: rgba(15,31,61,0.08);
         }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
+        /* ── DARK THEME (default) ── */
+        [data-theme="dark"] {
+            --navy: #e2e8f0;
+            --teal: #2dd4bf;
+            --teal-light: #5eead4;
+            --teal-glow: rgba(45,212,191,0.12);
+            --cream: #10121d;
+            --muted: #8892a4;
+            --border: rgba(255,255,255,0.07);
+            --bg: #10121d;
+            --bg2: #0d0f18;
+            --surface: #1b1f31;
+            --surface2: #222640;
+            --surface3: #191c2d;
+            --text: #e8eaf6;
+            --text-soft: #a8b2c8;
+            --nav-bg: rgba(16,18,29,0.92);
+            --nav-shadow: 0 1px 0 rgba(255,255,255,0.05);
+            --hero-gradient: linear-gradient(135deg, #0d1025 0%, #111630 55%, #0a1428 100%);
+            --hero-border: rgba(45,212,191,0.1);
+            --card-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.35);
+            --card-hover-shadow: 0 0 0 1px rgba(45,212,191,0.15), 0 8px 32px rgba(0,0,0,0.4);
+            --toggle-track: #1e2235;
+            --toggle-thumb: #6c63ff;
+            --toggle-pos: 24px;
+            --stat-color: #2dd4bf;
+            --accent-blue: #60a5fa;
+            --accent-purple: #a78bfa;
+            --accent-amber: #fbbf24;
+            --sidebar-divider: rgba(255,255,255,0.05);
         }
 
-        body{
-            font-family:'DM Sans',sans-serif;
-            background:var(--paper);
-            color:var(--ink);
-            min-height:100vh;
-            overflow-x:hidden;
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: var(--text);
+            transition: background 0.35s ease, color 0.35s ease;
+            min-height: 100vh;
         }
 
-        body::before{
-            content:'';
-            position:fixed;
-            inset:0;
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(255,77,46,0.07) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(26,26,255,0.06) 0%, transparent 40%);
-            pointer-events:none;
-            z-index:0;
+        /* ── NAV ── */
+        .tm-nav {
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: var(--nav-shadow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: background 0.35s ease, border-color 0.35s ease;
+        }
+        .tm-nav .inner {
+            display: flex; align-items: center; height: 60px;
+            max-width: 1280px; margin: auto; padding: 0 28px; gap: 0;
+        }
+        .tm-brand {
+            font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 800;
+            color: var(--text); text-decoration: none; letter-spacing: -0.03em;
+            margin-right: 36px; flex-shrink: 0;
+            transition: color 0.35s ease;
+        }
+        .tm-brand span { color: var(--teal); }
+        .tm-links { display: flex; align-items: center; gap: 1px; flex: 1; }
+        .tm-links a {
+            color: var(--muted); text-decoration: none; font-size: 0.85rem;
+            font-weight: 500; padding: 6px 12px; border-radius: 8px;
+            transition: color 0.15s, background 0.15s; white-space: nowrap;
+            letter-spacing: 0.01em;
+        }
+        .tm-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .tm-links a.active {
+            color: var(--teal);
+            background: var(--teal-glow);
+            font-weight: 600;
+        }
+        [data-theme="light"] .tm-links a:hover { background: var(--surface3); }
+
+        .tm-user { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .tm-hello { font-size: 0.83rem; color: var(--muted); transition: color 0.35s ease; }
+        .tm-hello strong { color: var(--text); font-weight: 600; transition: color 0.35s ease; }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px; padding: 5px 13px; font-size: 0.8rem;
+            font-weight: 600; color: var(--muted); cursor: pointer;
+            transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.01em;
+        }
+        .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
+
+        /* ── THEME TOGGLE ── */
+        .theme-toggle {
+            display: flex; align-items: center; gap: 7px;
+            cursor: pointer; user-select: none; flex-shrink: 0;
+        }
+        .theme-toggle-label {
+            font-size: 0.78rem; font-weight: 600; color: var(--muted);
+            transition: color 0.2s; white-space: nowrap; letter-spacing: 0.02em;
+        }
+        .toggle-track {
+            position: relative; width: 44px; height: 22px;
+            background: var(--toggle-track);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            transition: all 0.3s ease; flex-shrink: 0;
+        }
+        .toggle-thumb {
+            position: absolute; top: 2px; left: var(--toggle-pos);
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--toggle-thumb);
+            transition: left 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.55rem;
         }
 
-        body::after{
-            content:'';
-            position:fixed;
-            inset:0;
-            background-image:
-                linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-            background-size:28px 28px;
-            pointer-events:none;
-            z-index:0;
+        /* ── PAGE WRAP ── */
+        .page-wrap { max-width: 1280px; margin: 0 auto; padding: 32px 28px; }
+
+        /* ── HERO ── */
+        .hero-banner {
+            background: var(--hero-gradient);
+            border-radius: 20px;
+            padding: 44px 52px;
+            margin-bottom: 28px;
+            position: relative; overflow: hidden;
+            border: 1px solid var(--hero-border);
+            transition: background 0.35s ease, border-color 0.35s ease;
+        }
+        /* Decorative orbs */
+        .hero-banner::before {
+            content: '';
+            position: absolute; right: -80px; top: -80px;
+            width: 320px; height: 320px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-banner::after {
+            content: '';
+            position: absolute; right: 80px; bottom: -60px;
+            width: 200px; height: 200px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(96,165,250,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        [data-theme="light"] .hero-banner::before { background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); }
+        [data-theme="light"] .hero-banner::after  { background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); }
+
+        .hero-eyebrow {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--teal);
+            margin-bottom: 10px; font-family: 'Sora', sans-serif;
+        }
+        .hero-banner h2 {
+            font-family: 'Sora', sans-serif; font-size: 2rem;
+            font-weight: 800; color: #fff; margin-bottom: 6px;
+            letter-spacing: -0.03em; line-height: 1.15;
+        }
+        .hero-banner p { color: rgba(255,255,255,0.42); font-size: 0.88rem; margin: 0; line-height: 1.6; }
+
+        /* Stats row */
+        .hero-stats { display: flex; gap: 0; margin-top: 36px; }
+        .stat-item {
+            padding-right: 36px; margin-right: 36px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-item:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+        .stat-num {
+            font-family: 'Sora', sans-serif; font-size: 2.4rem;
+            font-weight: 800; color: var(--teal);
+            line-height: 1; letter-spacing: -0.04em;
+            text-shadow: 0 0 24px rgba(45,212,191,0.3);
+            transition: color 0.35s ease;
+        }
+        [data-theme="light"] .stat-num { text-shadow: none; }
+        .stat-label {
+            font-size: 0.76rem; color: rgba(255,255,255,0.38);
+            margin-top: 4px; font-weight: 500; letter-spacing: 0.02em;
         }
 
-        /* NAVBAR */
+        /* ── SECTION TITLE ── */
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-family: 'Sora', sans-serif; font-size: 0.95rem;
+            font-weight: 700; color: var(--text);
+            letter-spacing: -0.01em;
+        }
+        .see-all {
+            font-size: 0.8rem; color: var(--teal); text-decoration: none;
+            font-weight: 600; letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+        .see-all:hover { color: var(--teal-light); }
 
-        nav{
-            position:sticky;
-            top:0;
-            z-index:100;
-            height:64px;
-            padding:0 2rem;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            background:rgba(13,13,13,0.82);
-            backdrop-filter:blur(14px);
-            border-bottom:1px solid rgba(255,255,255,0.05);
+        /* ── CARDS ── */
+        .card-tm {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        .card-tm .card-body {
+            padding: 22px 26px;
+            background: var(--surface);
+            transition: background 0.35s ease;
         }
 
-        .nav-brand{
-            font-family:'Syne',sans-serif;
-            font-size:1.4rem;
-            font-weight:800;
-            color:white;
-            text-decoration:none;
-            letter-spacing:-0.04em;
+        /* ── FORUM LIST ── */
+        .forum-item {
+            padding: 16px 0; border-bottom: 1px solid var(--border);
+            transition: border-color 0.35s ease;
+        }
+        .forum-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .forum-item:first-child { padding-top: 0; }
+
+        .forum-meta { display: flex; align-items: center; margin-bottom: 6px; }
+        .avatar-sm {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--surface2); color: var(--teal);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-family: 'Sora', sans-serif; font-size: 0.7rem;
+            font-weight: 700; margin-right: 9px; flex-shrink: 0;
+            border: 1px solid var(--border);
+            transition: background 0.35s ease;
+        }
+        [data-theme="light"] .avatar-sm { background: #eef2ff; color: #4f46e5; }
+
+        .forum-author {
+            font-family: 'Sora', sans-serif; font-size: 0.81rem;
+            font-weight: 700; color: var(--text);
+            transition: color 0.35s ease;
+        }
+        .forum-date { font-size: 0.74rem; color: var(--muted); margin-left: auto; }
+        .forum-content {
+            font-size: 0.87rem; color: var(--text-soft);
+            line-height: 1.55;
+            transition: color 0.35s ease;
+        }
+        .forum-empty { text-align: center; padding: 44px 0; color: var(--muted); font-size: 0.87rem; }
+
+        /* ── QUICK ACCESS ── */
+        .qa-btn {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; border-radius: 12px; text-decoration: none;
+            margin-bottom: 8px; font-weight: 600; font-size: 0.88rem;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.2s, border-color 0.2s;
+            border: 1px solid transparent;
+            letter-spacing: 0.01em;
+        }
+        .qa-btn:hover { transform: translateY(-2px); box-shadow: var(--card-hover-shadow); }
+        .qa-btn:last-child { margin-bottom: 0; }
+        .qa-btn .icon {
+            width: 36px; height: 36px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem; flex-shrink: 0;
         }
 
-        .nav-brand span{
-            color:var(--accent);
+        /* Dark mode QA buttons */
+        [data-theme="dark"] .qa-btn.aspirasi {
+            background: rgba(96,165,250,0.07);
+            color: #93c5fd; border-color: rgba(96,165,250,0.15);
+        }
+        [data-theme="dark"] .qa-btn.aspirasi .icon { background: rgba(96,165,250,0.12); }
+        [data-theme="dark"] .qa-btn.forum {
+            background: rgba(45,212,191,0.07);
+            color: #5eead4; border-color: rgba(45,212,191,0.15);
+        }
+        [data-theme="dark"] .qa-btn.forum .icon { background: rgba(45,212,191,0.12); }
+        [data-theme="dark"] .qa-btn.riwayat {
+            background: rgba(167,139,250,0.07);
+            color: #c4b5fd; border-color: rgba(167,139,250,0.15);
+        }
+        [data-theme="dark"] .qa-btn.riwayat .icon { background: rgba(167,139,250,0.12); }
+
+        /* Light mode QA buttons */
+        [data-theme="light"] .qa-btn.aspirasi { background: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
+        [data-theme="light"] .qa-btn.aspirasi .icon { background: #dbeafe; }
+        [data-theme="light"] .qa-btn.forum { background: #f0fdfa; color: #0f766e; border-color: #99f6e4; }
+        [data-theme="light"] .qa-btn.forum .icon { background: #ccfbf1; }
+        [data-theme="light"] .qa-btn.riwayat { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+        [data-theme="light"] .qa-btn.riwayat .icon { background: #ede9fe; }
+
+        /* ── INFO CARD ── */
+        .info-card {
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: 14px; padding: 18px 20px; margin-top: 8px;
+            transition: background 0.35s ease, border-color 0.35s ease;
+        }
+        .info-card h6 {
+            font-family: 'Sora', sans-serif; font-size: 0.88rem;
+            font-weight: 700; color: var(--text); margin-bottom: 7px;
+            transition: color 0.35s ease;
+        }
+        .info-card p {
+            font-size: 0.82rem; color: var(--muted);
+            line-height: 1.65; margin: 0;
+            transition: color 0.35s ease;
         }
 
-        .nav-links{
-            display:flex;
-            align-items:center;
-            gap:.25rem;
-            list-style:none;
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center; padding: 56px 24px;
         }
-
-        .nav-links a{
-            text-decoration:none;
-            color:#999;
-            font-size:.84rem;
-            padding:.45rem .8rem;
-            border-radius:8px;
-            transition:.2s;
+        .empty-icon {
+            width: 64px; height: 64px; border-radius: 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; margin-bottom: 16px;
         }
-
-        .nav-links a:hover,
-        .nav-links a.active{
-            background:rgba(255,255,255,0.08);
-            color:white;
+        .empty-state h4 {
+            font-family: 'Sora', sans-serif; font-size: 1rem;
+            font-weight: 700; color: var(--text); margin-bottom: 6px;
         }
-
-        .nav-links a.active{
-            color:var(--accent);
-        }
-
-        .nav-right{
-            display:flex;
-            align-items:center;
-            gap:1rem;
-        }
-
-        .nav-greeting{
-            font-size:.82rem;
-            color:#777;
-        }
-
-        .nav-greeting strong{
-            color:white;
-            font-weight:500;
-        }
-
-        .btn-logout{
-            border:none;
-            background:var(--accent);
-            color:var(--ink);
-            font-family:'Syne',sans-serif;
-            font-size:.72rem;
-            font-weight:800;
-            text-transform:uppercase;
-            letter-spacing:.08em;
-            padding:.55rem 1rem;
-            border-radius:8px;
-            cursor:pointer;
-            transition:.2s;
-        }
-
-        .btn-logout:hover{
-            transform:translateY(-2px);
-            opacity:.9;
-        }
-
-        /* MAIN */
-
-        main{
-            position:relative;
-            z-index:1;
-            max-width:1200px;
-            margin:auto;
-            padding:4rem 1.5rem 5rem;
-        }
-
-        .hero{
-            margin-bottom:2rem;
-            animation:fadeUp .5s ease forwards;
-        }
-
-        .hero-eyebrow{
-            font-family:'Syne',sans-serif;
-            font-size:.72rem;
-            font-weight:800;
-            letter-spacing:.15em;
-            text-transform:uppercase;
-            color:var(--accent);
-            margin-bottom:.8rem;
-            display:flex;
-            align-items:center;
-            gap:.5rem;
-        }
-
-        .hero-eyebrow::before{
-            content:'';
-            width:24px;
-            height:2px;
-            background:var(--accent);
-        }
-
-        .hero-title{
-            font-family:'Syne',sans-serif;
-            font-size:clamp(2.8rem,6vw,5rem);
-            line-height:1;
-            letter-spacing:-0.05em;
-            font-weight:800;
-        }
-
-        .hero-title em{
-            font-style:normal;
-            color:var(--accent2);
-        }
-
-        .hero-subtitle{
-            margin-top:1rem;
-            max-width:600px;
-            color:var(--muted);
-            line-height:1.8;
-            font-size:1rem;
-            font-weight:300;
-        }
-
-        /* GRID */
-
-        .grid{
-            display:grid;
-            grid-template-columns:2fr 1fr;
-            gap:1.5rem;
-            margin-top:2rem;
-        }
-
-        /* CARD */
-
-        .card{
-            position:relative;
-            background:rgba(255,255,255,0.82);
-            backdrop-filter:blur(12px);
-            border:1.5px solid var(--border);
-            border-radius:24px;
-            padding:2rem;
-            overflow:hidden;
-            box-shadow:
-                0 10px 30px rgba(0,0,0,0.05),
-                0 2px 10px rgba(0,0,0,0.04);
-            animation:fadeUp .5s ease forwards;
-        }
-
-        .card::before{
-            content:'';
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            height:3px;
-            background:linear-gradient(90deg,var(--accent),var(--accent2));
-        }
-
-        .card-title{
-            font-family:'Syne',sans-serif;
-            font-size:1.1rem;
-            font-weight:700;
-            margin-bottom:1.5rem;
-            letter-spacing:-0.02em;
-        }
-
-        .welcome-title{
-            font-family:'Syne',sans-serif;
-            font-size:2rem;
-            line-height:1.1;
-            letter-spacing:-0.04em;
-            margin-bottom:1rem;
-        }
-
-        .welcome-title span{
-            color:var(--accent);
-        }
-
-        .welcome-desc{
-            color:var(--muted);
-            line-height:1.8;
-            font-size:.96rem;
-            max-width:600px;
-        }
-
-        /* FORUM ITEM */
-
-        .forum-item{
-            padding-bottom:1.4rem;
-            margin-bottom:1.4rem;
-            border-bottom:1px solid var(--border);
-        }
-
-        .forum-item:last-child{
-            border-bottom:none;
-            margin-bottom:0;
-            padding-bottom:0;
-        }
-
-        .forum-user{
-            font-family:'Syne',sans-serif;
-            font-size:.95rem;
-            font-weight:700;
-            margin-bottom:.6rem;
-        }
-
-        .forum-content{
-            color:#333;
-            line-height:1.7;
-            font-size:.94rem;
-        }
-
-        /* QUICK BUTTON */
-
-        .quick-btn{
-            display:block;
-            width:100%;
-            text-decoration:none;
-            padding:1rem 1.2rem;
-            border-radius:16px;
-            margin-bottom:1rem;
-            position:relative;
-            overflow:hidden;
-            transition:.25s;
-            border:1.5px solid transparent;
-        }
-
-        .quick-btn:hover{
-            transform:translateY(-3px);
-        }
-
-        .quick-btn strong{
-            display:block;
-            font-family:'Syne',sans-serif;
-            font-size:.95rem;
-            margin-bottom:.25rem;
-        }
-
-        .quick-btn span{
-            font-size:.82rem;
-            opacity:.8;
-        }
-
-        .btn-orange{
-            background:rgba(255,77,46,0.08);
-            color:var(--accent);
-            border-color:rgba(255,77,46,0.15);
-        }
-
-        .btn-blue{
-            background:rgba(26,26,255,0.07);
-            color:var(--accent2);
-            border-color:rgba(26,26,255,0.15);
-        }
-
-        .btn-dark{
-            background:#111;
-            color:white;
-        }
-
-        /* INFO */
-
-        .info-text{
-            color:var(--muted);
-            line-height:1.8;
-            font-size:.93rem;
-        }
-
-        /* STATS */
-
-        .stats{
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            gap:1rem;
-            margin-top:1.8rem;
-        }
-
-        .stat-box{
-            background:var(--paper);
-            border:1px solid var(--border);
-            border-radius:18px;
-            padding:1rem;
-        }
-
-        .stat-number{
-            font-family:'Syne',sans-serif;
-            font-size:1.8rem;
-            font-weight:800;
-            letter-spacing:-0.04em;
-        }
-
-        .stat-label{
-            color:var(--muted);
-            font-size:.78rem;
-            margin-top:.2rem;
-        }
-
-        /* BLOB */
-
-        .blob{
-            position:fixed;
-            border-radius:50%;
-            filter:blur(90px);
-            opacity:.16;
-            pointer-events:none;
-            z-index:0;
-        }
-
-        .blob1{
-            width:260px;
-            height:260px;
-            background:var(--accent);
-            top:-80px;
-            right:-80px;
-        }
-
-        .blob2{
-            width:240px;
-            height:240px;
-            background:var(--accent2);
-            bottom:-100px;
-            left:-80px;
-        }
-
-        @keyframes fadeUp{
-            from{
-                opacity:0;
-                transform:translateY(20px);
-            }
-            to{
-                opacity:1;
-                transform:translateY(0);
-            }
-        }
-
-        @media(max-width:900px){
-
-            .grid{
-                grid-template-columns:1fr;
-            }
-
-        }
-
-        @media(max-width:768px){
-
-            nav{
-                padding:0 1rem;
-            }
-
-            .nav-links{
-                display:none;
-            }
-
-            main{
-                padding:2.5rem 1rem 4rem;
-            }
-
-            .card{
-                padding:1.5rem;
-            }
-
-            .hero-title{
-                font-size:3rem;
-            }
-
-            .stats{
-                grid-template-columns:1fr;
-            }
-
-        }
-
+        .empty-state p { font-size: 0.84rem; color: var(--muted); margin: 0; }
     </style>
 </head>
-
 <body>
 
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
-
 <script>
-
-const user = JSON.parse(localStorage.getItem("user"));
-
-if(!user){
-    window.location.href = "/login.html";
-}
-
-if(user.role === "ADMIN"){
-    window.location.href = "/admin.html";
-}
-
-window.onload = function(){
-
-    const namaElements =
-        document.querySelectorAll(".namaUser");
-
-    namaElements.forEach(el => {
-        el.innerText = user.nama;
-    });
-}
-
+(function() {
+    const saved = localStorage.getItem('tellme-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
 </script>
 
-<nav>
+<script>
+const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","role":"MAHASISWA"}');
+window.onload = function() {
+    document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
+    applyThemeUI(document.documentElement.getAttribute('data-theme') || 'dark');
+}
+</script>
 
-    <a href="#" class="nav-brand">
-        Tell<span>Me</span>
-    </a>
-
-    <ul class="nav-links">
-
-        <li>
-            <a href="/index.html" class="active">
-                Beranda
-            </a>
-        </li>
-
-        <li>
-            <a href="/aspirasi.html">
-                Buat Aspirasi
-            </a>
-        </li>
-
-        <li>
-            <a href="/forum.html">
-                Forum
-            </a>
-        </li>
-
-        <li>
-            <a href="/riwayat.html">
-                Riwayat
-            </a>
-        </li>
-
-        <li>
-            <a href="/profile.html">
-                Profile
-            </a>
-        </li>
-
-    </ul>
-
-    <div class="nav-right">
-
-        <span class="nav-greeting">
-            Halo,
-            <strong class="namaUser"></strong>
-        </span>
-
-        <button
-            class="btn-logout"
-            onclick="logout()">
-
-            Logout
-
-        </button>
-
+<nav class="tm-nav">
+    <div class="inner">
+        <a class="tm-brand" href="/index.html">Tell<span>Me</span></a>
+        <div class="tm-links">
+            <a href="/index.html" class="active">Beranda</a>
+            <a href="/aspirasi.html">Buat Aspirasi</a>
+            <a href="/forum.html">Forum</a>
+            <a href="/riwayat.html">Riwayat Aspirasi</a>
+            <a href="/profile.html">Profil</a>
+        </div>
+        <div class="tm-user">
+            <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
+                <div class="toggle-track">
+                    <div class="toggle-thumb" id="toggleThumb">
+                        <span id="toggleIcon">🌙</span>
+                    </div>
+                </div>
+                <span class="theme-toggle-label" id="themeLabel">Gelap</span>
+            </div>
+            <div class="tm-hello">Halo, <strong class="namaUser"></strong></div>
+            <button class="btn-logout" onclick="logout()">Keluar</button>
+        </div>
     </div>
-
 </nav>
 
-<main>
+<div class="page-wrap">
 
-    <section class="hero">
+    <!-- Hero -->
+    <div class="hero-banner">
+        <div class="hero-eyebrow">Dashboard Mahasiswa</div>
+        <h2>Selamat datang, <span class="namaUser"></span> 👋</h2>
+        <p>Sampaikan aspirasi, ikut diskusi, dan pantau perkembangan kampus kamu.</p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-num" id="statForum">—</div>
+                <div class="stat-label">Postingan Forum</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" id="statAspirasi">—</div>
+                <div class="stat-label">Total Aspirasi</div>
+            </div>
+        </div>
+    </div>
 
-        <div class="hero-eyebrow">
-            Platform Aspirasi Mahasiswa
+    <div class="row g-4">
+
+        <!-- Forum Terbaru -->
+        <div class="col-md-8">
+            <div class="section-header">
+                <span class="section-title">Forum Terbaru</span>
+                <a href="/forum.html" class="see-all">Lihat semua →</a>
+            </div>
+            <div class="card-tm">
+                <div class="card-body">
+                    <div id="forumList">
+                        <div class="forum-empty">Memuat...</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <h1 class="hero-title">
-            Selamat Datang,<br>
-            <em class="namaUser"></em>
-        </h1>
-
-        <p class="hero-subtitle">
-            Gunakan TellMe untuk menyampaikan aspirasi, berdiskusi dengan mahasiswa lain, dan membangun lingkungan kampus yang lebih baik bersama.
-        </p>
-
-    </section>
-
-    <div class="card">
-
-        <h2 class="welcome-title">
-            Semua suara punya
-            <span>arti.</span>
-        </h2>
-
-        <p class="welcome-desc">
-            TellMe hadir sebagai ruang terbuka untuk mahasiswa menyampaikan kritik, ide, dan saran secara modern, nyaman, dan aman.
-        </p>
-
-        <div class="stats">
-
-            <div class="stat-box">
-
-                <div class="stat-number">
-                    24+
-                </div>
-
-                <div class="stat-label">
-                    Aspirasi Hari Ini
-                </div>
-
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="section-header">
+                <span class="section-title">Akses Cepat</span>
             </div>
-
-            <div class="stat-box">
-
-                <div class="stat-number">
-                    12+
+            <div class="card-tm mb-3">
+                <div class="card-body">
+                    <a href="/aspirasi.html" class="qa-btn aspirasi">
+                        <span class="icon">📢</span>
+                        <span>Buat Aspirasi</span>
+                    </a>
+                    <a href="/forum.html" class="qa-btn forum">
+                        <span class="icon">💬</span>
+                        <span>Buka Forum</span>
+                    </a>
+                    <a href="/riwayat.html" class="qa-btn riwayat">
+                        <span class="icon">📋</span>
+                        <span>Riwayat Aspirasi</span>
+                    </a>
                 </div>
-
-                <div class="stat-label">
-                    Diskusi Aktif
-                </div>
-
             </div>
-
-            <div class="stat-box">
-
-                <div class="stat-number">
-                    100%
-                </div>
-
-                <div class="stat-label">
-                    Suara Mahasiswa
-                </div>
-
+            <div class="info-card">
+                <h6>ℹ️ Tentang TellMe</h6>
+                <p>Gunakan forum untuk berdiskusi bersama mahasiswa lain. Gunakan fitur aspirasi untuk menyampaikan kritik dan saran kepada kampus.</p>
             </div>
-
         </div>
 
     </div>
-
-    <div class="grid">
-
-        <div class="card">
-
-            <div class="card-title">
-                Forum Terbaru
-            </div>
-
-            <div id="forumList"></div>
-
-        </div>
-
-        <div>
-
-            <div class="card" style="margin-bottom:1.5rem;">
-
-                <div class="card-title">
-                    Quick Access
-                </div>
-
-                <a
-                    href="/aspirasi.html"
-                    class="quick-btn btn-orange">
-
-                    <strong>
-                        Buat Aspirasi
-                    </strong>
-
-                    <span>
-                        Kirim kritik dan saran
-                    </span>
-
-                </a>
-
-                <a
-                    href="/forum.html"
-                    class="quick-btn btn-blue">
-
-                    <strong>
-                        Buka Forum
-                    </strong>
-
-                    <span>
-                        Diskusi bersama mahasiswa
-                    </span>
-
-                </a>
-
-                <a
-                    href="/riwayat.html"
-                    class="quick-btn btn-dark">
-
-                    <strong>
-                        Riwayat Aspirasi
-                    </strong>
-
-                    <span>
-                        Lihat aspirasi yang pernah dikirim
-                    </span>
-
-                </a>
-
-            </div>
-
-            <div class="card">
-
-                <div class="card-title">
-                    Informasi
-                </div>
-
-                <p class="info-text">
-                    Gunakan fitur forum untuk berdiskusi secara terbuka dan gunakan fitur aspirasi untuk menyampaikan masukan kepada pihak kampus dengan lebih terstruktur.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</main>
+</div>
 
 <script>
+const API_FORUM    = "http://localhost:8080/api/forum";
+const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
 
-const API_FORUM =
-    "http://localhost:8080/api/forum";
+function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
 
-function logout(){
-
-    localStorage.removeItem("user");
-
-    window.location.href = "/login.html";
+function applyThemeUI(theme) {
+    const isLight = theme === 'light';
+    document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
+    document.getElementById('toggleIcon').textContent  = isLight ? '☀️' : '🌙';
 }
 
-async function loadForum(){
+function toggleTheme() {
+    const html    = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next    = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('tellme-theme', next);
+    applyThemeUI(next);
+}
 
-    const res = await fetch(API_FORUM);
+async function loadForum() {
+    try {
+        const res  = await fetch(API_FORUM);
+        const data = await res.json();
+        document.getElementById("statForum").innerText = data.length;
 
-    const data = await res.json();
+        const posts = data.reverse().slice(0, 5);
+        if (!posts.length) {
+            document.getElementById("forumList").innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <h4>Belum ada diskusi</h4>
+                    <p>Jadilah yang pertama memulai diskusi di forum.</p>
+                </div>`;
+            return;
+        }
+        let html = "";
+        posts.forEach(post => {
+            const initial = (post.user?.nama || "?").charAt(0).toUpperCase();
+            html += `<div class="forum-item">
+                <div class="forum-meta">
+                    <span class="avatar-sm">${initial}</span>
+                    <span class="forum-author">${post.user?.nama || "Anonim"}</span>
+                    <span class="forum-date">${formatTgl(post.tanggal)}</span>
+                </div>
+                <p class="forum-content">${post.isiPost}</p>
+            </div>`;
+        });
+        document.getElementById("forumList").innerHTML = html;
+    } catch {
+        document.getElementById("forumList").innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">⚠️</div>
+                <h4>Gagal memuat</h4>
+                <p>Tidak dapat terhubung ke server. Coba refresh halaman.</p>
+            </div>`;
+    }
+}
 
-    let html = "";
+async function loadStats() {
+    try {
+        const res  = await fetch(API_ASPIRASI);
+        const data = await res.json();
+        document.getElementById("statAspirasi").innerText = data.length;
+    } catch {}
+}
 
-    data.reverse().slice(0,5).forEach(post => {
-
-        html += `
-
-        <div class="forum-item">
-
-            <div class="forum-user">
-                ${post.user?.nama}
-            </div>
-
-            <div class="forum-content">
-                ${post.isiPost}
-            </div>
-
-        </div>
-
-        `;
-    });
-
-    document.getElementById("forumList").innerHTML = html;
+function formatTgl(t) {
+    if (!t) return '';
+    return new Date(t).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' });
 }
 
 loadForum();
-
+loadStats();
 </script>
-
 </body>
 </html>

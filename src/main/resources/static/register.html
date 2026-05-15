@@ -1,561 +1,93 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TellMe — Register</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-<style>
-
-:root{
-    --bg:#f6f4ef;
-    --card:rgba(255,255,255,0.75);
-    --line:#e8e3d8;
-    --text:#111111;
-    --muted:#77776c;
-
-    --accent:#ff5a36;
-    --accent2:#2a4bff;
-
-    --shadow:
-        0 10px 30px rgba(0,0,0,0.06),
-        0 2px 10px rgba(0,0,0,0.04);
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'DM Sans',sans-serif;
-    min-height:100vh;
-    background:var(--bg);
-    overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    position:relative;
-    color:var(--text);
-}
-
-/* grid background */
-
-body::before{
-    content:'';
-    position:absolute;
-    inset:0;
-
-    background-image:
-        linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
-
-    background-size:32px 32px;
-}
-
-/* glow */
-
-.glow{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(100px);
-    opacity:.18;
-    pointer-events:none;
-}
-
-.glow.one{
-    width:300px;
-    height:300px;
-    background:var(--accent);
-    top:-120px;
-    right:-100px;
-}
-
-.glow.two{
-    width:280px;
-    height:280px;
-    background:var(--accent2);
-    bottom:-120px;
-    left:-100px;
-}
-
-/* wrapper */
-
-.register-wrapper{
-    width:100%;
-    max-width:460px;
-    padding:1.2rem;
-    position:relative;
-    z-index:10;
-}
-
-/* card */
-
-.register-card{
-    position:relative;
-
-    background:var(--card);
-    backdrop-filter:blur(16px);
-
-    border:1px solid rgba(255,255,255,0.5);
-
-    border-radius:30px;
-
-    padding:2.7rem;
-
-    box-shadow:var(--shadow);
-
-    overflow:hidden;
-
-    animation:fadeUp .6s ease;
-}
-
-.register-card::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:4px;
-
-    background:linear-gradient(
-        90deg,
-        var(--accent),
-        var(--accent2)
-    );
-}
-
-/* deco number */
-
-.corner-number{
-    position:absolute;
-    top:1.2rem;
-    right:1.5rem;
-
-    font-family:'Syne',sans-serif;
-    font-size:5rem;
-    font-weight:800;
-
-    color:#ece7dc;
-
-    line-height:1;
-    letter-spacing:-0.06em;
-}
-
-/* logo */
-
-.logo{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:.3rem;
-
-    margin-bottom:.8rem;
-
-    font-family:'Syne',sans-serif;
-    font-size:2rem;
-    font-weight:800;
-    letter-spacing:-0.05em;
-}
-
-.logo span{
-    color:var(--accent);
-}
-
-.subtitle{
-    text-align:center;
-    color:var(--muted);
-
-    line-height:1.7;
-    font-size:.95rem;
-
-    margin-bottom:2.2rem;
-}
-
-/* form */
-
-.form-group{
-    margin-bottom:1.15rem;
-}
-
-.label{
-    display:block;
-
-    margin-bottom:.65rem;
-
-    font-size:.72rem;
-    font-weight:700;
-
-    text-transform:uppercase;
-    letter-spacing:.14em;
-
-    font-family:'Syne',sans-serif;
-
-    color:var(--muted);
-}
-
-.input{
-    width:100%;
-
-    padding:1rem 1rem 1rem 1.05rem;
-
-    border-radius:16px;
-
-    border:1.5px solid var(--line);
-
-    background:rgba(255,255,255,.7);
-
-    outline:none;
-
-    font-size:.95rem;
-
-    transition:.25s ease;
-
-    color:var(--text);
-}
-
-.input::placeholder{
-    color:#b1b1aa;
-}
-
-.input:hover{
-    border-color:#d5d0c5;
-}
-
-.input:focus{
-    border-color:var(--accent2);
-
-    background:white;
-
-    box-shadow:
-        0 0 0 4px rgba(42,75,255,.08);
-}
-
-/* button */
-
-.register-btn{
-    width:100%;
-
-    margin-top:.6rem;
-
-    border:none;
-    outline:none;
-
-    padding:1rem;
-
-    border-radius:16px;
-
-    cursor:pointer;
-
-    position:relative;
-    overflow:hidden;
-
-    font-family:'Syne',sans-serif;
-    font-size:.95rem;
-    font-weight:700;
-
-    color:white;
-
-    background:#111;
-
-    transition:.3s ease;
-
-    box-shadow:
-        0 12px 25px rgba(0,0,0,.12);
-}
-
-.register-btn::before{
-    content:'';
-
-    position:absolute;
-    inset:0;
-
-    background:linear-gradient(
-        90deg,
-        var(--accent),
-        var(--accent2)
-    );
-
-    opacity:0;
-
-    transition:.35s;
-}
-
-.register-btn span{
-    position:relative;
-    z-index:2;
-}
-
-.register-btn:hover{
-    transform:translateY(-3px);
-}
-
-.register-btn:hover::before{
-    opacity:1;
-}
-
-/* message */
-
-.message{
-    min-height:22px;
-
-    text-align:center;
-
-    margin-top:1rem;
-
-    font-size:.86rem;
-}
-
-/* footer */
-
-.footer{
-    margin-top:2rem;
-
-    text-align:center;
-
-    color:var(--muted);
-
-    font-size:.92rem;
-}
-
-.footer a{
-    color:var(--accent2);
-
-    text-decoration:none;
-
-    font-weight:700;
-}
-
-.footer a:hover{
-    opacity:.7;
-}
-
-/* animation */
-
-@keyframes fadeUp{
-
-    from{
-        opacity:0;
-        transform:translateY(25px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-
-}
-
-/* mobile */
-
-@media(max-width:480px){
-
-    .register-card{
-        padding:2rem 1.4rem;
-        border-radius:24px;
-    }
-
-    .logo{
-        font-size:1.7rem;
-    }
-
-    .corner-number{
-        font-size:4rem;
-    }
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="glow one"></div>
-<div class="glow two"></div>
-
-<div class="register-wrapper">
-
-    <div class="register-card">
-
-        <div class="corner-number">
-            02
-        </div>
-
-        <div class="logo">
-            Tell<span>Me</span>
-        </div>
-
-        <p class="subtitle">
-            Buat akun untuk mulai berdiskusi dan menyampaikan aspirasi kampus secara modern dan terbuka.
-        </p>
-
-        <div class="form-group">
-
-            <label class="label">
-                Nama Lengkap
-            </label>
-
-            <input
-                type="text"
-                id="nama"
-                class="input"
-                placeholder="Masukkan nama lengkap">
-
-        </div>
-
-        <div class="form-group">
-
-            <label class="label">
-                NIM
-            </label>
-
-            <input
-                type="text"
-                id="nim"
-                class="input"
-                placeholder="Masukkan NIM">
-
-        </div>
-
-        <div class="form-group">
-
-            <label class="label">
-                Email
-            </label>
-
-            <input
-                type="email"
-                id="email"
-                class="input"
-                placeholder="Masukkan email">
-
-        </div>
-
-        <div class="form-group">
-
-            <label class="label">
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="password"
-                class="input"
-                placeholder="Masukkan password">
-
-        </div>
-
-        <button
-            class="register-btn"
-            onclick="register()">
-
-            <span>
-                Register
-            </span>
-
-        </button>
-
-        <p
-            id="message"
-            class="message">
-        </p>
-
-        <div class="footer">
-
-            Sudah punya akun?
-
-            <a href="/login.html">
-                Login
-            </a>
-
-        </div>
-
-    </div>
-
-</div>
-
-<script>
-
-const API =
-    "http://localhost:8080/api/users";
-
-async function register(){
-
-    const nama =
-        document.getElementById("nama").value;
-
-    const nim =
-        document.getElementById("nim").value;
-
-    const email =
-        document.getElementById("email").value;
-
-    const password =
-        document.getElementById("password").value;
-
-    const message =
-        document.getElementById("message");
-
-    if(!nama || !nim || !email || !password){
-
-        message.innerHTML =
-            "<span style='color:#ff5a36'>Lengkapi semua data</span>";
-
-        return;
-    }
-
-    try{
-
-        const res = await fetch(API,{
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-
-                nama:nama,
-                nim:nim,
-                email:email,
-                password:password,
-                role:"MAHASISWA"
-
-            })
-
-        });
-
-        if(!res.ok){
-
-            throw new Error();
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TellMe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --navy:#0f1f3d; --teal:#0e9f8e; --teal-light:#12b5a2; --cream:#f7f6f2; --muted:#6b7280; --border:#e5e7eb; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'DM Sans',sans-serif; background:var(--cream); min-height:100vh; display:flex; }
+        .left-panel {
+            width:42%; background:var(--navy);
+            display:flex; flex-direction:column; justify-content:center; padding:60px 56px;
+            position:relative; overflow:hidden;
         }
-
-        message.innerHTML =
-            "<span style='color:#22a06b'>Register berhasil</span>";
-
-        setTimeout(() => {
-
-            window.location.href =
-                "/login.html";
-
-        },1500);
-
-    }catch(err){
-
-        message.innerHTML =
-            "<span style='color:#ff5a36'>Email sudah digunakan</span>";
-
-    }
-
+        .left-panel::before { content:''; position:absolute; top:-80px; right:-80px; width:320px; height:320px; border:1px solid rgba(255,255,255,0.06); border-radius:50%; }
+        .left-panel::after { content:''; position:absolute; bottom:-60px; left:-60px; width:240px; height:240px; border:1px solid rgba(14,159,142,0.2); border-radius:50%; }
+        .brand-logo { font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:700; color:#fff; letter-spacing:-0.02em; margin-bottom:6px; }
+        .brand-logo span { color:var(--teal); }
+        .brand-tagline { color:rgba(255,255,255,0.45); font-size:0.9rem; margin-bottom:40px; }
+        .steps { list-style:none; }
+        .steps li { display:flex; align-items:center; gap:14px; color:rgba(255,255,255,0.6); font-size:0.88rem; margin-bottom:18px; }
+        .step-num { width:28px; height:28px; border-radius:50%; background:rgba(14,159,142,0.2); color:var(--teal); font-family:'Sora',sans-serif; font-weight:700; font-size:0.78rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .right-panel { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+        .reg-box { width:100%; max-width:420px; }
+        .reg-box h2 { font-family:'Sora',sans-serif; font-size:1.85rem; font-weight:700; color:var(--navy); margin-bottom:6px; letter-spacing:-0.02em; }
+        .reg-box .subtitle { color:var(--muted); font-size:0.88rem; margin-bottom:28px; }
+        .form-label { font-size:0.78rem; font-weight:500; color:var(--navy); margin-bottom:6px; letter-spacing:0.05em; text-transform:uppercase; display:block; }
+        .form-control { border:1.5px solid var(--border); border-radius:10px; padding:11px 16px; font-size:0.93rem; color:var(--navy); background:#fff; width:100%; transition:border-color 0.2s,box-shadow 0.2s; }
+        .form-control:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(14,159,142,0.12); outline:none; }
+        .mb-3 { margin-bottom:1rem; }
+        .btn-reg { background:var(--teal); color:#fff; border:none; border-radius:10px; padding:13px; font-family:'Sora',sans-serif; font-weight:600; font-size:0.93rem; width:100%; cursor:pointer; transition:background 0.2s,transform 0.1s; }
+        .btn-reg:hover { background:var(--teal-light); transform:translateY(-1px); }
+        .login-link { text-align:center; font-size:0.87rem; color:var(--muted); margin-top:20px; }
+        .login-link a { color:var(--teal); font-weight:600; text-decoration:none; }
+        #message { font-size:0.84rem; text-align:center; margin-top:12px; min-height:20px; }
+        @media (max-width:768px) { .left-panel { display:none; } .right-panel { padding:24px; } }
+    </style>
+</head>
+<body>
+<div class="left-panel">
+    <div class="brand-logo">Tell<span>Me</span></div>
+    <p class="brand-tagline">Platform aspirasi & diskusi kampus</p>
+    <ul class="steps">
+        <li><span class="step-num">1</span> Isi data diri kamu dengan benar</li>
+        <li><span class="step-num">2</span> Gunakan email kampus yang aktif</li>
+        <li><span class="step-num">3</span> Mulai sampaikan aspirasi & diskusi</li>
+    </ul>
+</div>
+<div class="right-panel">
+    <div class="reg-box">
+        <h2>Buat Akun</h2>
+        <p class="subtitle">Daftar dan mulai gunakan TellMe</p>
+        <div class="mb-3">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" id="nama" class="form-control" placeholder="Nama lengkap kamu">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">NIM</label>
+            <input type="text" id="nim" class="form-control" placeholder="Nomor Induk Mahasiswa">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="email@mhs.ac.id">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Min. 8 karakter">
+        </div>
+        <button class="btn-reg" onclick="register()">Daftar Sekarang</button>
+        <p id="message"></p>
+        <div class="login-link">Sudah punya akun? <a href="/login.html">Masuk di sini</a></div>
+    </div>
+</div>
+<script>
+const API = "http://localhost:8080/api/users";
+async function register() {
+    const nama=document.getElementById("nama").value, nim=document.getElementById("nim").value,
+          email=document.getElementById("email").value, password=document.getElementById("password").value;
+    const msg = document.getElementById("message");
+    if (!nama||!nim||!email||!password) { msg.innerHTML="<span style='color:#dc2626'>Lengkapi semua data</span>"; return; }
+    try {
+        const res = await fetch(API, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({nama,nim,email,password,role:"MAHASISWA"}) });
+        if (!res.ok) throw new Error();
+        msg.innerHTML="<span style='color:#0e9f8e'>Registrasi berhasil! Mengarahkan ke login...</span>";
+        setTimeout(() => { window.location.href="/login.html"; }, 1500);
+    } catch { msg.innerHTML="<span style='color:#dc2626'>Email sudah digunakan</span>"; }
 }
-
 </script>
-
 </body>
 </html>

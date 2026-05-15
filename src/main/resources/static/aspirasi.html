@@ -1,623 +1,349 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe — Buat Aspirasi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <title>TellMe - Buat Aspirasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --ink: #0d0d0d;
-            --paper: #f7f4ee;
-            --accent: #ff4d2e;
-            --accent2: #1a1aff;
-            --muted: #9e9e8f;
-            --card-bg: #ffffff;
-            --border: #e2dfd7;
+        /* ── LIGHT THEME (default) ── */
+        :root,
+        [data-theme="light"] {
+            --navy: #0f1f3d;
+            --teal: #0e9f8e;
+            --teal-light: #12b5a2;
+            --cream: #f7f6f2;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f7f6f2;
+            --surface: #ffffff;
+            --surface2: #f3f4f6;
+            --text: #1f2937;
+            --nav-bg: #ffffff;
+            --nav-shadow: 0 1px 8px rgba(15,31,61,0.06);
+            --card-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            --input-bg: #ffffff;
+            --anon-bg: #f7f6f2;
+            --toggle-track: #e5e7eb;
+            --toggle-thumb: #0e9f8e;
+            --toggle-pos: 2px;
+            --msg-success-bg: #f0fdf4;
+            --msg-success-border: #bbf7d0;
+            --msg-success-color: #15803d;
+            --msg-error-bg: #fef2f2;
+            --msg-error-border: #fecaca;
+            --msg-error-color: #dc2626;
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        /* ── DARK THEME ── */
+        [data-theme="dark"] {
+            --navy: #e2e8f0;
+            --teal: #2dd4bf;
+            --teal-light: #5eead4;
+            --cream: #0a0a0f;
+            --muted: #7a7a9a;
+            --border: rgba(255,255,255,0.08);
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #1a1a24;
+            --text: #f0eff8;
+            --nav-bg: rgba(17,17,24,0.92);
+            --nav-shadow: 0 1px 8px rgba(0,0,0,0.35);
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --input-bg: #1a1a24;
+            --anon-bg: #1a1a24;
+            --toggle-track: #22222f;
+            --toggle-thumb: #6c63ff;
+            --toggle-pos: 24px;
+            --msg-success-bg: rgba(45,201,106,0.08);
+            --msg-success-border: rgba(45,201,106,0.25);
+            --msg-success-color: #86efac;
+            --msg-error-bg: rgba(239,68,68,0.08);
+            --msg-error-border: rgba(239,68,68,0.25);
+            --msg-error-color: #fca5a5;
+        }
 
+        * { box-sizing: border-box; }
         body {
             font-family: 'DM Sans', sans-serif;
-            background: var(--paper);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            transition: background 0.35s ease, color 0.35s ease;
         }
 
-        /* ── BACKGROUND TEXTURE ── */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                radial-gradient(circle at 15% 25%, rgba(255,77,46,0.06) 0%, transparent 50%),
-                radial-gradient(circle at 85% 75%, rgba(26,26,255,0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
+        /* ── NAV ── */
+        .tm-nav {
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: var(--nav-shadow);
+            backdrop-filter: blur(16px);
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
         }
-
-        /* ── NAVBAR ── */
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--ink);
-            padding: 0 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            border-bottom: 2px solid #222;
+        .tm-nav .inner {
+            display: flex; align-items: center; height: 64px;
+            max-width: 1200px; margin: auto; padding: 0 24px;
         }
-
-        .nav-brand {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--paper);
-            letter-spacing: -0.03em;
-            text-decoration: none;
+        .tm-brand {
+            font-family: 'Sora', sans-serif; font-size: 1.35rem; font-weight: 700;
+            color: var(--navy); text-decoration: none; letter-spacing: -0.02em;
+            margin-right: 40px; flex-shrink: 0;
+            transition: color 0.35s ease;
         }
-
-        .nav-brand span {
-            color: var(--accent);
+        .tm-brand span { color: var(--teal); }
+        .tm-links { display: flex; align-items: center; gap: 2px; flex: 1; }
+        .tm-links a {
+            color: var(--muted); text-decoration: none; font-size: 0.87rem;
+            font-weight: 500; padding: 7px 13px; border-radius: 8px;
+            transition: color 0.15s, background 0.15s; white-space: nowrap;
         }
+        .tm-links a:hover { color: var(--navy); background: var(--surface2); }
+        .tm-links a.active { color: var(--teal); background: rgba(14,159,142,0.09); font-weight: 600; }
+        [data-theme="dark"] .tm-links a:hover { color: var(--text); }
+        [data-theme="dark"] .tm-links a.active { background: rgba(45,212,191,0.1); }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 400;
-            color: #aaa;
-            text-decoration: none;
-            padding: 0.35rem 0.75rem;
-            border-radius: 4px;
-            transition: color 0.2s, background 0.2s;
-            letter-spacing: 0.01em;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--paper);
-            background: rgba(255,255,255,0.08);
-        }
-
-        .nav-links a.active {
-            color: var(--accent);
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-greeting {
-            font-size: 0.82rem;
-            color: #777;
-        }
-
-        .nav-greeting strong {
-            color: var(--paper);
-            font-weight: 500;
-        }
-
+        .tm-user { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .tm-hello { font-size: 0.84rem; color: var(--muted); transition: color 0.35s ease; }
+        .tm-hello strong { color: var(--navy); transition: color 0.35s ease; }
         .btn-logout {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--ink);
-            background: var(--accent);
-            border: none;
-            padding: 0.4rem 0.9rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.15s;
+            background: transparent; border: 1.5px solid var(--border);
+            border-radius: 8px; padding: 6px 14px; font-size: 0.82rem;
+            font-weight: 600; color: var(--muted); cursor: pointer;
+            transition: all 0.15s; font-family: 'DM Sans', sans-serif;
         }
+        .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
 
-        .btn-logout:hover { opacity: 0.85; transform: translateY(-1px); }
-        .btn-logout:active { transform: translateY(0); }
-
-        /* ── MAIN LAYOUT ── */
-        main {
-            position: relative;
-            z-index: 1;
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 4rem 1.5rem 6rem;
+        /* ── THEME TOGGLE ── */
+        .theme-toggle {
+            display: flex; align-items: center; gap: .5rem;
+            cursor: pointer; user-select: none; flex-shrink: 0;
         }
-
-        /* ── PAGE HEADER ── */
-        .page-header {
-            margin-bottom: 3rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 0.5s ease forwards 0.1s;
+        .theme-toggle-label {
+            font-size: 0.8rem; font-weight: 600; color: var(--muted);
+            transition: color 0.2s; white-space: nowrap;
         }
-
-        .page-eyebrow {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .toggle-track {
+            position: relative; width: 44px; height: 22px;
+            background: var(--toggle-track); border: 1px solid var(--border);
+            border-radius: 100px; transition: all 0.3s ease; flex-shrink: 0;
         }
-
-        .page-eyebrow::before {
-            content: '';
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--accent);
+        .toggle-thumb {
+            position: absolute; top: 2px; left: var(--toggle-pos);
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--toggle-thumb);
+            box-shadow: 0 0 6px rgba(14,159,142,0.4);
+            transition: left 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease, box-shadow 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.55rem;
         }
+        [data-theme="dark"] .toggle-thumb { box-shadow: 0 0 8px rgba(108,99,255,0.5); }
 
-        .page-title {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -0.04em;
-            color: var(--ink);
+        /* ── PAGE ── */
+        .page-wrap { max-width: 800px; margin: 40px auto; padding: 0 24px; }
+        .page-header { margin-bottom: 28px; }
+        .page-header h2 {
+            font-family: 'Sora', sans-serif; font-size: 1.7rem; font-weight: 700;
+            color: var(--navy); letter-spacing: -0.02em; margin-bottom: 4px;
+            transition: color 0.35s ease;
         }
-
-        .page-title em {
-            font-style: normal;
-            color: var(--accent2);
-        }
-
-        .page-subtitle {
-            margin-top: 0.75rem;
-            font-size: 0.95rem;
-            color: var(--muted);
-            font-weight: 300;
-            max-width: 400px;
-            line-height: 1.6;
-        }
+        .page-header p { color: var(--muted); font-size: 0.88rem; margin: 0; transition: color 0.35s ease; }
 
         /* ── CARD ── */
-        .card {
-            background: var(--card-bg);
-            border: 1.5px solid var(--border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 0.5s ease forwards 0.25s;
+        .card-tm {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px;
+            box-shadow: var(--card-shadow);
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        /* ── FORM ── */
+        .form-label {
+            font-size: 0.78rem; font-weight: 500; color: var(--navy);
+            margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase;
+            display: block; transition: color 0.35s ease;
         }
-
-        /* ── LABEL ── */
-        .field-label {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 0.6rem;
-            display: block;
-        }
-
-        /* ── TEXTAREA ── */
-        .field-group {
-            margin-bottom: 1.75rem;
-        }
-
-        .textarea-wrap {
-            position: relative;
-        }
-
-        textarea#isiAspirasi {
-            width: 100%;
-            min-height: 200px;
-            resize: vertical;
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            padding: 1.1rem 1.25rem;
+        .form-control {
+            border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 12px 16px; font-size: 0.93rem; color: var(--text);
+            background: var(--input-bg); width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.35s ease, color 0.35s ease;
             font-family: 'DM Sans', sans-serif;
-            font-size: 0.97rem;
-            font-weight: 300;
-            line-height: 1.65;
-            color: var(--ink);
-            background: var(--paper);
-            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control::placeholder { color: var(--muted); }
+        .form-control:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(14,159,142,0.12);
             outline: none;
         }
+        [data-theme="dark"] .form-control:focus { box-shadow: 0 0 0 3px rgba(45,212,191,0.12); }
+        textarea.form-control { resize: vertical; min-height: 160px; line-height: 1.6; }
 
-        textarea#isiAspirasi::placeholder {
-            color: #bbb;
+        /* ── ANON CHECKBOX ── */
+        .anon-check {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 16px; background: var(--anon-bg);
+            border-radius: 10px; cursor: pointer; margin-top: 16px;
+            border: 1px solid var(--border);
+            transition: background 0.35s ease, border-color 0.35s ease;
         }
-
-        textarea#isiAspirasi:focus {
-            border-color: var(--accent2);
-            box-shadow: 0 0 0 3px rgba(26,26,255,0.08);
-        }
-
-        .char-counter {
-            position: absolute;
-            bottom: 0.6rem;
-            right: 0.9rem;
-            font-size: 0.72rem;
-            color: var(--muted);
-            font-weight: 300;
-            pointer-events: none;
-            transition: color 0.2s;
-        }
-
-        .char-counter.warn { color: var(--accent); }
-
-        /* ── ANON TOGGLE ── */
-        .anon-row {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.25rem;
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            background: var(--paper);
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-            margin-bottom: 2rem;
-            user-select: none;
-        }
-
-        .anon-row:hover {
-            border-color: #ccc;
-            background: #f0ede6;
-        }
-
-        .anon-row.checked {
-            border-color: var(--accent2);
-            background: rgba(26,26,255,0.03);
-        }
-
-        .toggle-track {
-            width: 40px;
-            height: 22px;
-            border-radius: 99px;
-            background: var(--border);
-            position: relative;
-            flex-shrink: 0;
-            transition: background 0.25s;
-        }
-
-        .toggle-track.on { background: var(--accent2); }
-
-        .toggle-thumb {
-            position: absolute;
-            top: 3px; left: 3px;
-            width: 16px; height: 16px;
-            border-radius: 50%;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
-        }
-
-        .toggle-track.on .toggle-thumb { transform: translateX(18px); }
-
-        input#anonim { display: none; }
-
-        .anon-text h4 {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            color: var(--ink);
-        }
-
-        .anon-text p {
-            font-size: 0.78rem;
-            color: var(--muted);
-            font-weight: 300;
-            margin-top: 0.15rem;
-        }
-
-        .anon-icon {
-            margin-left: auto;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            transition: background 0.25s;
-        }
-
-        .anon-row.checked .anon-icon { background: rgba(26,26,255,0.1); }
+        .anon-check input { width: 18px; height: 18px; accent-color: var(--teal); cursor: pointer; }
+        .anon-check label { font-size: 0.88rem; color: var(--navy); cursor: pointer; margin: 0; transition: color 0.35s ease; }
+        .anon-check small { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 2px; transition: color 0.35s ease; }
 
         /* ── SUBMIT BUTTON ── */
-        .btn-submit {
-            width: 100%;
-            padding: 1rem;
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            color: white;
-            background: var(--ink);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
+        .btn-kirim {
+            background: var(--teal); color: #fff; border: none;
+            border-radius: 10px; padding: 13px 32px;
+            font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.93rem;
+            cursor: pointer; transition: background 0.2s, transform 0.1s;
+            width: 100%; margin-top: 20px;
+        }
+        .btn-kirim:hover { background: var(--teal-light); transform: translateY(-1px); }
+
+        /* ── MESSAGE BOX ── */
+        .msg-box { border-radius: 10px; padding: 12px 16px; font-size: 0.85rem; margin-top: 14px; display: none; }
+        .msg-box.success {
+            background: var(--msg-success-bg); border: 1px solid var(--msg-success-border);
+            color: var(--msg-success-color); display: block;
+        }
+        .msg-box.error {
+            background: var(--msg-error-bg); border: 1px solid var(--msg-error-border);
+            color: var(--msg-error-color); display: block;
         }
 
-        .btn-submit::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, var(--accent), var(--accent2));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .btn-submit:hover::before { opacity: 1; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
-        .btn-submit:active { transform: translateY(0); }
-
-        .btn-submit span { position: relative; z-index: 1; }
-
-        .btn-arrow {
-            position: relative;
-            z-index: 1;
-            font-size: 1.1rem;
-            transition: transform 0.2s;
-        }
-
-        .btn-submit:hover .btn-arrow { transform: translateX(4px); }
-
-        /* ── STATE: loading ── */
-        .btn-submit.loading { pointer-events: none; }
-
-        .spinner {
-            display: none;
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            position: relative; z-index: 1;
-        }
-
-        .btn-submit.loading .spinner { display: block; }
-        .btn-submit.loading .btn-text,
-        .btn-submit.loading .btn-arrow { display: none; }
-
-        /* ── TOAST ── */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--ink);
-            color: var(--paper);
-            padding: 0.85rem 1.5rem;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            z-index: 999;
-            transition: transform 0.4s cubic-bezier(.34,1.56,.64,1), opacity 0.3s;
-            opacity: 0;
-            white-space: nowrap;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success { background: #1a1a1a; border-left: 3px solid #2ecc71; }
-        .toast.error   { background: #1a1a1a; border-left: 3px solid var(--accent); }
-
-        /* ── DECORATIVE NUMBER ── */
-        .deco-num {
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            font-family: 'Syne', sans-serif;
-            font-size: 5rem;
-            font-weight: 800;
-            color: var(--border);
-            line-height: 1;
-            pointer-events: none;
-            letter-spacing: -0.05em;
-        }
-
-        /* ── ANIMATIONS ── */
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ── MOBILE ── */
-        @media (max-width: 640px) {
-            nav { padding: 0 1rem; }
-            .nav-links { display: none; }
-            main { padding: 2.5rem 1rem 4rem; }
-            .card { padding: 1.75rem 1.25rem; }
-        }
+        .char-count { text-align: right; font-size: 0.75rem; color: var(--muted); margin-top: 6px; transition: color 0.35s ease; }
     </style>
 </head>
-
 <body>
 
 <script>
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) window.location.href = "/login.html";
-    if (user && user.role === "ADMIN") window.location.href = "/admin.html";
-    window.onload = () => {
-        document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
-    };
+(function() {
+    const saved = localStorage.getItem('tellme-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
 </script>
 
-<!-- NAVBAR -->
-<nav>
-    <a class="nav-brand" href="#">Tell<span>Me</span></a>
-    <ul class="nav-links">
-        <li><a href="/index.html">Beranda</a></li>
-        <li><a href="/aspirasi.html" class="active">Buat Aspirasi</a></li>
-        <li><a href="/forum.html">Forum</a></li>
-        <li><a href="/riwayat.html">Riwayat</a></li>
-        <li><a href="/profile.html">Profile</a></li>
-    </ul>
-    <div class="nav-right">
-        <span class="nav-greeting">Halo, <strong class="namaUser"></strong></span>
-        <button class="btn-logout" onclick="logout()">Logout</button>
+<script>
+const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","role":"MAHASISWA","id":1}');
+// if(!user) window.location.href="/login.html";
+// if(user&&user.role==="ADMIN") window.location.href="/admin.html";
+window.onload = function() {
+    document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
+    applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
+}
+</script>
+
+<nav class="tm-nav">
+    <div class="inner">
+        <a class="tm-brand" href="/index.html">Tell<span>Me</span></a>
+        <div class="tm-links">
+            <a href="/index.html">Beranda</a>
+            <a href="/aspirasi.html" class="active">Buat Aspirasi</a>
+            <a href="/forum.html">Forum</a>
+            <a href="/riwayat.html">Riwayat Aspirasi</a>
+            <a href="/profile.html">Profil</a>
+        </div>
+        <div class="tm-user">
+            <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
+                <div class="toggle-track">
+                    <div class="toggle-thumb" id="toggleThumb">
+                        <span id="toggleIcon">☀️</span>
+                    </div>
+                </div>
+                <span class="theme-toggle-label" id="themeLabel">Terang</span>
+            </div>
+            <div class="tm-hello">Halo, <strong class="namaUser"></strong></div>
+            <button class="btn-logout" onclick="logout()">Keluar</button>
+        </div>
     </div>
 </nav>
 
-<!-- MAIN -->
-<main>
-
+<div class="page-wrap">
     <div class="page-header">
-        <div class="page-eyebrow">Suara Kamu</div>
-        <h1 class="page-title">Buat<br><em>Aspirasi</em></h1>
-        <p class="page-subtitle">Sampaikan ide, masukan, atau harapanmu. Setiap suara punya makna.</p>
+        <h2>Buat Aspirasi</h2>
+        <p>Sampaikan kritik, saran, atau masukan kamu kepada pihak kampus.</p>
     </div>
-
-    <div class="card">
-        <div class="deco-num">01</div>
-
-        <div class="field-group">
-            <label class="field-label" for="isiAspirasi">Isi Aspirasi</label>
-            <div class="textarea-wrap">
-                <textarea
-                    id="isiAspirasi"
-                    placeholder="Ceritakan aspirasi atau idemu di sini…"
-                    maxlength="1000"
-                    oninput="updateCounter(this)"></textarea>
-                <span class="char-counter" id="charCounter">0 / 1000</span>
+    <div class="card-tm">
+        <div class="mb-3" style="margin-bottom:1rem">
+            <label class="form-label">Isi Aspirasi</label>
+            <textarea id="isiAspirasi" class="form-control" rows="7"
+                placeholder="Tulis aspirasi kamu di sini..." oninput="updateCount()"></textarea>
+            <div class="char-count"><span id="charCount">0</span> karakter</div>
+        </div>
+        <div class="anon-check">
+            <input type="checkbox" id="anonim">
+            <div>
+                <label for="anonim" style="font-weight:500">Kirim sebagai anonim</label>
+                <small>Nama kamu tidak akan ditampilkan kepada admin</small>
             </div>
         </div>
-
-        <label class="field-label">Privasi</label>
-        <div class="anon-row" id="anonRow" onclick="toggleAnon()">
-            <div class="toggle-track" id="toggleTrack">
-                <div class="toggle-thumb"></div>
-            </div>
-            <div class="anon-text">
-                <h4>Kirim sebagai Anonim</h4>
-                <p>Namamu tidak akan ditampilkan ke publik</p>
-            </div>
-            <div class="anon-icon" id="anonIcon">🙈</div>
-        </div>
-        <input type="checkbox" id="anonim">
-
-        <button class="btn-submit" id="submitBtn" onclick="kirimAspirasi()">
-            <div class="spinner"></div>
-            <span class="btn-text">Kirim Aspirasi</span>
-            <span class="btn-arrow">→</span>
-        </button>
+        <button class="btn-kirim" onclick="kirimAspirasi()">Kirim Aspirasi →</button>
+        <div id="message" class="msg-box"></div>
     </div>
-
-</main>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+</div>
 
 <script>
-    const API = "http://localhost:8080/api/aspirasi";
+const API = "http://localhost:8080/api/aspirasi";
 
-    function logout() {
-        localStorage.removeItem("user");
-        window.location.href = "/login.html";
+function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
+function updateCount() { document.getElementById("charCount").innerText = document.getElementById("isiAspirasi").value.length; }
+
+/* ── THEME ── */
+function applyThemeUI(theme) {
+    const isLight = theme === 'light';
+    document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
+    document.getElementById('toggleIcon').textContent = isLight ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+    const html    = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next    = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('tellme-theme', next);
+    applyThemeUI(next);
+}
+
+/* ── KIRIM ── */
+async function kirimAspirasi() {
+    const isiAspirasi = document.getElementById("isiAspirasi").value;
+    const anonim = document.getElementById("anonim").checked;
+    const msg = document.getElementById("message");
+    msg.className = "msg-box";
+
+    if (!isiAspirasi.trim()) {
+        msg.className = "msg-box error";
+        msg.innerText = "Isi aspirasi terlebih dahulu.";
+        return;
     }
 
-    function updateCounter(el) {
-        const counter = document.getElementById("charCounter");
-        const len = el.value.length;
-        counter.textContent = `${len} / 1000`;
-        counter.classList.toggle("warn", len > 900);
-    }
+    try {
+        const res = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isiAspirasi, anonim, user: { id: user.id } })
+        });
 
-    function toggleAnon() {
-        const cb = document.getElementById("anonim");
-        cb.checked = !cb.checked;
-        const row = document.getElementById("anonRow");
-        const track = document.getElementById("toggleTrack");
-        const icon = document.getElementById("anonIcon");
-        row.classList.toggle("checked", cb.checked);
-        track.classList.toggle("on", cb.checked);
-        icon.textContent = cb.checked ? "🥷" : "🙈";
-    }
-
-    function showToast(msg, type = "success") {
-        const t = document.getElementById("toast");
-        const emoji = type === "success" ? "✓" : "✗";
-        t.innerHTML = `<span>${emoji}</span> ${msg}`;
-        t.className = `toast ${type} show`;
-        setTimeout(() => t.classList.remove("show"), 3200);
-    }
-
-    async function kirimAspirasi() {
-        const isi = document.getElementById("isiAspirasi").value.trim();
-        const anonim = document.getElementById("anonim").checked;
-        const btn = document.getElementById("submitBtn");
-
-        if (!isi) {
-            showToast("Tulis aspirasi kamu dulu ya!", "error");
-            document.getElementById("isiAspirasi").focus();
+        if (!res.ok) {
+            const err = await res.text();
+            msg.className = "msg-box error";
+            msg.innerText = "Gagal mengirim: " + (err || res.status);
             return;
         }
 
-        btn.classList.add("loading");
+        msg.className = "msg-box success";
+        msg.innerText = "✓ Aspirasi berhasil dikirim!";
+        document.getElementById("isiAspirasi").value = "";
+        document.getElementById("anonim").checked = false;
+        document.getElementById("charCount").innerText = "0";
 
-        try {
-            await fetch(API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isiAspirasi: isi, anonim, user: { id: user.id } })
-            });
-
-            showToast("Aspirasi berhasil dikirim! 🎉", "success");
-            document.getElementById("isiAspirasi").value = "";
-            document.getElementById("charCounter").textContent = "0 / 1000";
-            if (document.getElementById("anonim").checked) toggleAnon();
-
-        } catch (err) {
-            showToast("Gagal mengirim, coba lagi.", "error");
-        } finally {
-            btn.classList.remove("loading");
-        }
+    } catch (e) {
+        msg.className = "msg-box error";
+        msg.innerText = "Gagal mengirim aspirasi. Pastikan server berjalan.";
     }
+}
 </script>
-
 </body>
 </html>
