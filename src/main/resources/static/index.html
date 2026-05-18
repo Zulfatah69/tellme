@@ -387,7 +387,6 @@ window.onload = function() {
             <a href="/index.html" class="active">Beranda</a>
             <a href="/aspirasi.html">Buat Aspirasi</a>
             <a href="/forum.html">Forum</a>
-            <a href="/riwayat.html">Riwayat Aspirasi</a>
             <a href="/profile.html">Profil</a>
         </div>
         <div class="tm-user">
@@ -410,7 +409,7 @@ window.onload = function() {
     <!-- Hero -->
     <div class="hero-banner">
         <div class="hero-eyebrow">Dashboard Mahasiswa</div>
-        <h2>Selamat datang, <span class="namaUser"></span> 👋</h2>
+        <h2>Selamat datang, <span class="namaUser"></span>!</h2>
         <p>Sampaikan aspirasi, ikut diskusi, dan pantau perkembangan kampus kamu.</p>
         <div class="hero-stats">
             <div class="stat-item">
@@ -449,15 +448,15 @@ window.onload = function() {
             <div class="card-tm mb-3">
                 <div class="card-body">
                     <a href="/aspirasi.html" class="qa-btn aspirasi">
-                        <span class="icon">📢</span>
+                        <span class="icon"></span>
                         <span>Buat Aspirasi</span>
                     </a>
                     <a href="/forum.html" class="qa-btn forum">
-                        <span class="icon">💬</span>
+                        <span class="icon"></span>
                         <span>Buka Forum</span>
                     </a>
                     <a href="/riwayat.html" class="qa-btn riwayat">
-                        <span class="icon">📋</span>
+                        <span class="icon"></span>
                         <span>Riwayat Aspirasi</span>
                     </a>
                 </div>
@@ -502,7 +501,7 @@ async function loadForum() {
         if (!posts.length) {
             document.getElementById("forumList").innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">💬</div>
+                    <div class="empty-icon"></div>
                     <h4>Belum ada diskusi</h4>
                     <p>Jadilah yang pertama memulai diskusi di forum.</p>
                 </div>`;

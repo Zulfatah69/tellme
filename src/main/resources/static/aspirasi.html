@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TellMe - Buat Aspirasi</title>
+    <title>TellMe - Aspirasi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* ── LIGHT THEME (default) ── */
         :root,
         [data-theme="light"] {
             --navy: #0f1f3d;
@@ -20,23 +19,37 @@
             --surface: #ffffff;
             --surface2: #f3f4f6;
             --text: #1f2937;
+            --text-soft: #374151;
             --nav-bg: #ffffff;
             --nav-shadow: 0 1px 8px rgba(15,31,61,0.06);
             --card-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            --card-shadow-hover: 0 4px 20px rgba(15,31,61,0.08);
             --input-bg: #ffffff;
             --anon-bg: #f7f6f2;
             --toggle-track: #e5e7eb;
             --toggle-thumb: #0e9f8e;
             --toggle-pos: 2px;
+            --aspirasi-text-bg: #f7f6f2;
+            --count-badge-bg: #0f1f3d;
+            --count-badge-color: #ffffff;
+            --feedback-bg: rgba(14,159,142,0.06);
+            --feedback-border: rgba(14,159,142,0.15);
+            --feedback-text: #374151;
             --msg-success-bg: #f0fdf4;
             --msg-success-border: #bbf7d0;
             --msg-success-color: #15803d;
             --msg-error-bg: #fef2f2;
             --msg-error-border: #fecaca;
             --msg-error-color: #dc2626;
+            --badge-proses-bg: #fef9c3; --badge-proses-color: #92400e; --badge-proses-border: #fde68a;
+            --badge-selesai-bg: #f0fdf4; --badge-selesai-color: #15803d; --badge-selesai-border: #bbf7d0;
+            --badge-ditolak-bg: #fef2f2; --badge-ditolak-color: #dc2626; --badge-ditolak-border: #fecaca;
+            --tab-active-bg: #ffffff;
+            --tab-inactive-bg: #f3f4f6;
+            --divider: #e5e7eb;
+            --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
         }
 
-        /* ── DARK THEME ── */
         [data-theme="dark"] {
             --navy: #e2e8f0;
             --teal: #2dd4bf;
@@ -48,20 +61,35 @@
             --surface: #111118;
             --surface2: #1a1a24;
             --text: #f0eff8;
+            --text-soft: #cbd5e1;
             --nav-bg: rgba(17,17,24,0.92);
             --nav-shadow: 0 1px 8px rgba(0,0,0,0.35);
             --card-shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --card-shadow-hover: 0 4px 24px rgba(0,0,0,0.4);
             --input-bg: #1a1a24;
             --anon-bg: #1a1a24;
             --toggle-track: #22222f;
             --toggle-thumb: #6c63ff;
             --toggle-pos: 24px;
+            --aspirasi-text-bg: #1a1a24;
+            --count-badge-bg: #22222f;
+            --count-badge-color: #e2e8f0;
+            --feedback-bg: rgba(45,212,191,0.06);
+            --feedback-border: rgba(45,212,191,0.15);
+            --feedback-text: #cbd5e1;
             --msg-success-bg: rgba(45,201,106,0.08);
             --msg-success-border: rgba(45,201,106,0.25);
             --msg-success-color: #86efac;
             --msg-error-bg: rgba(239,68,68,0.08);
             --msg-error-border: rgba(239,68,68,0.25);
             --msg-error-color: #fca5a5;
+            --badge-proses-bg: rgba(251,191,36,0.1); --badge-proses-color: #fcd34d; --badge-proses-border: rgba(251,191,36,0.25);
+            --badge-selesai-bg: rgba(74,222,128,0.1); --badge-selesai-color: #86efac; --badge-selesai-border: rgba(74,222,128,0.25);
+            --badge-ditolak-bg: rgba(239,68,68,0.1); --badge-ditolak-color: #fca5a5; --badge-ditolak-border: rgba(239,68,68,0.25);
+            --tab-active-bg: #111118;
+            --tab-inactive-bg: #1a1a24;
+            --divider: rgba(255,255,255,0.08);
+            --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
         }
 
         * { box-sizing: border-box; }
@@ -73,7 +101,7 @@
             transition: background 0.35s ease, color 0.35s ease;
         }
 
-        /* ── NAV ── */
+        /* NAV */
         .tm-nav {
             background: var(--nav-bg);
             border-bottom: 1px solid var(--border);
@@ -89,8 +117,7 @@
         .tm-brand {
             font-family: 'Sora', sans-serif; font-size: 1.35rem; font-weight: 700;
             color: var(--navy); text-decoration: none; letter-spacing: -0.02em;
-            margin-right: 40px; flex-shrink: 0;
-            transition: color 0.35s ease;
+            margin-right: 40px; flex-shrink: 0; transition: color 0.35s ease;
         }
         .tm-brand span { color: var(--teal); }
         .tm-links { display: flex; align-items: center; gap: 2px; flex: 1; }
@@ -115,7 +142,7 @@
         }
         .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
 
-        /* ── THEME TOGGLE ── */
+        /* THEME TOGGLE */
         .theme-toggle {
             display: flex; align-items: center; gap: .5rem;
             cursor: pointer; user-select: none; flex-shrink: 0;
@@ -135,13 +162,13 @@
             background: var(--toggle-thumb);
             box-shadow: 0 0 6px rgba(14,159,142,0.4);
             transition: left 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s ease, box-shadow 0.3s ease;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.55rem;
+            display: flex; align-items: center; justify-content: center; font-size: 0.55rem;
         }
         [data-theme="dark"] .toggle-thumb { box-shadow: 0 0 8px rgba(108,99,255,0.5); }
 
-        /* ── PAGE ── */
-        .page-wrap { max-width: 800px; margin: 40px auto; padding: 0 24px; }
+        /* PAGE */
+        .page-wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px; }
+
         .page-header { margin-bottom: 28px; }
         .page-header h2 {
             font-family: 'Sora', sans-serif; font-size: 1.7rem; font-weight: 700;
@@ -150,23 +177,59 @@
         }
         .page-header p { color: var(--muted); font-size: 0.88rem; margin: 0; transition: color 0.35s ease; }
 
-        /* ── CARD ── */
-        .card-tm {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 16px; padding: 32px;
+        /* SPLIT LAYOUT */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 860px) { .split-layout { grid-template-columns: 1fr; } }
+
+        /* LEFT PANEL - FORM */
+        .panel-form {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
             box-shadow: var(--card-shadow);
-            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+            position: sticky;
+            top: 88px;
+            transition: background 0.35s ease, border-color 0.35s ease;
         }
 
-        /* ── FORM ── */
+        .panel-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: var(--navy); margin-bottom: 4px;
+            transition: color 0.35s ease;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .panel-title .panel-icon {
+            width: 28px; height: 28px;
+            background: rgba(14,159,142,0.12);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+        }
+        [data-theme="dark"] .panel-title .panel-icon { background: rgba(45,212,191,0.12); }
+
+        .panel-sub {
+            font-size: 0.8rem; color: var(--muted); margin-bottom: 20px;
+            transition: color 0.35s ease;
+        }
+
+        .divider { height: 1px; background: var(--divider); margin: 20px 0; transition: background 0.35s ease; }
+
+        /* FORM ELEMENTS */
         .form-label {
-            font-size: 0.78rem; font-weight: 500; color: var(--navy);
-            margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase;
+            font-size: 0.75rem; font-weight: 600; color: var(--navy);
+            margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase;
             display: block; transition: color 0.35s ease;
         }
         .form-control {
             border: 1.5px solid var(--border); border-radius: 10px;
-            padding: 12px 16px; font-size: 0.93rem; color: var(--text);
+            padding: 11px 14px; font-size: 0.9rem; color: var(--text);
             background: var(--input-bg); width: 100%;
             transition: border-color 0.2s, box-shadow 0.2s, background 0.35s ease, color 0.35s ease;
             font-family: 'DM Sans', sans-serif;
@@ -178,32 +241,105 @@
             outline: none;
         }
         [data-theme="dark"] .form-control:focus { box-shadow: 0 0 0 3px rgba(45,212,191,0.12); }
-        textarea.form-control { resize: vertical; min-height: 160px; line-height: 1.6; }
+        textarea.form-control { resize: vertical; min-height: 140px; line-height: 1.6; }
 
-        /* ── ANON CHECKBOX ── */
+        /* SELECT / KATEGORI */
+        .select-wrapper {
+            position: relative;
+            margin-bottom: 14px;
+        }
+        .select-wrapper::after {
+            content: '';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px; height: 8px;
+            background: var(--select-arrow) no-repeat center;
+            pointer-events: none;
+        }
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+        select.form-control:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* Kategori chips (pill selector alternative shown below select) */
+        .kategori-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .kategori-chip {
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .kategori-chip:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            background: rgba(14,159,142,0.06);
+        }
+        .kategori-chip.active {
+            border-color: var(--teal);
+            background: rgba(14,159,142,0.1);
+            color: var(--teal);
+        }
+        [data-theme="dark"] .kategori-chip:hover,
+        [data-theme="dark"] .kategori-chip.active {
+            background: rgba(45,212,191,0.1);
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        /* Kategori loading skeleton */
+        .kategori-loading {
+            display: flex; gap: 6px;
+        }
+        .kat-sk {
+            height: 28px; border-radius: 20px;
+            background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+        }
+
         .anon-check {
-            display: flex; align-items: center; gap: 10px;
-            padding: 14px 16px; background: var(--anon-bg);
-            border-radius: 10px; cursor: pointer; margin-top: 16px;
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 12px 14px; background: var(--anon-bg);
+            border-radius: 10px; cursor: pointer; margin-top: 14px;
             border: 1px solid var(--border);
             transition: background 0.35s ease, border-color 0.35s ease;
         }
-        .anon-check input { width: 18px; height: 18px; accent-color: var(--teal); cursor: pointer; }
-        .anon-check label { font-size: 0.88rem; color: var(--navy); cursor: pointer; margin: 0; transition: color 0.35s ease; }
-        .anon-check small { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 2px; transition: color 0.35s ease; }
+        .anon-check input { width: 16px; height: 16px; accent-color: var(--teal); cursor: pointer; margin-top: 2px; flex-shrink: 0; }
+        .anon-check label { font-size: 0.85rem; color: var(--navy); cursor: pointer; margin: 0; transition: color 0.35s ease; font-weight: 500; }
+        .anon-check small { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 2px; transition: color 0.35s ease; }
 
-        /* ── SUBMIT BUTTON ── */
         .btn-kirim {
             background: var(--teal); color: #fff; border: none;
-            border-radius: 10px; padding: 13px 32px;
-            font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.93rem;
+            border-radius: 10px; padding: 12px 24px;
+            font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.9rem;
             cursor: pointer; transition: background 0.2s, transform 0.1s;
-            width: 100%; margin-top: 20px;
+            width: 100%; margin-top: 16px;
         }
         .btn-kirim:hover { background: var(--teal-light); transform: translateY(-1px); }
+        .btn-kirim:active { transform: translateY(0); }
+        .btn-kirim:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
-        /* ── MESSAGE BOX ── */
-        .msg-box { border-radius: 10px; padding: 12px 16px; font-size: 0.85rem; margin-top: 14px; display: none; }
+        .msg-box { border-radius: 10px; padding: 10px 14px; font-size: 0.83rem; margin-top: 12px; display: none; }
         .msg-box.success {
             background: var(--msg-success-bg); border: 1px solid var(--msg-success-border);
             color: var(--msg-success-color); display: block;
@@ -212,8 +348,118 @@
             background: var(--msg-error-bg); border: 1px solid var(--msg-error-border);
             color: var(--msg-error-color); display: block;
         }
+        .char-count { text-align: right; font-size: 0.72rem; color: var(--muted); margin-top: 5px; transition: color 0.35s ease; }
 
-        .char-count { text-align: right; font-size: 0.75rem; color: var(--muted); margin-top: 6px; transition: color 0.35s ease; }
+        /* RIGHT PANEL - RIWAYAT */
+        .panel-list { }
+
+        .list-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .list-header-left { display: flex; align-items: center; gap: 10px; }
+        .list-title {
+            font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+            color: var(--navy); transition: color 0.35s ease;
+        }
+        .count-badge {
+            background: var(--count-badge-bg); color: var(--count-badge-color);
+            font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border);
+            transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+        }
+
+        .btn-refresh {
+            background: transparent; border: 1.5px solid var(--border);
+            border-radius: 8px; padding: 5px 12px; font-size: 0.78rem;
+            font-weight: 600; color: var(--muted); cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-refresh:hover { border-color: var(--teal); color: var(--teal); }
+        .btn-refresh.spinning .refresh-icon { display: inline-block; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .refresh-icon { display: inline-block; }
+
+        /* ASPIRASI CARD */
+        .aspirasi-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 14px; padding: 20px; margin-bottom: 12px;
+            transition: box-shadow 0.15s, background 0.35s ease, border-color 0.35s ease;
+            animation: cardIn 0.25s ease both;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .aspirasi-card:hover { box-shadow: var(--card-shadow-hover); }
+
+        .card-top {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-family: 'Sora', sans-serif; font-size: 0.85rem;
+            font-weight: 700; color: var(--navy); transition: color 0.35s ease;
+        }
+
+        .badge-status {
+            font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+            border-radius: 20px; font-family: 'Sora', sans-serif;
+            transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+        }
+        .badge-diproses { background: var(--badge-proses-bg); color: var(--badge-proses-color); border: 1px solid var(--badge-proses-border); }
+        .badge-selesai  { background: var(--badge-selesai-bg); color: var(--badge-selesai-color); border: 1px solid var(--badge-selesai-border); }
+        .badge-ditolak  { background: var(--badge-ditolak-bg); color: var(--badge-ditolak-color); border: 1px solid var(--badge-ditolak-border); }
+
+        .aspirasi-text {
+            font-size: 0.87rem; color: var(--text-soft); line-height: 1.6;
+            margin-bottom: 12px; padding: 12px;
+            background: var(--aspirasi-text-bg); border-radius: 8px;
+            transition: background 0.35s ease, color 0.35s ease;
+        }
+        .meta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .meta-item { font-size: 0.77rem; color: var(--muted); transition: color 0.35s ease; }
+        .meta-item strong { color: var(--navy); font-weight: 600; transition: color 0.35s ease; }
+
+        .feedback-box {
+            margin-top: 10px; padding: 10px 12px;
+            background: var(--feedback-bg); border: 1px solid var(--feedback-border);
+            border-radius: 8px; font-size: 0.81rem; color: var(--feedback-text);
+            transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+        }
+        .feedback-box .fb-label {
+            font-family: 'Sora', sans-serif; font-weight: 700;
+            font-size: 0.73rem; color: var(--teal); margin-bottom: 4px;
+            transition: color 0.35s ease;
+        }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 60px 0; }
+        .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .empty-state h5 {
+            font-family: 'Sora', sans-serif; color: var(--navy);
+            font-size: 1rem; margin-bottom: 6px; transition: color 0.35s ease;
+        }
+        .empty-state p { color: var(--muted); font-size: 0.83rem; transition: color 0.35s ease; }
+
+        /* SKELETON LOADER */
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+            border-radius: 8px;
+        }
+        @keyframes shimmer { to { background-position: -200% 0; } }
+        .skeleton-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 14px; padding: 20px; margin-bottom: 12px;
+        }
+        .sk-line { height: 12px; margin-bottom: 8px; }
+        .sk-title { width: 40%; }
+        .sk-badge { width: 18%; height: 20px; border-radius: 20px; }
+        .sk-body { width: 100%; height: 60px; margin: 12px 0; border-radius: 8px; }
+        .sk-meta { width: 60%; }
     </style>
 </head>
 <body>
@@ -227,8 +473,6 @@
 
 <script>
 const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","role":"MAHASISWA","id":1}');
-// if(!user) window.location.href="/login.html";
-// if(user&&user.role==="ADMIN") window.location.href="/admin.html";
 window.onload = function() {
     document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
     applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
@@ -240,9 +484,8 @@ window.onload = function() {
         <a class="tm-brand" href="/index.html">Tell<span>Me</span></a>
         <div class="tm-links">
             <a href="/index.html">Beranda</a>
-            <a href="/aspirasi.html" class="active">Buat Aspirasi</a>
+            <a href="/aspirasi.html" class="active">Aspirasi</a>
             <a href="/forum.html">Forum</a>
-            <a href="/riwayat.html">Riwayat Aspirasi</a>
             <a href="/profile.html">Profil</a>
         </div>
         <div class="tm-user">
@@ -262,41 +505,125 @@ window.onload = function() {
 
 <div class="page-wrap">
     <div class="page-header">
-        <h2>Buat Aspirasi</h2>
-        <p>Sampaikan kritik, saran, atau masukan kamu kepada pihak kampus.</p>
+        <h2>Aspirasi</h2>
+        <p>Kirim aspirasi dan pantau statusnya dalam satu halaman.</p>
     </div>
-    <div class="card-tm">
-        <div class="mb-3" style="margin-bottom:1rem">
-            <label class="form-label">Isi Aspirasi</label>
-            <textarea id="isiAspirasi" class="form-control" rows="7"
-                placeholder="Tulis aspirasi kamu di sini..." oninput="updateCount()"></textarea>
-            <div class="char-count"><span id="charCount">0</span> karakter</div>
+
+    <div class="split-layout">
+
+        <!-- LEFT: FORM BUAT ASPIRASI -->
+        <div class="panel-form">
+            <div class="panel-title">
+                <div class="panel-icon">✍️</div>
+                Buat Aspirasi
+            </div>
+            <div class="panel-sub">Sampaikan kritik, saran, atau masukan kamu kepada pihak kampus.</div>
+
+            <div class="divider"></div>
+
+            <!-- KATEGORI -->
+            <div style="margin-bottom:14px">
+                <label class="form-label">Kategori</label>
+                <div class="select-wrapper">
+                    <select id="kategoriSelect" class="form-control" disabled>
+                        <option value="">Memuat kategori...</option>
+                    </select>
+                </div>
+                <!-- Chip pills ditampilkan setelah kategori berhasil dimuat -->
+                <div id="kategoriChips" class="kategori-chips" style="display:none"></div>
+                <div id="kategoriLoading" class="kategori-loading">
+                    <div class="kat-sk" style="width:72px"></div>
+                    <div class="kat-sk" style="width:88px"></div>
+                    <div class="kat-sk" style="width:60px"></div>
+                    <div class="kat-sk" style="width:80px"></div>
+                </div>
+            </div>
+
+            <!-- ISI ASPIRASI -->
+            <div style="margin-bottom:14px">
+                <label class="form-label">Isi Aspirasi</label>
+                <textarea id="isiAspirasi" class="form-control" rows="6"
+                    placeholder="Tulis aspirasi kamu di sini..." oninput="updateCount()"></textarea>
+                <div class="char-count"><span id="charCount">0</span> karakter</div>
+            </div>
+
+            <div class="anon-check">
+                <input type="checkbox" id="anonim">
+                <div>
+                    <label for="anonim">Kirim sebagai anonim</label>
+                    <small>Nama kamu tidak akan ditampilkan kepada admin</small>
+                </div>
+            </div>
+
+            <button class="btn-kirim" onclick="kirimAspirasi()">Kirim Aspirasi →</button>
+            <div id="message" class="msg-box"></div>
         </div>
-        <div class="anon-check">
-            <input type="checkbox" id="anonim">
-            <div>
-                <label for="anonim" style="font-weight:500">Kirim sebagai anonim</label>
-                <small>Nama kamu tidak akan ditampilkan kepada admin</small>
+
+        <!-- RIGHT: RIWAYAT -->
+        <div class="panel-list">
+            <div class="list-header">
+                <div class="list-header-left">
+                    <div class="panel-title" style="margin:0">
+                        <div class="panel-icon">📋</div>
+                        Riwayat Aspirasi
+                    </div>
+                    <div class="count-badge" id="countBadge">— Aspirasi</div>
+                </div>
+                <button class="btn-refresh" id="refreshBtn" onclick="loadRiwayat()">
+                    <span class="refresh-icon" id="refreshIcon">↻</span> Refresh
+                </button>
+            </div>
+
+            <div id="listRiwayat">
+                <!-- Skeleton -->
+                <div class="skeleton-card">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+                        <div class="skeleton sk-line sk-title"></div>
+                        <div class="skeleton sk-badge"></div>
+                    </div>
+                    <div class="skeleton sk-body"></div>
+                    <div class="skeleton sk-line sk-meta"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+                        <div class="skeleton sk-line sk-title"></div>
+                        <div class="skeleton sk-badge"></div>
+                    </div>
+                    <div class="skeleton sk-body"></div>
+                    <div class="skeleton sk-line sk-meta"></div>
+                </div>
             </div>
         </div>
-        <button class="btn-kirim" onclick="kirimAspirasi()">Kirim Aspirasi →</button>
-        <div id="message" class="msg-box"></div>
+
     </div>
 </div>
 
 <script>
-const API = "http://localhost:8080/api/aspirasi";
+const API          = "http://localhost:8080/api/aspirasi";
+const API_KATEGORI = "http://localhost:8080/api/kategori";
+
+// Fallback kategori jika API belum tersedia
+const FALLBACK_KATEGORI = [
+    { id: 1, namaKategori: "Akademik" },
+    { id: 2, namaKategori: "Fasilitas" },
+    { id: 3, namaKategori: "Keuangan" },
+    { id: 4, namaKategori: "Kemahasiswaan" },
+    { id: 5, namaKategori: "Layanan" },
+    { id: 6, namaKategori: "Lainnya" },
+];
+
+let selectedKategoriId = null;
+let kategoriList       = [];
 
 function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
 function updateCount() { document.getElementById("charCount").innerText = document.getElementById("isiAspirasi").value.length; }
 
-/* ── THEME ── */
+/* THEME */
 function applyThemeUI(theme) {
     const isLight = theme === 'light';
     document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
-    document.getElementById('toggleIcon').textContent = isLight ? '☀️' : '🌙';
+    document.getElementById('toggleIcon').textContent  = isLight ? '☀️' : '🌙';
 }
-
 function toggleTheme() {
     const html    = document.documentElement;
     const current = html.getAttribute('data-theme') || 'light';
@@ -306,12 +633,138 @@ function toggleTheme() {
     applyThemeUI(next);
 }
 
-/* ── KIRIM ── */
+/* FORMAT DATE */
+function formatTgl(t) {
+    if (!t) return '-';
+    return new Date(t).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/* ── LOAD KATEGORI ── */
+async function loadKategori() {
+    try {
+        const res  = await fetch(API_KATEGORI);
+        if (!res.ok) throw new Error('api error');
+        const data = await res.json();
+        kategoriList = data;
+    } catch {
+        // Gunakan fallback jika API tidak tersedia
+        kategoriList = FALLBACK_KATEGORI;
+    }
+    renderKategori();
+}
+
+function renderKategori() {
+    // Sembunyikan loading skeleton
+    document.getElementById('kategoriLoading').style.display = 'none';
+
+    // Isi dropdown (untuk aksesibilitas / mobile)
+    const sel = document.getElementById('kategoriSelect');
+    sel.innerHTML = '<option value="">— Pilih Kategori —</option>';
+    kategoriList.forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k.id;
+        opt.textContent = k.namaKategori;
+        sel.appendChild(opt);
+    });
+    sel.disabled = false;
+
+    // Sinkronkan chips dengan dropdown
+    sel.addEventListener('change', () => {
+        selectedKategoriId = sel.value ? parseInt(sel.value) : null;
+        syncChips();
+    });
+
+    // Render chip pills
+    const chipsEl = document.getElementById('kategoriChips');
+    chipsEl.innerHTML = '';
+    kategoriList.forEach(k => {
+        const chip = document.createElement('div');
+        chip.className    = 'kategori-chip';
+        chip.textContent  = k.namaKategori;
+        chip.dataset.id   = k.id;
+        chip.onclick      = () => {
+            selectedKategoriId = (selectedKategoriId === k.id) ? null : k.id;
+            sel.value = selectedKategoriId || '';
+            syncChips();
+        };
+        chipsEl.appendChild(chip);
+    });
+    chipsEl.style.display = 'flex';
+}
+
+function syncChips() {
+    document.querySelectorAll('.kategori-chip').forEach(chip => {
+        chip.classList.toggle('active', parseInt(chip.dataset.id) === selectedKategoriId);
+    });
+}
+
+/* ── LOAD RIWAYAT ── */
+async function loadRiwayat() {
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.add('spinning');
+
+    try {
+        const res  = await fetch(API);
+        let data   = await res.json();
+        data = data.filter(a => a.user?.id == user.id);
+
+        document.getElementById("countBadge").innerText = data.length + " Aspirasi";
+
+        if (!data.length) {
+            document.getElementById("listRiwayat").innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h5>Belum ada aspirasi</h5>
+                    <p>Aspirasi yang kamu kirim akan muncul di sini.</p>
+                </div>`;
+            return;
+        }
+
+        let html = "";
+        [...data].reverse().forEach((a, i) => {
+            let badge = "";
+            if (a.status?.id == 1)      badge = '<span class="badge-status badge-diproses">⏳ Diproses</span>';
+            else if (a.status?.id == 2) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
+            else if (a.status?.id == 3) badge = '<span class="badge-status badge-ditolak">✕ Ditolak</span>';
+
+            const feedback = a.feedback
+                ? `<div class="feedback-box"><div class="fb-label">Feedback Admin</div>${a.feedback}</div>`
+                : '';
+
+            html += `<div class="aspirasi-card" style="animation-delay:${i * 0.05}s">
+                <div class="card-top">
+                    <div class="card-title">Aspirasi #${a.id}</div>
+                    ${badge}
+                </div>
+                <div class="aspirasi-text">${a.isiAspirasi}</div>
+                <div class="meta-row">
+                    <div class="meta-item"><strong>Kategori:</strong> ${a.kategori?.namaKategori || '—'}</div>
+                    <div class="meta-item"><strong>Dikirim:</strong> ${formatTgl(a.tanggal)}</div>
+                    <div class="meta-item"><strong>Anonim:</strong> ${a.anonim ? 'Ya' : 'Tidak'}</div>
+                </div>
+                ${feedback}
+            </div>`;
+        });
+        document.getElementById("listRiwayat").innerHTML = html;
+    } catch {
+        document.getElementById("countBadge").innerText = "— Aspirasi";
+        document.getElementById("listRiwayat").innerHTML = `
+            <div class="empty-state">
+                <div class="icon">❌</div>
+                <h5>Gagal memuat data</h5>
+                <p>Pastikan server berjalan dan coba lagi.</p>
+            </div>`;
+    } finally {
+        btn.classList.remove('spinning');
+    }
+}
+
+/* ── KIRIM ASPIRASI ── */
 async function kirimAspirasi() {
     const isiAspirasi = document.getElementById("isiAspirasi").value;
-    const anonim = document.getElementById("anonim").checked;
-    const msg = document.getElementById("message");
-    msg.className = "msg-box";
+    const anonim      = document.getElementById("anonim").checked;
+    const msg         = document.getElementById("message");
+    msg.className     = "msg-box";
 
     if (!isiAspirasi.trim()) {
         msg.className = "msg-box error";
@@ -319,11 +772,28 @@ async function kirimAspirasi() {
         return;
     }
 
+    if (!selectedKategoriId) {
+        msg.className = "msg-box error";
+        msg.innerText = "Pilih kategori aspirasi terlebih dahulu.";
+        return;
+    }
+
+    const btn = document.querySelector('.btn-kirim');
+    btn.textContent = "Mengirim...";
+    btn.disabled = true;
+
     try {
+        const payload = {
+            isiAspirasi,
+            anonim,
+            user:     { id: user.id },
+            kategori: { id: selectedKategoriId }
+        };
+
         const res = await fetch(API, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ isiAspirasi, anonim, user: { id: user.id } })
+            body: JSON.stringify(payload)
         });
 
         if (!res.ok) {
@@ -336,14 +806,29 @@ async function kirimAspirasi() {
         msg.className = "msg-box success";
         msg.innerText = "✓ Aspirasi berhasil dikirim!";
         document.getElementById("isiAspirasi").value = "";
-        document.getElementById("anonim").checked = false;
+        document.getElementById("anonim").checked    = false;
         document.getElementById("charCount").innerText = "0";
+
+        // Reset kategori
+        selectedKategoriId = null;
+        document.getElementById('kategoriSelect').value = '';
+        syncChips();
+
+        // Auto-refresh riwayat setelah kirim
+        setTimeout(() => loadRiwayat(), 600);
 
     } catch (e) {
         msg.className = "msg-box error";
         msg.innerText = "Gagal mengirim aspirasi. Pastikan server berjalan.";
+    } finally {
+        btn.textContent = "Kirim Aspirasi →";
+        btn.disabled = false;
     }
 }
+
+/* Init */
+loadKategori();
+loadRiwayat();
 </script>
 </body>
 </html>

@@ -620,10 +620,10 @@ async function loadDashboard() {
     document.getElementById("judulHalaman").textContent = "Dashboard";
     document.getElementById("contentArea").innerHTML = `
         <div class="stats-grid">
-            <div class="stat-card c-purple"><div class="stat-glow"></div><div class="stat-icon">👥</div><div class="stat-label">Total User</div><div class="stat-value loading" id="cUser">—</div></div>
-            <div class="stat-card c-pink"><div class="stat-glow"></div><div class="stat-icon">📝</div><div class="stat-label">Total Aspirasi</div><div class="stat-value loading" id="cAspirasi">—</div></div>
-            <div class="stat-card c-green"><div class="stat-glow"></div><div class="stat-icon">💬</div><div class="stat-label">Forum Aktif</div><div class="stat-value loading" id="cForum">—</div></div>
-            <div class="stat-card c-orange"><div class="stat-glow"></div><div class="stat-icon">⏳</div><div class="stat-label">Menunggu Review</div><div class="stat-value loading" id="cPending">—</div></div>
+            <div class="stat-card c-purple"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Total User</div><div class="stat-value loading" id="cUser">—</div></div>
+            <div class="stat-card c-pink"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Total Aspirasi</div><div class="stat-value loading" id="cAspirasi">—</div></div>
+            <div class="stat-card c-green"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Forum Aktif</div><div class="stat-value loading" id="cForum">—</div></div>
+            <div class="stat-card c-orange"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Menunggu Review</div><div class="stat-value loading" id="cPending">—</div></div>
         </div>`;
     try {
         const [users, aspirasi, forum] = await Promise.all([
@@ -644,19 +644,19 @@ async function loadAspirasi() {
     document.getElementById("judulHalaman").textContent = "Kelola Aspirasi";
     document.getElementById("contentArea").innerHTML = `
         <div class="panel">
-            <div class="panel-header"><div class="panel-title">📝 Data Aspirasi</div></div>
-            <div class="panel-body"><div id="aspirasiList"><div class="empty-state"><span class="empty-icon">⏳</span><div class="empty-text">Memuat data...</div></div></div></div>
+            <div class="panel-header"><div class="panel-title"> Data Aspirasi</div></div>
+            <div class="panel-body"><div id="aspirasiList"><div class="empty-state"><span class="empty-icon"></span><div class="empty-text">Memuat data...</div></div></div></div>
         </div>`;
     try {
         const data = await fetch(API_ASPIRASI).then(r=>r.json());
         const list = document.getElementById("aspirasiList");
-        if(!data.length) { list.innerHTML=`<div class="empty-state"><span class="empty-icon">📭</span><div class="empty-text">Belum ada aspirasi.</div></div>`; return; }
+        if(!data.length) { list.innerHTML=`<div class="empty-state"><span class="empty-icon"></span><div class="empty-text">Belum ada aspirasi.</div></div>`; return; }
         list.innerHTML = `<div class="item-list">${[...data].reverse().map(a=>{
             const sName = a.status?.namaStatus||'-';
             const bClass = {"Pending":"badge-pending","Diproses":"badge-proses","Selesai":"badge-selesai","Ditolak":"badge-ditolak"}[sName]||"badge-pending";
             const actions = (()=>{
                 if(a.status?.id==1&&!a.kategori) return `
-                    <button class="btn btn-purple" onclick="prosesAspirasi(${a.id},1)">📚 Akademik</button>
+                    <button class="btn btn-purple" onclick="prosesAspirasi(${a.id},1)"> Akademik</button>
                     <button class="btn btn-green"  onclick="prosesAspirasi(${a.id},2)">🏛 Organisasi</button>
                     <button class="btn btn-orange" onclick="terimaAspirasi(${a.id})">✓ Terima</button>
                     <button class="btn btn-red"    onclick="tolakAspirasi(${a.id})">✗ Tolak</button>`;
@@ -666,9 +666,9 @@ async function loadAspirasi() {
             return `<div class="item-card">
                 <div class="item-head"><div class="item-title">${a.isiAspirasi||'(tanpa isi)'}</div><span class="badge ${bClass}">${sName}</span></div>
                 <div class="item-metas">
-                    <span class="meta-chip">👤 ${a.user?.nama||'Anonymous'}</span>
-                    <span class="meta-chip">📂 ${a.kategori?.namaKategori||'Belum dikategori'}</span>
-                    ${a.feedback?`<span class="meta-chip">💬 ${a.feedback}</span>`:''}
+                    <span class="meta-chip"> ${a.user?.nama||'Anonymous'}</span>
+                    <span class="meta-chip"> ${a.kategori?.namaKategori||'Belum dikategori'}</span>
+                    ${a.feedback?`<span class="meta-chip"> ${a.feedback}</span>`:''}
                 </div>
                 ${actions?`<div class="item-actions">${actions}</div>`:''}
             </div>`;
@@ -742,7 +742,7 @@ async function loadUser(){
             </div>
         </div>
         <div class="panel">
-            <div class="panel-header"><div class="panel-title">👥 Daftar User</div></div>
+            <div class="panel-header"><div class="panel-title"> Daftar User</div></div>
             <div class="panel-body"><div id="userList"><div class="empty-state"><span class="empty-icon">⏳</span><div class="empty-text">Memuat data...</div></div></div></div>
         </div>`;
     await refreshUserTable();
