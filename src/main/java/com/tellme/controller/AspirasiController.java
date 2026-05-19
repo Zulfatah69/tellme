@@ -60,13 +60,22 @@ public class AspirasiController {
     }
 
     @PutMapping("/{id}/proses")
-    public Aspirasi proses(
+    public Aspirasi prosesAspirasi(
             @PathVariable Long id,
-            @RequestBody UpdateStatusRequest request) {
+            @RequestBody Map<String, Long> body
+    ){
 
-        Long kategoriId = request.getStatusId();
+        Long kategoriId =
+                body.get("kategoriId");
 
-        return aspirasiService.prosesAspirasi(id, kategoriId);
+        Long statusId =
+                body.get("statusId");
+
+        return aspirasiService.prosesAspirasi(
+                id,
+                kategoriId,
+                statusId
+        );
     }
 
     @PutMapping("/{id}/feedback")

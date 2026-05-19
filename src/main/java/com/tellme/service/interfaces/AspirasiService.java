@@ -23,7 +23,11 @@ public interface AspirasiService {
 
     void deleteById(Long id);
 
-    Aspirasi prosesAspirasi(Long id, Long kategoriId);
+    Aspirasi prosesAspirasi(
+            Long id,
+            Long kategoriId,
+            Long statusId
+    );
 
     Aspirasi updateWithFeedback(Long id, Long statusId, String feedback);
 }

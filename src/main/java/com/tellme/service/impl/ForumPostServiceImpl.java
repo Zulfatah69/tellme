@@ -13,7 +13,8 @@ import com.tellme.repository.UserRepository;
 import com.tellme.service.interfaces.ForumPostService;
 
 @Service
-public class ForumPostServiceImpl implements ForumPostService {
+public class ForumPostServiceImpl
+        implements ForumPostService {
 
     @Autowired
     private ForumPostRepository forumPostRepository;
@@ -22,24 +23,37 @@ public class ForumPostServiceImpl implements ForumPostService {
     private UserRepository userRepository;
 
     @Override
-    public ForumPost createPost(ForumPost post) {
+    public ForumPost createPost(
+            ForumPost post) {
 
-        User user = userRepository.findById(post.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+        User user =
+                userRepository.findById(
+                        post.getUser().getId()
+                ).orElseThrow(() ->
+                        new RuntimeException(
+                                "User tidak ditemukan"
+                        )
+                );
 
         post.setUser(user);
-        post.setTanggal(LocalDateTime.now());
+
+        post.setTanggal(
+                LocalDateTime.now()
+        );
 
         return forumPostRepository.save(post);
     }
 
     @Override
     public List<ForumPost> getAllPost() {
-        return forumPostRepository.findAll();
+
+        return forumPostRepository
+                .findAllByPopular();
     }
 
     @Override
     public void deletePost(Long id) {
+
         forumPostRepository.deleteById(id);
     }
 }

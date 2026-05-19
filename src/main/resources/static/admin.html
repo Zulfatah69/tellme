@@ -530,8 +530,6 @@ const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Demo","role":"
         <a href="#" class="menu-link" onclick="setMenu(event,'aspirasi')"><div class="menu-icon">📝</div>Kelola Aspirasi</a>
         <a href="#" class="menu-link" onclick="setMenu(event,'forum')"><div class="menu-icon">💬</div>Kelola Forum</a>
         <a href="#" class="menu-link" onclick="setMenu(event,'user')"><div class="menu-icon">👥</div>Kelola User</a>
-        <div class="nav-section">Laporan</div>
-        <a href="#" class="menu-link" onclick="setMenu(event,'statistik')"><div class="menu-icon">📈</div>Statistik</a>
     </nav>
 
     <!-- Theme toggle in sidebar -->
@@ -616,72 +614,761 @@ function setMenu(e, menu) {
 }
 
 /* ── DASHBOARD ── */
-async function loadDashboard() {
-    document.getElementById("judulHalaman").textContent = "Dashboard";
-    document.getElementById("contentArea").innerHTML = `
-        <div class="stats-grid">
-            <div class="stat-card c-purple"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Total User</div><div class="stat-value loading" id="cUser">—</div></div>
-            <div class="stat-card c-pink"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Total Aspirasi</div><div class="stat-value loading" id="cAspirasi">—</div></div>
-            <div class="stat-card c-green"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Forum Aktif</div><div class="stat-value loading" id="cForum">—</div></div>
-            <div class="stat-card c-orange"><div class="stat-glow"></div><div class="stat-icon"></div><div class="stat-label">Menunggu Review</div><div class="stat-value loading" id="cPending">—</div></div>
-        </div>`;
-    try {
-        const [users, aspirasi, forum] = await Promise.all([
-            fetch(API_USER).then(r=>r.json()),
-            fetch(API_ASPIRASI).then(r=>r.json()),
-            fetch(API_FORUM).then(r=>r.json()),
-        ]);
-        document.getElementById("cUser").textContent     = users.length;
-        document.getElementById("cAspirasi").textContent = aspirasi.length;
-        document.getElementById("cForum").textContent    = forum.length;
-        document.getElementById("cPending").textContent  = aspirasi.filter(a=>a.status?.id==1&&!a.kategori).length;
-        ["cUser","cAspirasi","cForum","cPending"].forEach(id=>document.getElementById(id).classList.remove("loading"));
-    } catch { showToast("Gagal memuat data dashboard","error"); }
+async function loadDashboard(){
+
+    document.getElementById(
+        "judulHalaman"
+    ).textContent = "Dashboard";
+
+    document.getElementById(
+        "contentArea"
+    ).innerHTML = `
+
+        <div
+            style="
+                display:grid;
+                gap:24px;
+            ">
+
+            <!-- STAT CARD -->
+            <div
+                style="
+                    display:grid;
+                    grid-template-columns:
+                        repeat(auto-fit,minmax(220px,1fr));
+                    gap:20px;
+                ">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+
+                        Total User
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statUser">
+
+                        0
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+
+                        Total Forum
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statForum">
+
+                        0
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+
+                        Total Aspirasi
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statAspirasi">
+
+                        0
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+
+                        Diproses
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statProses">
+
+                        0
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+
+                        Selesai
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statSelesai">
+
+                        0
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+
+                        Ditolak
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statTolak">
+
+                        0
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RINGKASAN -->
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+
+                         Ringkasan Sistem
+
+                    </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                    <div
+                        style="
+                            display:grid;
+                            gap:14px;
+                            color:var(--muted);
+                            line-height:1.7;
+                        ">
+
+                        <div>
+
+                             Admin dapat mengelola
+                            forum, user, dan aspirasi
+                            mahasiswa.
+
+                        </div>
+
+                        <div>
+
+                             Sistem mendukung
+                            diskusi bertingkat
+                            (nested discussion).
+
+                        </div>
+
+                        <div>
+
+                             Aspirasi dapat
+                            dikategorikan dan
+                            diproses langsung
+                            oleh admin.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    try{
+
+        const users =
+            await fetch(API_USERS)
+            .then(r => r.json());
+
+        const forum =
+            await fetch(API_FORUM)
+            .then(r => r.json());
+
+        const aspirasi =
+            await fetch(API_ASPIRASI)
+            .then(r => r.json());
+
+        document.getElementById(
+            "statUser"
+        ).textContent =
+            users.length;
+
+        document.getElementById(
+            "statForum"
+        ).textContent =
+            forum.length;
+
+        document.getElementById(
+            "statAspirasi"
+        ).textContent =
+            aspirasi.length;
+
+        document.getElementById(
+            "statProses"
+        ).textContent =
+
+            aspirasi.filter(
+                a =>
+                    a.status?.namaStatus
+                    ?.toLowerCase()
+                    == "diproses"
+            ).length;
+
+        document.getElementById(
+            "statSelesai"
+        ).textContent =
+
+            aspirasi.filter(
+                a =>
+                    a.status?.namaStatus
+                    ?.toLowerCase()
+                    == "selesai"
+            ).length;
+
+        document.getElementById(
+            "statTolak"
+        ).textContent =
+
+            aspirasi.filter(
+                a =>
+                    a.status?.namaStatus
+                    ?.toLowerCase()
+                    == "ditolak"
+            ).length;
+
+    }catch{
+
+        showToast(
+            "Gagal memuat dashboard",
+            "error"
+        );
+    }
 }
 
 /* ── ASPIRASI ── */
 async function loadAspirasi() {
-    document.getElementById("judulHalaman").textContent = "Kelola Aspirasi";
-    document.getElementById("contentArea").innerHTML = `
+
+    document.getElementById(
+        "judulHalaman"
+    ).textContent = "Kelola Aspirasi";
+
+    document.getElementById(
+        "contentArea"
+    ).innerHTML = `
+
         <div class="panel">
-            <div class="panel-header"><div class="panel-title"> Data Aspirasi</div></div>
-            <div class="panel-body"><div id="aspirasiList"><div class="empty-state"><span class="empty-icon"></span><div class="empty-text">Memuat data...</div></div></div></div>
-        </div>`;
-    try {
-        const data = await fetch(API_ASPIRASI).then(r=>r.json());
-        const list = document.getElementById("aspirasiList");
-        if(!data.length) { list.innerHTML=`<div class="empty-state"><span class="empty-icon"></span><div class="empty-text">Belum ada aspirasi.</div></div>`; return; }
-        list.innerHTML = `<div class="item-list">${[...data].reverse().map(a=>{
-            const sName = a.status?.namaStatus||'-';
-            const bClass = {"Pending":"badge-pending","Diproses":"badge-proses","Selesai":"badge-selesai","Ditolak":"badge-ditolak"}[sName]||"badge-pending";
-            const actions = (()=>{
-                if(a.status?.id==1&&!a.kategori) return `
-                    <button class="btn btn-purple" onclick="prosesAspirasi(${a.id},1)"> Akademik</button>
-                    <button class="btn btn-green"  onclick="prosesAspirasi(${a.id},2)">🏛 Organisasi</button>
-                    <button class="btn btn-orange" onclick="terimaAspirasi(${a.id})">✓ Terima</button>
-                    <button class="btn btn-red"    onclick="tolakAspirasi(${a.id})">✗ Tolak</button>`;
-                if(a.status?.id==1&&a.kategori) return `<button class="btn btn-green" onclick="selesaiAspirasi(${a.id})">✓ Tandai Selesai</button>`;
-                return '';
-            })();
-            return `<div class="item-card">
-                <div class="item-head"><div class="item-title">${a.isiAspirasi||'(tanpa isi)'}</div><span class="badge ${bClass}">${sName}</span></div>
-                <div class="item-metas">
-                    <span class="meta-chip"> ${a.user?.nama||'Anonymous'}</span>
-                    <span class="meta-chip"> ${a.kategori?.namaKategori||'Belum dikategori'}</span>
-                    ${a.feedback?`<span class="meta-chip"> ${a.feedback}</span>`:''}
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+
+                     Kelola Aspirasi
+
                 </div>
-                ${actions?`<div class="item-actions">${actions}</div>`:''}
-            </div>`;
-        }).join('')}</div>`;
+
+            </div>
+
+            <div class="panel-body">
+
+                <!-- NAV -->
+                <div
+                    style="
+                        display:flex;
+                        gap:12px;
+                        margin-bottom:24px;
+                        flex-wrap:wrap;
+                    ">
+
+                    <button
+                        class="btn btn-purple"
+                        id="tabMasuk"
+                        onclick="switchAspirasiTab('masuk')">
+
+                         Aspirasi Masuk
+
+                    </button>
+
+                    <button
+                        class="btn btn-ghost"
+                        id="tabProses"
+                        onclick="switchAspirasiTab('proses')">
+
+                         Diproses
+
+                    </button>
+
+                    <button
+                        class="btn btn-ghost"
+                        id="tabSelesai"
+                        onclick="switchAspirasiTab('selesai')">
+
+                         Selesai
+
+                    </button>
+                    <button
+                        class="btn btn-ghost"
+                        id="tabDitolak"
+                        onclick="switchAspirasiTab('ditolak')">
+
+                        Ditolak
+
+                    </button>
+                </div>
+
+                <!-- CONTENT -->
+                <div id="aspirasiContainer">
+
+                    <div class="empty-state">
+
+                        <div class="empty-text">
+
+                            Memuat data...
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    try {
+
+        window.allAspirasi =
+            await fetch(
+                API_ASPIRASI
+            ).then(r => r.json());
+
+        switchAspirasiTab(
+            'masuk'
+        );
+
     } catch {
-        document.getElementById("aspirasiList").innerHTML=`<div class="empty-state"><span class="empty-icon">❌</span><div class="empty-text">Gagal memuat data.</div></div>`;
-        showToast("Gagal memuat aspirasi","error");
+
+        showToast(
+            "Gagal memuat aspirasi",
+            "error"
+        );
     }
 }
 
-async function prosesAspirasi(id,kategoriId){
-    try{ await fetch(`${API_ASPIRASI}/${id}/proses`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:kategoriId})}); showToast("Aspirasi berhasil diproses"); loadAspirasi(); }
-    catch{ showToast("Gagal memproses aspirasi","error"); }
+function switchAspirasiTab(type){
+
+    document.getElementById(
+        "tabMasuk"
+    ).className =
+        "btn btn-ghost";
+
+    document.getElementById(
+        "tabProses"
+    ).className =
+        "btn btn-ghost";
+
+    document.getElementById(
+        "tabSelesai"
+    ).className =
+        "btn btn-ghost";
+    document.getElementById(
+        "tabDitolak"
+    ).className =
+        "btn btn-ghost";
+    if(type == "masuk"){
+
+        document.getElementById(
+            "tabMasuk"
+        ).className =
+            "btn btn-purple";
+    }
+
+    if(type == "proses"){
+
+        document.getElementById(
+            "tabProses"
+        ).className =
+            "btn btn-purple";
+    }
+
+    if(type == "selesai"){
+
+        document.getElementById(
+            "tabSelesai"
+        ).className =
+            "btn btn-purple";
+    }
+    if(type == "ditolak"){
+
+        document.getElementById(
+            "tabDitolak"
+        ).className =
+            "btn btn-purple";
+    }
+    let filtered = [];
+
+    // MASUK
+    if(type == "masuk"){
+
+        filtered =
+            allAspirasi.filter(
+                a => a.status?.id == 1
+            );
+    }
+
+    // DIPROSES
+    if(type == "proses"){
+
+        filtered =
+            allAspirasi.filter(
+                a => a.status?.id == 2
+            );
+    }
+
+    // SELESAI
+    if(type == "selesai"){
+
+        filtered =
+            allAspirasi.filter(
+                a => a.status?.id == 3
+            );
+    }
+
+    // DITOLAK
+    if(type == "ditolak"){
+
+        filtered =
+            allAspirasi.filter(
+                a => a.status?.id == 4
+            );
+    }
+
+    renderAspirasiTab(
+        filtered,
+        type
+    );
+}
+
+function renderAspirasiTab(
+    data,
+    type
+){
+
+    const el =
+        document.getElementById(
+            "aspirasiContainer"
+        );
+
+    if(!data.length){
+
+        el.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-text">
+
+                    Tidak ada data.
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    el.innerHTML = `
+
+        <div class="item-list">
+
+            ${[...data].reverse().map(a => {
+
+                const sName =
+                    a.status?.namaStatus || '-';
+
+                const bClass = {
+
+                    "Pending":"badge-pending",
+                    "Diproses":"badge-proses",
+                    "Selesai":"badge-selesai",
+                    "Ditolak":"badge-ditolak"
+
+                }[sName] || "badge-pending";
+
+                let actions = '';
+
+                // ASPIRASI MASUK
+                if(type == "masuk"){
+
+                    // BELUM ADA KATEGORI
+                    if(!a.kategori){
+
+                        actions = `
+
+                            <button
+                                class="btn btn-purple"
+                                onclick="event.stopPropagation(); prosesAspirasi(${a.id},1)">
+
+                                 Akademik
+
+                            </button>
+
+                            <button
+                                class="btn btn-green"
+                                onclick="event.stopPropagation(); prosesAspirasi(${a.id},3)">
+
+                                 Organisasi
+
+                            </button>
+
+                            <button
+                                class="btn btn-red"
+                                onclick="event.stopPropagation(); tolakAspirasi(${a.id})">
+
+                                 Tolak
+
+                            </button>
+                        `;
+                    }
+
+                    // SUDAH ADA KATEGORI
+                    else{
+
+                        actions = `
+
+                            <button
+                                class="btn btn-orange"
+                                onclick="event.stopPropagation(); terimaAspirasi(${a.id})">
+
+                                 Lanjut
+
+                            </button>
+
+                            <button
+                                class="btn btn-red"
+                                onclick="event.stopPropagation(); tolakAspirasi(${a.id})">
+
+                                 Tolak
+
+                            </button>
+                        `;
+                    }
+                }
+
+                // DIPROSES
+                if(type == "proses"){
+
+                    actions = `
+
+                        <button
+                            class="btn btn-green"
+                            onclick="event.stopPropagation(); selesaiAspirasi(${a.id})">
+
+                             Tandai Selesai
+
+                        </button>
+                    `;
+                }
+
+                return `
+
+                    <div
+                        class="item-card"
+                        ${type == "selesai" || type == "ditolak"
+                            ? `onclick="toggleFeedback(${a.id})"`
+                            : ''
+                        }
+                        style="
+                            cursor:${type == "selesai" || type == "ditolak"
+                                ? 'pointer'
+                                : 'default'
+                            };
+                        ">
+
+                        <div class="item-head">
+
+                            <div class="item-title">
+
+                                ${a.isiAspirasi || '(tanpa isi)'}
+
+                            </div>
+
+                            <span class="badge ${bClass}">
+
+                                ${sName}
+
+                            </span>
+
+                        </div>
+
+                        <div class="item-metas">
+
+                            <span class="meta-chip">
+
+                                 ${a.user?.nama || 'Anonymous'}
+
+                            </span>
+
+                            <span class="meta-chip">
+
+                                 ${a.kategori?.namaKategori || 'Belum dikategori'}
+
+                            </span>
+
+                        </div>
+
+                        ${
+                            (type == "selesai" || type == "ditolak")
+                            && a.feedback
+
+                            ?
+
+                            `
+                            <div
+                                id="feedback-${a.id}"
+                                style="
+                                    display:none;
+                                    margin-top:16px;
+                                    padding:14px;
+                                    border-radius:12px;
+                                    background:var(--surface3);
+                                    border:1px solid var(--border);
+                                    color:var(--muted);
+                                    line-height:1.6;
+                                ">
+
+                                <strong
+                                    style="
+                                        color:var(--text);
+                                        display:block;
+                                        margin-bottom:8px;
+                                    ">
+
+                                    Feedback Admin
+
+                                </strong>
+
+                                ${a.feedback}
+
+                            </div>
+                            `
+
+                            :
+
+                            ''
+                        }
+
+                        ${
+                            actions
+
+                            ?
+
+                            `
+                            <div class="item-actions">
+
+                                ${actions}
+
+                            </div>
+                            `
+
+                            :
+
+                            ''
+                        }
+
+                    </div>
+                `;
+
+            }).join('')}
+
+        </div>
+    `;
+}
+function toggleFeedback(id){
+
+    const el =
+        document.getElementById(
+            `feedback-${id}`
+        );
+
+    if(!el) return;
+
+    if(el.style.display == "none"){
+
+        el.style.display = "block";
+
+    }else{
+
+        el.style.display = "none";
+    }
+}
+async function prosesAspirasi(id, kategoriId){
+
+    try{
+
+        await fetch(
+            `${API_ASPIRASI}/${id}/proses`,
+            {
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    kategoriId: kategoriId,
+                    statusId: 2
+
+                })
+            }
+        );
+
+        showToast(
+            "Aspirasi berhasil diproses"
+        );
+
+        loadAspirasi();
+
+    }catch{
+
+        showToast(
+            "Gagal memproses aspirasi",
+            "error"
+        );
+    }
 }
 async function terimaAspirasi(id){
     const fb=prompt("Pesan penerimaan (opsional):"); if(fb===null) return;
@@ -689,39 +1376,671 @@ async function terimaAspirasi(id){
     catch{ showToast("Gagal menerima aspirasi","error"); }
 }
 async function selesaiAspirasi(id){
-    const fb=prompt("Masukkan feedback:"); if(fb===null) return;
-    try{ await fetch(`${API_ASPIRASI}/${id}/feedback`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:2,feedback:fb})}); showToast("Aspirasi selesai"); loadAspirasi(); }
-    catch{ showToast("Gagal mengupdate aspirasi","error"); }
+
+    const fb = prompt(
+        "Masukkan feedback:"
+    );
+
+    if(fb === null) return;
+
+    try{
+
+        await fetch(
+            `${API_ASPIRASI}/${id}/feedback`,
+            {
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    statusId:3,
+
+                    feedback:fb
+
+                })
+            }
+        );
+
+        showToast(
+            "Aspirasi selesai"
+        );
+
+        loadAspirasi();
+
+    }catch{
+
+        showToast(
+            "Gagal mengupdate aspirasi",
+            "error"
+        );
+    }
 }
 async function tolakAspirasi(id){
-    const alasan=prompt("Alasan penolakan:"); if(alasan===null||alasan.trim()==="") return;
-    try{ await fetch(`${API_ASPIRASI}/${id}/feedback`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({statusId:3,feedback:alasan})}); showToast("Aspirasi ditolak"); loadAspirasi(); }
-    catch{ showToast("Gagal menolak aspirasi","error"); }
+
+    const alasan = prompt(
+        "Alasan penolakan:"
+    );
+
+    if(
+        alasan === null ||
+        alasan.trim() === ""
+    ) return;
+
+    try{
+
+        await fetch(
+            `${API_ASPIRASI}/${id}/feedback`,
+            {
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    statusId:4,
+
+                    feedback:alasan
+
+                })
+            }
+        );
+
+        showToast(
+            "Aspirasi ditolak"
+        );
+
+        loadAspirasi();
+
+    }catch{
+
+        showToast(
+            "Gagal menolak aspirasi",
+            "error"
+        );
+    }
 }
 
 /* ── FORUM ── */
 async function loadForum(){
-    document.getElementById("judulHalaman").textContent="Kelola Forum";
-    document.getElementById("contentArea").innerHTML=`<div class="panel"><div class="panel-header"><div class="panel-title">💬 Data Forum</div></div><div class="panel-body"><div id="forumList"><div class="empty-state"><span class="empty-icon">⏳</span><div class="empty-text">Memuat data...</div></div></div></div></div>`;
+
+    document.getElementById(
+        "judulHalaman"
+    ).textContent = "Kelola Forum";
+
+    document.getElementById(
+        "contentArea"
+    ).innerHTML = `
+
+        <div
+            style="
+                max-width:900px;
+                margin:auto;
+            ">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div class="panel-title">
+
+                         Diskusi Forum
+
+                    </div>
+
+                </div>
+
+                <div class="panel-body">
+
+                    <div
+                        style="
+                            display:flex;
+                            gap:12px;
+                            margin-bottom:20px;
+                        ">
+
+                        <textarea
+                            id="isiPost"
+                            class="form-input"
+                            placeholder="Tulis topik diskusi..."
+                            style="
+                                min-height:90px;
+                                resize:none;
+                            "></textarea>
+
+                        <button
+                            class="btn btn-purple"
+                            onclick="kirimPostAdmin()">
+
+                            Kirim
+
+                        </button>
+
+                    </div>
+
+                    <div id="forumList">
+
+                        <div class="empty-state">
+
+                            <div class="empty-text">
+
+                                Memuat forum...
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
     try{
-        const data=await fetch(API_FORUM).then(r=>r.json());
-        const list=document.getElementById("forumList");
-        if(!data.length){list.innerHTML=`<div class="empty-state"><span class="empty-icon">💬</span><div class="empty-text">Belum ada postingan.</div></div>`;return;}
-        list.innerHTML=`<div class="item-list">${[...data].reverse().map(p=>`
-            <div class="item-card">
-                <div class="item-head"><div class="item-title">${p.isiPost||'(tanpa isi)'}</div></div>
-                <div class="item-metas"><span class="meta-chip">👤 ${p.user?.nama||'Anonymous'}</span></div>
-                <div class="item-actions"><button class="btn btn-red" onclick="hapusPost(${p.id})">🗑 Hapus</button></div>
-            </div>`).join('')}</div>`;
-    }catch{document.getElementById("forumList").innerHTML=`<div class="empty-state"><span class="empty-icon">❌</span><div class="empty-text">Gagal memuat data.</div></div>`;showToast("Gagal memuat forum","error");}
+
+        const data =
+            await fetch(API_FORUM)
+            .then(r => r.json());
+
+        renderForumAdmin(data);
+
+    }catch{
+
+        showToast(
+            "Gagal memuat forum",
+            "error"
+        );
+    }
 }
 async function hapusPost(id){
     if(!confirm("Hapus postingan ini?")) return;
     try{await fetch(`${API_FORUM}/${id}`,{method:"DELETE"});showToast("Postingan dihapus");loadForum();}
     catch{showToast("Gagal menghapus postingan","error");}
 }
+function renderForumAdmin(data){
 
-/* ── USER ── */
+    const list =
+        document.getElementById(
+            "forumList"
+        );
+
+    if(!data.length){
+
+        list.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-text">
+
+                    Belum ada diskusi.
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    list.innerHTML = `
+
+        <div class="item-list">
+
+            ${[...data].map(post => `
+
+                <div class="item-card">
+
+                    <div class="item-head">
+
+                        <div>
+
+                            <div class="item-title">
+
+                                ${post.isiPost}
+
+                            </div>
+
+                            <div
+                                style="
+                                    margin-top:8px;
+                                    color:var(--muted);
+                                    font-size:13px;
+                                ">
+
+                                👤 ${post.user?.nama || 'Anonymous'}
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="btn btn-red"
+                            onclick="hapusPost(${post.id})">
+
+                            Hapus
+
+                        </button>
+
+                    </div>
+
+                    <div
+                        style="
+                            margin-top:20px;
+                        ">
+
+                        <button
+                            class="btn btn-ghost"
+                            onclick="toggleKomentarAdmin(${post.id})">
+
+                            Lihat Diskusi
+
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="komentar-${post.id}"
+                        style="
+                            display:none;
+                            margin-top:20px;
+                        ">
+
+                    </div>
+
+                </div>
+
+            `).join('')}
+
+        </div>
+    `;
+}
+
+async function toggleKomentarAdmin(postId){
+
+    const el =
+        document.getElementById(
+            `komentar-${postId}`
+        );
+
+    if(el.style.display == "block"){
+
+        el.style.display = "none";
+
+        return;
+    }
+
+    el.style.display = "block";
+
+    try{
+
+        const comments =
+            await fetch(
+                `http://localhost:8080/api/forum-comment/${postId}`
+            ).then(r => r.json());
+
+        el.innerHTML = `
+
+            <div
+                style="
+                    margin-top:16px;
+                    padding:18px;
+                    border-radius:14px;
+                    background:var(--surface3);
+                    border:1px solid var(--border);
+                ">
+
+                <div
+                    id="comment-list-${postId}"
+                    style="
+                        display:flex;
+                        flex-direction:column;
+                        gap:12px;
+                    ">
+
+                    ${
+                        renderKomentarAdmin(
+                            comments,
+                            postId
+                        )
+                    }
+
+                </div>
+
+                <div
+                    style="
+                        display:flex;
+                        gap:10px;
+                        margin-top:16px;
+                    ">
+
+                    <input
+                        id="input-komentar-${postId}"
+                        class="form-input"
+                        placeholder="Tulis komentar...">
+
+                    <button
+                        class="btn btn-purple"
+                        onclick="kirimKomentarAdmin(${postId})">
+
+                        Kirim
+
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+    }catch{
+
+        el.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-text">
+
+                    Gagal memuat komentar.
+
+                </div>
+
+            </div>
+        `;
+    }
+}
+
+function renderKomentarAdmin(
+    comments,
+    postId,
+    level = 0
+){
+
+    return comments.map(c => `
+
+        <div
+            style="
+                margin-left:${level * 25}px;
+                padding:14px;
+                border-radius:12px;
+                background:var(--surface2);
+                border:1px solid var(--border);
+            ">
+
+            <div
+                style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:10px;
+                ">
+
+                <div>
+
+                    <div
+                        style="
+                            font-weight:700;
+                            margin-bottom:6px;
+                        ">
+
+                        ${c.namaUser}
+
+                    </div>
+
+                    <div>
+
+                        ${c.isiKomentar}
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn btn-red"
+                    onclick="hapusKomentarAdmin(${c.id}, ${postId})">
+
+                    Hapus
+
+                </button>
+
+            </div>
+
+            <div
+                style="
+                    margin-top:12px;
+                ">
+
+                <button
+                    class="btn btn-ghost"
+                    onclick="replyAdmin(${c.id}, ${postId})">
+
+                    Balas
+
+                </button>
+
+            </div>
+
+            ${
+                c.replies?.length
+
+                ?
+
+                `
+                <div
+                    style="
+                        margin-top:14px;
+                        display:flex;
+                        flex-direction:column;
+                        gap:10px;
+                    ">
+
+                    ${
+                        renderKomentarAdmin(
+                            c.replies,
+                            postId,
+                            level + 1
+                        )
+                    }
+
+                </div>
+                `
+
+                :
+
+                ''
+            }
+
+        </div>
+    `).join('');
+}
+
+async function kirimPostAdmin(){
+
+    const isi =
+        document.getElementById(
+            "isiPost"
+        ).value;
+
+    if(!isi.trim()) return;
+
+    try{
+
+        await fetch(API_FORUM,{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                isiPost:isi,
+
+                user:{
+                    id:user.id
+                }
+
+            })
+
+        });
+
+        showToast(
+            "Topik berhasil dibuat"
+        );
+
+        loadForum();
+
+    }catch{
+
+        showToast(
+            "Gagal membuat topik",
+            "error"
+        );
+    }
+}
+
+async function kirimKomentarAdmin(postId){
+
+    const input =
+        document.getElementById(
+            `input-komentar-${postId}`
+        );
+
+    const isi = input.value;
+
+    if(!isi.trim()) return;
+
+    try{
+
+        await fetch(
+            "http://localhost:8080/api/forum-comment",
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    isiKomentar:isi,
+
+                    post:{
+                        id:postId
+                    },
+
+                    user:{
+                        id:user.id
+                    }
+
+                })
+            }
+        );
+
+        toggleKomentarAdmin(postId);
+
+        toggleKomentarAdmin(postId);
+
+    }catch{
+
+        showToast(
+            "Gagal mengirim komentar",
+            "error"
+        );
+    }
+}
+
+async function hapusKomentarAdmin(
+    id,
+    postId
+){
+
+    if(!confirm(
+        "Hapus komentar ini?"
+    )) return;
+
+    try{
+
+        await fetch(
+            `http://localhost:8080/api/forum-comment/${id}`,
+            {
+                method:"DELETE"
+            }
+        );
+
+        toggleKomentarAdmin(postId);
+
+        toggleKomentarAdmin(postId);
+
+    }catch{
+
+        showToast(
+            "Gagal menghapus komentar",
+            "error"
+        );
+    }
+}
+
+async function replyAdmin(
+    commentId,
+    postId
+){
+
+    const isi =
+        prompt("Balas komentar:");
+
+    if(!isi) return;
+
+    try{
+
+        await fetch(
+            "http://localhost:8080/api/forum-comment",
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    isiKomentar:isi,
+
+                    post:{
+                        id:postId
+                    },
+
+                    parentComment:{
+                        id:commentId
+                    },
+
+                    user:{
+                        id:user.id
+                    }
+
+                })
+            }
+        );
+
+        toggleKomentarAdmin(postId);
+
+        toggleKomentarAdmin(postId);
+
+    }catch{
+
+        showToast(
+            "Gagal membalas komentar",
+            "error"
+        );
+    }
+}
 async function loadUser(){
     document.getElementById("judulHalaman").textContent="Kelola User";
     document.getElementById("contentArea").innerHTML=`
@@ -807,12 +2126,215 @@ async function loadStatistik(){
         const data=await fetch(API_ASPIRASI).then(r=>r.json());
         document.getElementById("sAkademik").textContent  =data.filter(a=>a.kategori?.namaKategori==="Akademik").length;
         document.getElementById("sOrganisasi").textContent=data.filter(a=>a.kategori?.namaKategori==="Organisasi").length;
-        document.getElementById("sSelesai").textContent   =data.filter(a=>a.status?.id==2).length;
-        document.getElementById("sDitolak").textContent   =data.filter(a=>a.status?.id==3).length;
+        document.getElementById("sSelesai").textContent   =data.filter(a=>a.status?.id==3).length;
+        document.getElementById("sDitolak").textContent   =data.filter(a=>a.status?.id==4).length;
     }catch{showToast("Gagal memuat statistik","error");}
 }
 
-loadDashboard();
+async function loadDashboard(){
+
+    document.getElementById(
+        "judulHalaman"
+    ).textContent = "Dashboard";
+
+    document.getElementById(
+        "contentArea"
+    ).innerHTML = `
+
+        <div
+            style="
+                display:grid;
+                gap:24px;
+            ">
+
+            <div
+                style="
+                    display:grid;
+                    grid-template-columns:
+                        repeat(auto-fit,minmax(220px,1fr));
+                    gap:20px;
+                ">
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Total User
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statUser">
+
+                        ...
+
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Total Forum
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statForum">
+
+                        ...
+
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Total Aspirasi
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statAspirasi">
+
+                        ...
+
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Diproses
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statProses">
+
+                        ...
+
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Selesai
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statSelesai">
+
+                        ...
+
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">
+                        Ditolak
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="statTolak">
+
+                        ...
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    try{
+
+        // FETCH SEMUA DATA
+        const userRes =
+            await fetch(
+                "http://localhost:8080/api/users"
+            );
+
+        const forumRes =
+            await fetch(
+                API_FORUM
+            );
+
+        const aspirasiRes =
+            await fetch(
+                "http://localhost:8080/api/aspirasi"
+            );
+
+        const users =
+            await userRes.json();
+
+        const forums =
+            await forumRes.json();
+
+        const aspirasi =
+            await aspirasiRes.json();
+
+        // TOTAL USER
+        document.getElementById(
+            "statUser"
+        ).innerText =
+            users.length || 0;
+
+        // TOTAL FORUM
+        document.getElementById(
+            "statForum"
+        ).innerText =
+            forums.length || 0;
+
+        // TOTAL ASPIRASI
+        document.getElementById(
+            "statAspirasi"
+        ).innerText =
+            aspirasi.length || 0;
+
+        // DIPROSES
+        document.getElementById(
+            "statProses"
+        ).innerText =
+
+            aspirasi.filter(
+                a =>
+                    a.status?.namaStatus
+                    ?.toLowerCase()
+                    == "diproses"
+            ).length;
+
+        // SELESAI
+        document.getElementById(
+            "statSelesai"
+        ).innerText =
+
+            aspirasi.filter(
+                a =>
+                    a.status?.namaStatus
+                    ?.toLowerCase()
+                    == "selesai"
+            ).length;
+
+        // DITOLAK
+        document.getElementById(
+            "statTolak"
+        ).innerText =
+
+            aspirasi.filter(
+                a =>
+                    a.status?.namaStatus
+                    ?.toLowerCase()
+                    == "ditolak"
+            ).length;
+
+    }catch(err){
+
+        console.log(err);
+
+        showToast(
+            "Gagal memuat dashboard",
+            "error"
+        );
+    }
+}
 </script>
 </body>
 </html>

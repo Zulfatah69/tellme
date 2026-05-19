@@ -268,10 +268,24 @@ const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","rol
 if(!user) window.location.href = "/login.html";
 
 window.onload = function() {
+
+    document
+        .querySelectorAll(".namaUser")
+        .forEach(el =>
+            el.innerText = user.nama
+        );
+
+    applyThemeUI(
+        document.documentElement
+        .getAttribute('data-theme')
+        || 'dark'
+    );
+
+    loadPost();
+}
     document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
     applyThemeUI(document.documentElement.getAttribute('data-theme') || 'dark');
     loadPost();
-}
 </script>
 
 <nav class="tm-nav">
@@ -324,6 +338,7 @@ window.onload = function() {
 <script>
 const POST_API = "http://localhost:8080/api/forum";
 const COMMENT_API = "http://localhost:8080/api/forum-comment";
+let currentReplyUser = null;
 
 function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
 
@@ -347,12 +362,25 @@ function formatTgl(t) {
     return new Date(t).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
-function initial(nama) { return (nama || "?").charAt(0).toUpperCase(); }
+function initial(nama) {
+    return (nama || "M")
+        .charAt(0)
+        .toUpperCase();
+}
 
-// Fitur balas (Tag user di kolom komentar)
 function balasKomentar(postId, namaUser) {
-    const inputKomentar = document.getElementById(`komentar-${postId}`);
-    inputKomentar.value = `@${namaUser} `;
+
+    const inputKomentar =
+        document.getElementById(
+            `komentar-${postId}`
+        );
+
+    currentReplyUser =
+        namaUser;
+
+    inputKomentar.value =
+        `@${namaUser} `;
+
     inputKomentar.focus();
 }
 
@@ -381,35 +409,153 @@ async function loadPost() {
             return;
         }
 
-        data.reverse().forEach(post => {
+        data.forEach(post => {
             const canDel = post.user?.id == user.id || user.role == 'ADMIN';
-            html += `
-            <div class="card-tm" id="post-${post.id}">
-                <div class="card-body">
-                    <div class="post-header">
-                        <div class="post-user">
-                            <div class="avatar">${initial(post.user?.nama)}</div>
-                            <div>
-                                <div class="post-name">${post.user?.nama || 'Anonim'}</div>
-                                <div class="post-date">${formatTgl(post.tanggal)}</div>
+        html += `
+
+        <div
+            style="
+                margin-bottom:20px;
+            ">
+
+            <div
+                class="card-tm"
+                id="post-${post.id}"
+
+                style="
+                    background:var(--surface);
+                    border-radius:22px;
+                    padding:24px;
+
+                    border:1px solid var(--border);
+
+                    box-shadow:
+                        0 8px 28px rgba(0,0,0,0.06);
+                ">
+
+                <div class="post-header">
+
+                    <div class="post-user">
+
+                        <div class="avatar">
+
+                            ${initial(post.user?.nama)}
+
+                        </div>
+
+                        <div>
+
+                            <div class="post-name">
+
+                                ${post.user?.nama || 'Mahasiswa'}
+
                             </div>
+
+                            <div class="post-date">
+
+                                ${formatTgl(post.tanggal)}
+
+                            </div>
+
                         </div>
-                        ${canDel ? `<button class="btn-del" onclick="hapusPost(${post.id})">Hapus</button>` : ''}
+
                     </div>
-                    <div class="post-body">${post.isiPost}</div>
-                    
-                    <div class="post-footer">
-                        <div class="comment-input-row">
-                            <textarea id="komentar-${post.id}" class="form-control" rows="1" placeholder="Tulis komentar atau balas..."></textarea>
-                            <button class="btn-comment" onclick="kirimKomentar(${post.id})">Kirim</button>
-                        </div>
-                        <div id="comment-list-${post.id}"></div>
-                    </div>
+
+                    ${canDel
+                        ? `
+                        <button
+                            class="btn-del"
+                            onclick="hapusPost(${post.id})">
+
+                            Hapus
+
+                        </button>
+                        `
+                        : ''
+                    }
+
                 </div>
-            </div>`;
+
+                <div class="post-body">
+
+                    ${post.isiPost}
+
+                </div>
+
+                <div class="post-footer">
+
+                    <button
+                        class="btn-comment"
+                        onclick="toggleKomentar(${post.id})">
+
+                        Lihat Diskusi
+
+                    </button>
+
+                    <div
+                        id="komentar-wrapper-${post.id}"
+                        style="
+                            display:none;
+                            margin-top:24px;
+                        ">
+
+                        <div
+                            style="
+                                background:var(--surface2);
+                                border:1px solid var(--border);
+
+                                border-radius:18px;
+
+                                padding:20px;
+                            ">
+
+                            <div
+                                style="
+                                    font-weight:700;
+                                    margin-bottom:18px;
+                                ">
+
+                                Diskusi
+
+                            </div>
+
+                            <div
+                                id="comment-list-${post.id}"></div>
+
+                            <div
+                                class="comment-input-row"
+                                style="
+                                    margin-top:18px;
+                                ">
+
+                                <textarea
+                                    id="komentar-${post.id}"
+                                    class="form-control"
+                                    rows="2"
+                                    placeholder="Tulis komentar..."></textarea>
+
+                                <button
+                                    class="btn-comment"
+                                    onclick="kirimKomentar(${post.id})">
+
+                                    Kirim
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        `;
         });
         document.getElementById("listPost").innerHTML = html;
-        data.forEach(post => loadKomentar(post.id));
     } catch {
         document.getElementById("listPost").innerHTML = `
             <div class="card-tm empty-state">
@@ -420,59 +566,311 @@ async function loadPost() {
 }
 
 async function buatPost() {
-    const isiPost = document.getElementById("isiPost").value;
-    if (!isiPost.trim()) { alert("Isi postingan dulu"); return; }
-    await fetch(POST_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isiPost, user: { id: user.id } }) });
-    document.getElementById("isiPost").value = ""; 
+
+    const isiPost =
+        document.getElementById(
+            "isiPost"
+        ).value;
+
+    if(!isiPost.trim()){
+
+        alert(
+            "Isi postingan dulu"
+        );
+
+        return;
+    }
+
+    const body = {
+
+        isiPost,
+
+        user:{
+            id:user.id
+        }
+    };
+
+    await fetch(POST_API, {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(body)
+    });
+
+    document.getElementById(
+        "isiPost"
+    ).value = "";
+
     loadPost();
 }
-
 async function hapusPost(id) {
     if (!confirm("Hapus postingan ini?")) return;
     await fetch(`${POST_API}/${id}`, { method: "DELETE" }); 
     loadPost();
 }
 
-async function kirimKomentar(postId) {
-    const isiKomentar = document.getElementById(`komentar-${postId}`).value;
-    if (!isiKomentar.trim()) { alert("Isi komentar dulu"); return; }
-    await fetch(COMMENT_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isiKomentar, post: { id: postId }, user: { id: user.id } }) });
-    document.getElementById(`komentar-${postId}`).value = ""; 
+async function kirimKomentar(postId){
+
+    const input =
+        document.getElementById(
+            `komentar-${postId}`
+        );
+
+    const isiKomentar =
+        input.value;
+
+    if(!isiKomentar.trim()) return;
+
+    const parentId =
+        input.getAttribute(
+            "data-parent"
+        );
+
+    const body = {
+
+        isiKomentar,
+
+        post:{
+            id:postId
+        },
+
+        user:{
+            id:user.id
+        }
+    };
+
+    if(parentId){
+
+        body.parentComment = {
+            id:parentId
+        };
+    }
+
+    await fetch(COMMENT_API, {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(body)
+    });
+
+    input.value = "";
+
+    input.removeAttribute(
+        "data-parent"
+    );
+
     loadKomentar(postId);
 }
 
-async function loadKomentar(postId) {
-    try {
-        const res = await fetch(`${COMMENT_API}/${postId}`); 
-        const data = await res.json();
-        let html = "";
-        data.forEach(c => {
-            const canDel = c.user?.id == user.id || user.role == 'ADMIN';
-            const namaClean = (c.user?.nama || 'Anonim').replace(/\s+/g, ''); // bersihkan spasi untuk tag Balas
-            html += `
-            <div class="comment-item">
-                <div class="comment-avatar">${initial(c.user?.nama)}</div>
-                <div class="comment-body">
-                    <div class="comment-meta">
-                        <span class="comment-name">${c.user?.nama || 'Anonim'}</span>
-                        <div class="comment-actions">
-                            <button class="btn-reply-link" onclick="balasKomentar(${postId}, '${namaClean}')">Balas</button>
-                            ${canDel ? `<button class="comment-del" onclick="hapusKomentar(${c.id}, ${postId})">Hapus</button>` : ''}
-                        </div>
+async function toggleKomentar(postId){
+
+    const wrapper =
+        document.getElementById(
+            `komentar-wrapper-${postId}`
+        );
+
+    if(wrapper.style.display === "none"){
+
+        wrapper.style.display = "block";
+
+        loadKomentar(postId);
+
+    }else{
+
+        wrapper.style.display = "none";
+    }
+}
+
+async function loadKomentar(postId){
+
+    try{
+
+        const res =
+            await fetch(
+                `${COMMENT_API}/${postId}`
+            );
+
+        const data =
+            await res.json();
+
+        document.getElementById(
+            `comment-list-${postId}`
+        ).innerHTML =
+            renderKomentarTree(
+                data,
+                0,
+                postId
+            );
+
+    }catch(err){
+
+        console.log(err);
+    }
+}
+
+function renderKomentarTree(
+    comments,
+    level = 0,
+    postId
+){
+
+    let html = "";
+
+    comments.forEach(c => {
+
+        const canDelete =
+            c.userId == user.id ||
+            user.role == 'ADMIN';
+
+        html += `
+
+        <div
+            class="comment-item"
+            style="
+                margin-left:${level * 25}px;
+            ">
+
+            <div class="comment-avatar">
+
+                ${initial(c.namaUser)}
+
+            </div>
+
+            <div class="comment-body">
+
+                <div class="comment-meta">
+
+                    <span class="comment-name">
+
+                        ${c.namaUser}
+
+                    </span>
+
+                    <div class="comment-actions">
+
+                        <button
+                            class="btn-reply-link"
+                            onclick="replyComment(${c.id}, ${postId})">
+
+                            Balas
+
+                        </button>
+
+                        ${
+                            canDelete
+
+                            ?
+
+                            `
+                            <button
+                                class="comment-del"
+                                onclick="hapusKomentar(${c.id}, ${postId})">
+
+                                Hapus
+
+                            </button>
+                            `
+
+                            :
+
+                            ''
+                        }
+
                     </div>
-                    <div class="comment-text">${formatKomentarTeks(c.isiKomentar)}</div>
+
                 </div>
-            </div>`;
-        });
-        document.getElementById(`comment-list-${postId}`).innerHTML = html;
-    } catch {}
+
+                <div class="comment-text">
+
+                    ${formatKomentarTeks(c.isiKomentar)}
+
+                </div>
+
+                ${
+                    c.replies &&
+                    c.replies.length > 0
+
+                    ?
+
+                    `
+                    <button
+                        class="btn-reply-link mt-2"
+                        onclick="toggleReply(${c.id})">
+
+                        Lihat ${c.replies.length} balasan
+
+                    </button>
+
+                    <div
+                        id="reply-${c.id}"
+                        style="
+                            display:none;
+                        ">
+
+                        ${
+                            renderKomentarTree(
+                                c.replies,
+                                level + 1,
+                                postId
+                            )
+                        }
+
+                    </div>
+                    `
+
+                    :
+
+                    ''
+                }
+
+            </div>
+
+        </div>
+        `;
+    });
+
+    return html;
 }
 
-async function hapusKomentar(id, postId) {
-    if (!confirm("Hapus komentar ini?")) return;
-    await fetch(`${COMMENT_API}/${id}`, { method: "DELETE" }); 
-    loadKomentar(postId);
+function toggleReply(commentId){
+
+    const el =
+        document.getElementById(
+            `reply-${commentId}`
+        );
+
+    if(el.style.display === "none"){
+
+        el.style.display = "block";
+
+    }else{
+
+        el.style.display = "none";
+    }
 }
+function replyComment(commentId, postId){
+
+    const input =
+        document.getElementById(
+            `komentar-${postId}`
+        );
+
+    input.focus();
+
+    input.setAttribute(
+        "data-parent",
+        commentId
+    );
+}
+
 </script>
 </body>
 </html>

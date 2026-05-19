@@ -51,7 +51,28 @@ public class AspirasiServiceImpl implements AspirasiService {
 
         aspirasi.setUser(user);
         aspirasi.setStatus(status);
-        aspirasi.setKategori(null);
+
+        if(
+            aspirasi.getKategori() != null &&
+            aspirasi.getKategori().getId() != null
+        ){
+
+            Kategori kategori =
+                    kategoriRepository.findById(
+                            aspirasi.getKategori().getId()
+                    ).orElseThrow(() ->
+                            new RuntimeException(
+                                    "Kategori tidak ditemukan"
+                            )
+                    );
+
+            aspirasi.setKategori(kategori);
+
+        }else{
+
+            aspirasi.setKategori(null);
+        }
+
         aspirasi.setTanggal(LocalDateTime.now());
 
         return aspirasiRepository.save(aspirasi);
@@ -142,47 +163,43 @@ public class AspirasiServiceImpl implements AspirasiService {
     }
 
     @Override
-    public Aspirasi prosesAspirasi(Long id, Long kategoriId) {
+    public Aspirasi prosesAspirasi(
+            Long id,
+            Long kategoriId,
+            Long statusId
+    ){
 
-        Aspirasi aspirasi = aspirasiRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aspirasi tidak ditemukan"));
+        Aspirasi aspirasi =
+                aspirasiRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Aspirasi tidak ditemukan"
+                        )
+                );
 
-        if (kategoriId == 0) {
-            Status ditolak = statusRepository.findById(3L)
-                    .orElseThrow(() -> new RuntimeException("Status tidak ditemukan"));
+        Status status =
+                statusRepository.findById(statusId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Status tidak ditemukan"
+                        )
+                );
 
-            aspirasi.setStatus(ditolak);
+        Kategori kategori =
+                kategoriRepository.findById(kategoriId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Kategori tidak ditemukan"
+                        )
+                );
 
-            return aspirasiRepository.save(aspirasi);
-        }
-
-        Kategori kategori = kategoriRepository.findById(kategoriId)
-                .orElseThrow(() -> new RuntimeException("Kategori tidak ditemukan"));
-
-        Status diproses = statusRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Status tidak ditemukan"));
-
-        String emailTujuan = "";
-
-        if (kategori.getNamaKategori().equalsIgnoreCase("Akademik")) {
-            emailTujuan = "varroblake0@gmail.com";
-        }
-
-        if (kategori.getNamaKategori().equalsIgnoreCase("Organisasi")) {
-            emailTujuan = "poke113333@gmail.com";
-        }
+        aspirasi.setStatus(status);
 
         aspirasi.setKategori(kategori);
-        aspirasi.setStatus(diproses);
-        aspirasi.setEmailTujuan(emailTujuan);
 
-        emailService.sendEmail(
-                emailTujuan,
-                "Aspirasi Baru - " + kategori.getNamaKategori(),
-                "Isi Aspirasi:\n\n" + aspirasi.getIsiAspirasi()
+        return aspirasiRepository.save(
+                aspirasi
         );
-
-        return aspirasiRepository.save(aspirasi);
     }
 
     @Override

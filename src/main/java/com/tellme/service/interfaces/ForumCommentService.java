@@ -7,9 +7,13 @@ import com.tellme.model.ForumComment;
 
 public interface ForumCommentService {
 
-    ForumComment createComment(ForumComment comment);
+    ForumComment createComment(
+            ForumComment comment
+    );
 
-    List<ForumCommentResponse> getByPost(Long postId);
+    List<ForumCommentResponse> getByPost(
+            Long postId
+    );
 
     void deleteComment(Long id);
 }

@@ -142,7 +142,6 @@
         }
         .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
 
-        /* THEME TOGGLE */
         .theme-toggle {
             display: flex; align-items: center; gap: .5rem;
             cursor: pointer; user-select: none; flex-shrink: 0;
@@ -517,13 +516,24 @@ window.onload = function() {
                 <div class="panel-icon">✍️</div>
                 Buat Aspirasi
             </div>
-            <div class="panel-sub">Sampaikan kritik, saran, atau masukan kamu kepada pihak kampus.</div>
+            <div class="panel-sub">Sampaikan kritik, saran, atau masukan kamu.</div>
 
             <div class="divider"></div>
 
             <!-- KATEGORI -->
             <div style="margin-bottom:14px">
                 <label class="form-label">Kategori</label>
+                <div
+                    style="
+                        font-size:12px;
+                        color:var(--muted);
+                        margin-bottom:8px;
+                    ">
+
+                    Kategori boleh dikosongkan.
+                    Admin akan menentukan kategori nanti.
+
+                </div>
                 <div class="select-wrapper">
                     <select id="kategoriSelect" class="form-control" disabled>
                         <option value="">Memuat kategori...</option>
@@ -723,9 +733,9 @@ async function loadRiwayat() {
         let html = "";
         [...data].reverse().forEach((a, i) => {
             let badge = "";
-            if (a.status?.id == 1)      badge = '<span class="badge-status badge-diproses">⏳ Diproses</span>';
-            else if (a.status?.id == 2) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
-            else if (a.status?.id == 3) badge = '<span class="badge-status badge-ditolak">✕ Ditolak</span>';
+            if (a.status?.id == 2)      badge = '<span class="badge-status badge-diproses">⏳ Diproses</span>';
+            else if (a.status?.id == 3) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
+            else if (a.status?.id == 4) badge = '<span class="badge-status badge-ditolak">✕ Ditolak</span>';
 
             const feedback = a.feedback
                 ? `<div class="feedback-box"><div class="fb-label">Feedback Admin</div>${a.feedback}</div>`
@@ -733,7 +743,7 @@ async function loadRiwayat() {
 
             html += `<div class="aspirasi-card" style="animation-delay:${i * 0.05}s">
                 <div class="card-top">
-                    <div class="card-title">Aspirasi #${a.id}</div>
+                    <div class="card-title">Aspirasi</div>
                     ${badge}
                 </div>
                 <div class="aspirasi-text">${a.isiAspirasi}</div>
@@ -761,67 +771,100 @@ async function loadRiwayat() {
 
 /* ── KIRIM ASPIRASI ── */
 async function kirimAspirasi() {
+
     const isiAspirasi = document.getElementById("isiAspirasi").value;
     const anonim      = document.getElementById("anonim").checked;
     const msg         = document.getElementById("message");
-    msg.className     = "msg-box";
+
+    msg.className = "msg-box";
 
     if (!isiAspirasi.trim()) {
+
         msg.className = "msg-box error";
         msg.innerText = "Isi aspirasi terlebih dahulu.";
-        return;
-    }
 
-    if (!selectedKategoriId) {
-        msg.className = "msg-box error";
-        msg.innerText = "Pilih kategori aspirasi terlebih dahulu.";
         return;
     }
 
     const btn = document.querySelector('.btn-kirim');
+
     btn.textContent = "Mengirim...";
-    btn.disabled = true;
+    btn.disabled    = true;
 
     try {
+
         const payload = {
+
             isiAspirasi,
             anonim,
-            user:     { id: user.id },
-            kategori: { id: selectedKategoriId }
+
+            user: {
+                id: user.id
+            },
+
+            ...(selectedKategoriId && {
+
+                kategori: {
+                    id: selectedKategoriId
+                }
+
+            })
+
         };
 
         const res = await fetch(API, {
+
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
             body: JSON.stringify(payload)
+
         });
 
         if (!res.ok) {
+
             const err = await res.text();
+
             msg.className = "msg-box error";
             msg.innerText = "Gagal mengirim: " + (err || res.status);
+
             return;
         }
 
         msg.className = "msg-box success";
         msg.innerText = "✓ Aspirasi berhasil dikirim!";
+
         document.getElementById("isiAspirasi").value = "";
         document.getElementById("anonim").checked    = false;
         document.getElementById("charCount").innerText = "0";
 
-        // Reset kategori
+        // reset kategori
         selectedKategoriId = null;
+
         document.getElementById('kategoriSelect').value = '';
+
         syncChips();
 
-        // Auto-refresh riwayat setelah kirim
-        setTimeout(() => loadRiwayat(), 600);
+        setTimeout(() => {
+
+            loadRiwayat();
+
+        }, 600);
 
     } catch (e) {
+
         msg.className = "msg-box error";
-        msg.innerText = "Gagal mengirim aspirasi. Pastikan server berjalan.";
+
+        msg.innerText =
+            "Gagal mengirim aspirasi. Pastikan server berjalan.";
+
     } finally {
+
         btn.textContent = "Kirim Aspirasi →";
+
         btn.disabled = false;
     }
 }

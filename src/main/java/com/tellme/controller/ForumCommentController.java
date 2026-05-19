@@ -26,20 +26,23 @@ public class ForumCommentController {
     public ForumComment createComment(
             @RequestBody ForumComment comment) {
 
-        return forumCommentService.createComment(comment);
+        return forumCommentService
+                .createComment(comment);
     }
 
     @GetMapping("/{postId}")
     public List<ForumCommentResponse> getByPost(
             @PathVariable Long postId) {
 
-        return forumCommentService.getByPost(postId);
+        return forumCommentService
+                .getByPost(postId);
     }
 
     @DeleteMapping("/{id}")
     public void deleteComment(
             @PathVariable Long id) {
 
-        forumCommentService.deleteComment(id);
+        forumCommentService
+                .deleteComment(id);
     }
 }
