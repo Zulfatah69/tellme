@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TellMe - Riwayat Aspirasi</title>
+    <script src="/js/auth.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* ── LIGHT THEME (default) ── */
         :root,
         [data-theme="light"] {
             --navy: #0f1f3d;
@@ -33,13 +33,11 @@
             --toggle-track: #e5e7eb;
             --toggle-thumb: #0e9f8e;
             --toggle-pos: 2px;
-            /* badge colors */
             --badge-proses-bg: #fef9c3; --badge-proses-color: #92400e; --badge-proses-border: #fde68a;
             --badge-selesai-bg: #f0fdf4; --badge-selesai-color: #15803d; --badge-selesai-border: #bbf7d0;
             --badge-ditolak-bg: #fef2f2; --badge-ditolak-color: #dc2626; --badge-ditolak-border: #fecaca;
         }
 
-        /* ── DARK THEME ── */
         [data-theme="dark"] {
             --navy: #e2e8f0;
             --teal: #2dd4bf;
@@ -64,7 +62,6 @@
             --toggle-track: #22222f;
             --toggle-thumb: #6c63ff;
             --toggle-pos: 24px;
-            /* badge colors */
             --badge-proses-bg: rgba(251,191,36,0.1); --badge-proses-color: #fcd34d; --badge-proses-border: rgba(251,191,36,0.25);
             --badge-selesai-bg: rgba(74,222,128,0.1); --badge-selesai-color: #86efac; --badge-selesai-border: rgba(74,222,128,0.25);
             --badge-ditolak-bg: rgba(239,68,68,0.1); --badge-ditolak-color: #fca5a5; --badge-ditolak-border: rgba(239,68,68,0.25);
@@ -79,7 +76,6 @@
             transition: background 0.35s ease, color 0.35s ease;
         }
 
-        /* ── NAV ── */
         .tm-nav {
             background: var(--nav-bg);
             border-bottom: 1px solid var(--border);
@@ -120,7 +116,6 @@
         }
         .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
 
-        /* ── THEME TOGGLE ── */
         .theme-toggle {
             display: flex; align-items: center; gap: .5rem;
             cursor: pointer; user-select: none; flex-shrink: 0;
@@ -144,7 +139,6 @@
         }
         [data-theme="dark"] .toggle-thumb { box-shadow: 0 0 8px rgba(108,99,255,0.5); }
 
-        /* ── PAGE ── */
         .page-wrap { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
         .page-header {
             margin-bottom: 24px; display: flex;
@@ -165,7 +159,6 @@
             transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
         }
 
-        /* ── ASPIRASI CARD ── */
         .aspirasi-card {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 16px; padding: 24px; margin-bottom: 14px;
@@ -181,7 +174,6 @@
             font-weight: 700; color: var(--navy); transition: color 0.35s ease;
         }
 
-        /* ── BADGES ── */
         .badge-status {
             font-size: 0.75rem; font-weight: 600; padding: 4px 12px;
             border-radius: 20px; font-family: 'Sora', sans-serif;
@@ -200,7 +192,6 @@
             border: 1px solid var(--badge-ditolak-border);
         }
 
-        /* ── CONTENT ── */
         .aspirasi-text {
             font-size: 0.9rem; color: var(--text-soft); line-height: 1.65;
             margin-bottom: 14px; padding: 14px;
@@ -223,7 +214,6 @@
             transition: color 0.35s ease;
         }
 
-        /* ── EMPTY STATE ── */
         .empty-state { text-align: center; padding: 80px 0; }
         .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
         .empty-state h5 {
@@ -250,9 +240,7 @@
 </script>
 
 <script>
-const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","role":"MAHASISWA","id":1}');
-// if(!user) window.location.href="/login.html";
-// if(user&&user.role==="ADMIN") window.location.href="/admin.html";
+const user = JSON.parse(localStorage.getItem("user"));
 window.onload = function() {
     document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
     applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
@@ -292,19 +280,50 @@ window.onload = function() {
         </div>
         <div class="count-badge" id="countBadge">0 Aspirasi</div>
     </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <select id="filterStatus" class="form-select" onchange="applyFilters()" style="flex: 1; min-width: 140px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; background: var(--surface); color: var(--text);">
+            <option value="semua">Semua Status</option>
+            <option value="1">Masuk</option>
+            <option value="2">Diproses</option>
+            <option value="3">Selesai</option>
+            <option value="4">Ditolak</option>
+        </select>
+        <select id="filterKategori" class="form-select" onchange="applyFilters()" style="flex: 1; min-width: 140px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; background: var(--surface); color: var(--text);">
+            <option value="semua">Semua Kategori</option>
+            <option value="Akademik">Akademik</option>
+            <option value="Organisasi">Organisasi</option>
+            <option value="belum">Belum Kategori</option>
+        </select>
+        <select id="filterAnonim" class="form-select" onchange="applyFilters()" style="flex: 1; min-width: 140px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; background: var(--surface); color: var(--text);">
+            <option value="semua">Semua Pengiriman</option>
+            <option value="anonim">Anonim</option>
+            <option value="non-anonim">Non-Anonim (Nama Terlihat)</option>
+        </select>
+    </div>
+
     <div id="listRiwayat"></div>
 </div>
 
 <script>
-const API = "http://localhost:8080/api/aspirasi";
+const API = "http://localhost:8080/api/aspirasi/my";
+let allData = [];
 
-function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
+async function logout() {
+    try {
+        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+    } catch (e) {
+        console.error("Gagal logout di server:", e);
+    }
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
+}
+
 function formatTgl(t) {
     if (!t) return '-';
     return new Date(t).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-/* ── THEME ── */
 function applyThemeUI(theme) {
     const isLight = theme === 'light';
     document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
@@ -320,52 +339,34 @@ function toggleTheme() {
     applyThemeUI(next);
 }
 
-/* ── DATA ── */
+function openFullImage(path) {
+    let overlay = document.getElementById("imgOverlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "imgOverlay";
+        overlay.style = "position:fixed; inset:0; background:rgba(0,0,0,.85); display:flex; align-items:center; justify-content:center; z-index:999999; cursor:pointer;";
+        overlay.onclick = () => overlay.style.display = "none";
+        
+        const img = document.createElement("img");
+        img.id = "imgOverlaySrc";
+        img.style = "max-width:90%; max-height:90%; object-fit:contain; border-radius:8px;";
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+    document.getElementById("imgOverlaySrc").src = path;
+    overlay.style.display = "flex";
+}
+
 async function loadRiwayat() {
     try {
-        const res  = await fetch(API);
-        let data   = await res.json();
-        data = data.filter(a => a.user?.id == user.id);
-        document.getElementById("countBadge").innerText = data.length + " Aspirasi";
-
-        if (!data.length) {
-            document.getElementById("listRiwayat").innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">📭</div>
-                    <h5>Belum ada aspirasi</h5>
-                    <p>Kamu belum pernah mengirim aspirasi.</p>
-                    <a href="/aspirasi.html">Buat Aspirasi Pertama</a>
-                </div>`;
-            return;
-        }
-
-        let html = "";
-        data.reverse().forEach(a => {
-            let badge = "";
-            if (a.status?.id == 1)      badge = '<span class="badge-status badge-diproses">Diproses</span>';
-            else if (a.status?.id == 2) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
-            else if (a.status?.id == 3) badge = '<span class="badge-status badge-ditolak">Ditolak</span>';
-
-            const feedback = a.feedback
-                ? `<div class="feedback-box"><div class="fb-label">Feedback Admin</div>${a.feedback}</div>`
-                : '';
-
-            html += `<div class="aspirasi-card">
-                <div class="card-top">
-                    <div class="card-title">Aspirasi #${a.id}</div>
-                    ${badge}
-                </div>
-                <div class="aspirasi-text">${a.isiAspirasi}</div>
-                <div class="meta-row">
-                    <div class="meta-item"><strong>Kategori:</strong> ${a.kategori?.namaKategori || '—'}</div>
-                    <div class="meta-item"><strong>Dikirim:</strong> ${formatTgl(a.tanggal)}</div>
-                    <div class="meta-item"><strong>Anonim:</strong> ${a.anonim ? 'Ya' : 'Tidak'}</div>
-                </div>
-                ${feedback}
-            </div>`;
-        });
-        document.getElementById("listRiwayat").innerHTML = html;
-    } catch {
+        const res  = await authenticatedFetch(API);
+        allData   = await res.json();
+        
+        allData.sort((x, y) => new Date(y.tanggal) - new Date(x.tanggal));
+        
+        applyFilters();
+    } catch (e) {
+        console.error(e);
         document.getElementById("listRiwayat").innerHTML = `
             <div class="empty-state">
                 <div class="icon">❌</div>
@@ -373,6 +374,78 @@ async function loadRiwayat() {
                 <p>Pastikan server berjalan dan coba lagi.</p>
             </div>`;
     }
+}
+
+function applyFilters() {
+    const statusVal = document.getElementById("filterStatus").value;
+    const kategoriVal = document.getElementById("filterKategori").value;
+    const anonimVal = document.getElementById("filterAnonim").value;
+    
+    let filtered = [...allData];
+    
+    if (statusVal !== "semua") {
+        filtered = filtered.filter(a => a.status?.id == parseInt(statusVal));
+    }
+    
+    if (kategoriVal !== "semua") {
+        if (kategoriVal === "belum") {
+            filtered = filtered.filter(a => !a.kategori);
+        } else {
+            filtered = filtered.filter(a => a.kategori?.namaKategori === kategoriVal);
+        }
+    }
+    
+    if (anonimVal !== "semua") {
+        const isAnon = anonimVal === "anonim";
+        filtered = filtered.filter(a => a.anonim === isAnon);
+    }
+    
+    document.getElementById("countBadge").innerText = filtered.length + " Aspirasi";
+    
+    if (!filtered.length) {
+        document.getElementById("listRiwayat").innerHTML = `
+            <div class="empty-state">
+                <div class="icon">📭</div>
+                <h5>Tidak ada aspirasi</h5>
+                <p>Tidak ditemukan aspirasi yang sesuai dengan filter.</p>
+            </div>`;
+        return;
+    }
+    
+    let html = "";
+    filtered.forEach(a => {
+        let badge = "";
+        if (a.status?.id == 1)      badge = '<span class="badge-status badge-diproses" style="background:var(--border); color:var(--text-soft);">Masuk</span>';
+        else if (a.status?.id == 2) badge = '<span class="badge-status badge-diproses">Diproses</span>';
+        else if (a.status?.id == 3) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
+        else if (a.status?.id == 4) badge = '<span class="badge-status badge-ditolak">Ditolak</span>';
+
+        const feedback = a.feedback
+            ? `<div class="feedback-box"><div class="fb-label">Feedback Admin</div>${a.feedback}</div>`
+            : '';
+
+        const fotoGallery = a.fotoPaths && a.fotoPaths.length > 0
+            ? `<div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                ${a.fotoPaths.map(path => `<img src="${path}" style="width:70px; height:70px; object-fit:cover; border-radius:6px; cursor:pointer; border:1px solid var(--border);" onclick="openFullImage('${path}')">`).join('')}
+               </div>`
+            : '';
+
+        html += `<div class="aspirasi-card">
+            <div class="card-top">
+                <div class="card-title">Aspirasi #${a.id}</div>
+                ${badge}
+            </div>
+            <div class="aspirasi-text">${a.isiAspirasi}</div>
+            ${fotoGallery}
+            <div class="meta-row" style="margin-top:12px">
+                <div class="meta-item"><strong>Kategori:</strong> ${a.kategori?.namaKategori || '—'}</div>
+                <div class="meta-item"><strong>Dikirim:</strong> ${formatTgl(a.tanggal)}</div>
+                <div class="meta-item"><strong>Anonim:</strong> ${a.anonim ? 'Ya' : 'Tidak'}</div>
+            </div>
+            ${feedback}
+        </div>`;
+    });
+    document.getElementById("listRiwayat").innerHTML = html;
 }
 
 loadRiwayat();

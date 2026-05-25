@@ -1,6 +1,7 @@
 package com.tellme.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.tellme.model.Kategori;
 import com.tellme.model.Status;
@@ -16,6 +17,7 @@ public class AspirasiResponse {
     private Status status;
     private String feedback;
     private String emailTujuan;
+    private List<String> fotoPaths;
 
     public Long getId() {
         return id;
@@ -87,5 +89,13 @@ public class AspirasiResponse {
 
     public void setEmailTujuan(String emailTujuan) {
         this.emailTujuan = emailTujuan;
+    }
+
+    public List<String> getFotoPaths() {
+        return fotoPaths;
+    }
+
+    public void setFotoPaths(List<String> fotoPaths) {
+        this.fotoPaths = fotoPaths;
     }
 }

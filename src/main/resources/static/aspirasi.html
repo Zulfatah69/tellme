@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TellMe - Aspirasi</title>
+    <script src="/js/auth.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
@@ -96,12 +97,11 @@
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
-            color: var(--text);
             margin: 0;
+            color: var(--text);
             transition: background 0.35s ease, color 0.35s ease;
         }
 
-        /* NAV */
         .tm-nav {
             background: var(--nav-bg);
             border-bottom: 1px solid var(--border);
@@ -165,7 +165,6 @@
         }
         [data-theme="dark"] .toggle-thumb { box-shadow: 0 0 8px rgba(108,99,255,0.5); }
 
-        /* PAGE */
         .page-wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px; }
 
         .page-header { margin-bottom: 28px; }
@@ -176,7 +175,6 @@
         }
         .page-header p { color: var(--muted); font-size: 0.88rem; margin: 0; transition: color 0.35s ease; }
 
-        /* SPLIT LAYOUT */
         .split-layout {
             display: grid;
             grid-template-columns: 400px 1fr;
@@ -185,15 +183,14 @@
         }
         @media (max-width: 860px) { .split-layout { grid-template-columns: 1fr; } }
 
-        /* LEFT PANEL - FORM */
         .panel-form {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 28px;
             box-shadow: var(--card-shadow);
-            position: sticky;
-            top: 88px;
+            position: relative;
+            top: 0;
             transition: background 0.35s ease, border-color 0.35s ease;
         }
 
@@ -220,7 +217,6 @@
 
         .divider { height: 1px; background: var(--divider); margin: 20px 0; transition: background 0.35s ease; }
 
-        /* FORM ELEMENTS */
         .form-label {
             font-size: 0.75rem; font-weight: 600; color: var(--navy);
             margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase;
@@ -242,7 +238,6 @@
         [data-theme="dark"] .form-control:focus { box-shadow: 0 0 0 3px rgba(45,212,191,0.12); }
         textarea.form-control { resize: vertical; min-height: 140px; line-height: 1.6; }
 
-        /* SELECT / KATEGORI */
         .select-wrapper {
             position: relative;
             margin-bottom: 14px;
@@ -268,7 +263,6 @@
             cursor: not-allowed;
         }
 
-        /* Kategori chips (pill selector alternative shown below select) */
         .kategori-chips {
             display: flex;
             flex-wrap: wrap;
@@ -305,7 +299,6 @@
             color: var(--teal);
         }
 
-        /* Kategori loading skeleton */
         .kategori-loading {
             display: flex; gap: 6px;
         }
@@ -349,7 +342,6 @@
         }
         .char-count { text-align: right; font-size: 0.72rem; color: var(--muted); margin-top: 5px; transition: color 0.35s ease; }
 
-        /* RIGHT PANEL - RIWAYAT */
         .panel-list { }
 
         .list-header {
@@ -380,7 +372,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .refresh-icon { display: inline-block; }
 
-        /* ASPIRASI CARD */
         .aspirasi-card {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 14px; padding: 20px; margin-bottom: 12px;
@@ -403,78 +394,77 @@
         }
 
         .badge-status {
-            font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+            font-size: 0.7rem; font-weight: 600; padding: 3px 10px;
             border-radius: 20px; font-family: 'Sora', sans-serif;
             transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
         }
-        .badge-diproses { background: var(--badge-proses-bg); color: var(--badge-proses-color); border: 1px solid var(--badge-proses-border); }
-        .badge-selesai  { background: var(--badge-selesai-bg); color: var(--badge-selesai-color); border: 1px solid var(--badge-selesai-border); }
-        .badge-ditolak  { background: var(--badge-ditolak-bg); color: var(--badge-ditolak-color); border: 1px solid var(--badge-ditolak-border); }
+        .badge-diproses {
+            background: var(--badge-proses-bg); color: var(--badge-proses-color);
+            border: 1px solid var(--badge-proses-border);
+        }
+        .badge-selesai {
+            background: var(--badge-selesai-bg); color: var(--badge-selesai-color);
+            border: 1px solid var(--badge-selesai-border);
+        }
+        .badge-ditolak {
+            background: var(--badge-ditolak-bg); color: var(--badge-ditolak-color);
+            border: 1px solid var(--badge-ditolak-border);
+        }
 
         .aspirasi-text {
-            font-size: 0.87rem; color: var(--text-soft); line-height: 1.6;
+            font-size: 0.88rem; color: var(--text-soft); line-height: 1.6;
             margin-bottom: 12px; padding: 12px;
             background: var(--aspirasi-text-bg); border-radius: 8px;
             transition: background 0.35s ease, color 0.35s ease;
         }
         .meta-row { display: flex; gap: 16px; flex-wrap: wrap; }
-        .meta-item { font-size: 0.77rem; color: var(--muted); transition: color 0.35s ease; }
+        .meta-item { font-size: 0.75rem; color: var(--muted); transition: color 0.35s ease; }
         .meta-item strong { color: var(--navy); font-weight: 600; transition: color 0.35s ease; }
 
         .feedback-box {
             margin-top: 10px; padding: 10px 12px;
             background: var(--feedback-bg); border: 1px solid var(--feedback-border);
-            border-radius: 8px; font-size: 0.81rem; color: var(--feedback-text);
+            border-radius: 8px; font-size: 0.8rem; color: var(--feedback-text);
             transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
         }
         .feedback-box .fb-label {
             font-family: 'Sora', sans-serif; font-weight: 700;
-            font-size: 0.73rem; color: var(--teal); margin-bottom: 4px;
+            font-size: 0.72rem; color: var(--teal); margin-bottom: 3px;
             transition: color 0.35s ease;
         }
 
-        /* EMPTY STATE */
-        .empty-state { text-align: center; padding: 60px 0; }
-        .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
-        .empty-state h5 {
-            font-family: 'Sora', sans-serif; color: var(--navy);
-            font-size: 1rem; margin-bottom: 6px; transition: color 0.35s ease;
-        }
-        .empty-state p { color: var(--muted); font-size: 0.83rem; transition: color 0.35s ease; }
-
-        /* SKELETON LOADER */
-        .skeleton {
-            background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.2s infinite;
-            border-radius: 8px;
-        }
-        @keyframes shimmer { to { background-position: -200% 0; } }
         .skeleton-card {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 14px; padding: 20px; margin-bottom: 12px;
         }
-        .sk-line { height: 12px; margin-bottom: 8px; }
-        .sk-title { width: 40%; }
-        .sk-badge { width: 18%; height: 20px; border-radius: 20px; }
-        .sk-body { width: 100%; height: 60px; margin: 12px 0; border-radius: 8px; }
-        .sk-meta { width: 60%; }
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+        }
+        @keyframes shimmer { to { background-position: -200% 0; } }
+        .sk-line { height: 12px; border-radius: 4px; }
+        .sk-title { width: 80px; }
+        .sk-badge { width: 60px; height: 22px; border-radius: 20px; }
+        .sk-body { height: 48px; border-radius: 8px; margin: 12px 0; background: var(--surface2); }
+        .sk-meta { width: 180px; }
     </style>
 </head>
 <body>
 
 <script>
 (function() {
-    const saved = localStorage.getItem('tellme-theme') || 'light';
+    const saved = localStorage.getItem('tellme-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
 })();
 </script>
 
 <script>
-const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","role":"MAHASISWA","id":1}');
+const user = JSON.parse(localStorage.getItem("user")) || {};
+
 window.onload = function() {
-    document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
-    applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
+    document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama || "");
+    applyThemeUI(document.documentElement.getAttribute('data-theme') || 'dark');
 }
 </script>
 
@@ -483,7 +473,7 @@ window.onload = function() {
         <a class="tm-brand" href="/index.html">Tell<span>Me</span></a>
         <div class="tm-links">
             <a href="/index.html">Beranda</a>
-            <a href="/aspirasi.html" class="active">Aspirasi</a>
+            <a href="/aspirasi.html" class="active">Buat Aspirasi</a>
             <a href="/forum.html">Forum</a>
             <a href="/profile.html">Profil</a>
         </div>
@@ -491,10 +481,10 @@ window.onload = function() {
             <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
                 <div class="toggle-track">
                     <div class="toggle-thumb" id="toggleThumb">
-                        <span id="toggleIcon">☀️</span>
+                        <span id="toggleIcon">🌙</span>
                     </div>
                 </div>
-                <span class="theme-toggle-label" id="themeLabel">Terang</span>
+                <span class="theme-toggle-label" id="themeLabel">Gelap</span>
             </div>
             <div class="tm-hello">Halo, <strong class="namaUser"></strong></div>
             <button class="btn-logout" onclick="logout()">Keluar</button>
@@ -510,7 +500,6 @@ window.onload = function() {
 
     <div class="split-layout">
 
-        <!-- LEFT: FORM BUAT ASPIRASI -->
         <div class="panel-form">
             <div class="panel-title">
                 <div class="panel-icon">✍️</div>
@@ -520,26 +509,17 @@ window.onload = function() {
 
             <div class="divider"></div>
 
-            <!-- KATEGORI -->
             <div style="margin-bottom:14px">
                 <label class="form-label">Kategori</label>
-                <div
-                    style="
-                        font-size:12px;
-                        color:var(--muted);
-                        margin-bottom:8px;
-                    ">
-
-                    Kategori boleh dikosongkan.
-                    Admin akan menentukan kategori nanti.
-
+                <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">
+                    Kategori boleh dikosongkan. Admin akan menentukan kategori nanti.
                 </div>
                 <div class="select-wrapper">
                     <select id="kategoriSelect" class="form-control" disabled>
                         <option value="">Memuat kategori...</option>
                     </select>
                 </div>
-                <!-- Chip pills ditampilkan setelah kategori berhasil dimuat -->
+
                 <div id="kategoriChips" class="kategori-chips" style="display:none"></div>
                 <div id="kategoriLoading" class="kategori-loading">
                     <div class="kat-sk" style="width:72px"></div>
@@ -549,12 +529,16 @@ window.onload = function() {
                 </div>
             </div>
 
-            <!-- ISI ASPIRASI -->
             <div style="margin-bottom:14px">
                 <label class="form-label">Isi Aspirasi</label>
-                <textarea id="isiAspirasi" class="form-control" rows="6"
-                    placeholder="Tulis aspirasi kamu di sini..." oninput="updateCount()"></textarea>
+                <textarea id="isiAspirasi" class="form-control" rows="6" placeholder="Tulis aspirasi kamu di sini..." oninput="updateCount()"></textarea>
                 <div class="char-count"><span id="charCount">0</span> karakter</div>
+            </div>
+
+            <div style="margin-bottom:14px">
+                <label class="form-label">Foto Bukti (Opsional)</label>
+                <input type="file" id="fotoInput" class="form-control" multiple accept="image/*" onchange="previewImages()">
+                <div id="fotoPreviewContainer" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;"></div>
             </div>
 
             <div class="anon-check">
@@ -569,7 +553,6 @@ window.onload = function() {
             <div id="message" class="msg-box"></div>
         </div>
 
-        <!-- RIGHT: RIWAYAT -->
         <div class="panel-list">
             <div class="list-header">
                 <div class="list-header-left">
@@ -584,8 +567,28 @@ window.onload = function() {
                 </button>
             </div>
 
-            <div id="listRiwayat">
-                <!-- Skeleton -->
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                <select id="filterStatus" class="form-control" onchange="applyFilters()" style="flex: 1; min-width: 110px; font-size: 0.8rem; padding: 8px 12px; height: auto;">
+                    <option value="semua">Semua Status</option>
+                    <option value="1">Masuk</option>
+                    <option value="2">Diproses</option>
+                    <option value="3">Selesai</option>
+                    <option value="4">Ditolak</option>
+                </select>
+                <select id="filterKategori" class="form-control" onchange="applyFilters()" style="flex: 1; min-width: 110px; font-size: 0.8rem; padding: 8px 12px; height: auto;">
+                    <option value="semua">Semua Kategori</option>
+                    <option value="Akademik">Akademik</option>
+                    <option value="Organisasi">Organisasi</option>
+                    <option value="belum">Belum Kategori</option>
+                </select>
+                <select id="filterAnonim" class="form-control" onchange="applyFilters()" style="flex: 1; min-width: 110px; font-size: 0.8rem; padding: 8px 12px; height: auto;">
+                    <option value="semua">Semua Pengiriman</option>
+                    <option value="anonim">Anonim</option>
+                    <option value="non-anonim">Non-Anonim</option>
+                </select>
+            </div>
+
+            <div id="listRiwayat" style="max-height: 600px; overflow-y: auto; padding-right: 6px;">
                 <div class="skeleton-card">
                     <div style="display:flex;justify-content:space-between;margin-bottom:12px">
                         <div class="skeleton sk-line sk-title"></div>
@@ -605,14 +608,14 @@ window.onload = function() {
             </div>
         </div>
 
-    </div>
+     </div>
 </div>
 
 <script>
-const API          = "http://localhost:8080/api/aspirasi";
+const API = "http://localhost:8080/api/aspirasi";
+const API_MY = "http://localhost:8080/api/aspirasi/my";
 const API_KATEGORI = "http://localhost:8080/api/kategori";
 
-// Fallback kategori jika API belum tersedia
 const FALLBACK_KATEGORI = [
     { id: 1, namaKategori: "Akademik" },
     { id: 2, namaKategori: "Fasilitas" },
@@ -624,11 +627,19 @@ const FALLBACK_KATEGORI = [
 
 let selectedKategoriId = null;
 let kategoriList       = [];
+let selectedFiles      = [];
 
-function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
+async function logout() {
+    try {
+        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+    } catch (e) {
+        console.error("Gagal logout di server:", e);
+    }
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
+}
 function updateCount() { document.getElementById("charCount").innerText = document.getElementById("isiAspirasi").value.length; }
 
-/* THEME */
 function applyThemeUI(theme) {
     const isLight = theme === 'light';
     document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
@@ -643,31 +654,83 @@ function toggleTheme() {
     applyThemeUI(next);
 }
 
-/* FORMAT DATE */
 function formatTgl(t) {
     if (!t) return '-';
     return new Date(t).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-/* ── LOAD KATEGORI ── */
+function previewImages() {
+    const input = document.getElementById("fotoInput");
+    for (let file of input.files) {
+        selectedFiles.push(file);
+    }
+    input.value = ""; 
+    renderPreviews();
+}
+
+function renderPreviews() {
+    const container = document.getElementById("fotoPreviewContainer");
+    container.innerHTML = "";
+    selectedFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const wrapper = document.createElement("div");
+            wrapper.style = "position:relative; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid var(--border);";
+            
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.style = "width:100%; height:100%; object-fit:cover;";
+            
+            const removeBtn = document.createElement("button");
+            removeBtn.innerHTML = "✕";
+            removeBtn.style = "position:absolute; top:2px; right:2px; background:rgba(239,68,68,0.85); color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;";
+            removeBtn.onclick = function(e) {
+                e.preventDefault();
+                selectedFiles.splice(index, 1);
+                renderPreviews();
+            };
+            
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            container.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function openFullImage(path) {
+    let overlay = document.getElementById("imgOverlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "imgOverlay";
+        overlay.style = "position:fixed; inset:0; background:rgba(0,0,0,.85); display:flex; align-items:center; justify-content:center; z-index:999999; cursor:pointer;";
+        overlay.onclick = () => overlay.style.display = "none";
+        
+        const img = document.createElement("img");
+        img.id = "imgOverlaySrc";
+        img.style = "max-width:90%; max-height:90%; object-fit:contain; border-radius:8px;";
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+    document.getElementById("imgOverlaySrc").src = path;
+    overlay.style.display = "flex";
+}
+
 async function loadKategori() {
     try {
-        const res  = await fetch(API_KATEGORI);
+        const res  = await authenticatedFetch(API_KATEGORI);
         if (!res.ok) throw new Error('api error');
         const data = await res.json();
         kategoriList = data;
     } catch {
-        // Gunakan fallback jika API tidak tersedia
         kategoriList = FALLBACK_KATEGORI;
     }
     renderKategori();
 }
 
 function renderKategori() {
-    // Sembunyikan loading skeleton
     document.getElementById('kategoriLoading').style.display = 'none';
 
-    // Isi dropdown (untuk aksesibilitas / mobile)
     const sel = document.getElementById('kategoriSelect');
     sel.innerHTML = '<option value="">— Pilih Kategori —</option>';
     kategoriList.forEach(k => {
@@ -678,13 +741,11 @@ function renderKategori() {
     });
     sel.disabled = false;
 
-    // Sinkronkan chips dengan dropdown
     sel.addEventListener('change', () => {
         selectedKategoriId = sel.value ? parseInt(sel.value) : null;
         syncChips();
     });
 
-    // Render chip pills
     const chipsEl = document.getElementById('kategoriChips');
     chipsEl.innerHTML = '';
     kategoriList.forEach(k => {
@@ -708,55 +769,19 @@ function syncChips() {
     });
 }
 
-/* ── LOAD RIWAYAT ── */
 async function loadRiwayat() {
     const btn = document.getElementById('refreshBtn');
-    btn.classList.add('spinning');
+    if (btn) btn.classList.add('spinning');
 
     try {
-        const res  = await fetch(API);
+        const res  = await authenticatedFetch(API_MY);
         let data   = await res.json();
-        data = data.filter(a => a.user?.id == user.id);
-
-        document.getElementById("countBadge").innerText = data.length + " Aspirasi";
-
-        if (!data.length) {
-            document.getElementById("listRiwayat").innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">📭</div>
-                    <h5>Belum ada aspirasi</h5>
-                    <p>Aspirasi yang kamu kirim akan muncul di sini.</p>
-                </div>`;
-            return;
-        }
-
-        let html = "";
-        [...data].reverse().forEach((a, i) => {
-            let badge = "";
-            if (a.status?.id == 2)      badge = '<span class="badge-status badge-diproses">⏳ Diproses</span>';
-            else if (a.status?.id == 3) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
-            else if (a.status?.id == 4) badge = '<span class="badge-status badge-ditolak">✕ Ditolak</span>';
-
-            const feedback = a.feedback
-                ? `<div class="feedback-box"><div class="fb-label">Feedback Admin</div>${a.feedback}</div>`
-                : '';
-
-            html += `<div class="aspirasi-card" style="animation-delay:${i * 0.05}s">
-                <div class="card-top">
-                    <div class="card-title">Aspirasi</div>
-                    ${badge}
-                </div>
-                <div class="aspirasi-text">${a.isiAspirasi}</div>
-                <div class="meta-row">
-                    <div class="meta-item"><strong>Kategori:</strong> ${a.kategori?.namaKategori || '—'}</div>
-                    <div class="meta-item"><strong>Dikirim:</strong> ${formatTgl(a.tanggal)}</div>
-                    <div class="meta-item"><strong>Anonim:</strong> ${a.anonim ? 'Ya' : 'Tidak'}</div>
-                </div>
-                ${feedback}
-            </div>`;
-        });
-        document.getElementById("listRiwayat").innerHTML = html;
-    } catch {
+        
+        data.sort((x, y) => new Date(y.tanggal) - new Date(x.tanggal));
+        window.allRiwayatData = data;
+        applyFilters();
+    } catch (e) {
+        console.error(e);
         document.getElementById("countBadge").innerText = "— Aspirasi";
         document.getElementById("listRiwayat").innerHTML = `
             <div class="empty-state">
@@ -765,13 +790,83 @@ async function loadRiwayat() {
                 <p>Pastikan server berjalan dan coba lagi.</p>
             </div>`;
     } finally {
-        btn.classList.remove('spinning');
+        if (btn) btn.classList.remove('spinning');
     }
 }
 
-/* ── KIRIM ASPIRASI ── */
-async function kirimAspirasi() {
+function applyFilters() {
+    const statusVal = document.getElementById("filterStatus").value;
+    const kategoriVal = document.getElementById("filterKategori").value;
+    const anonimVal = document.getElementById("filterAnonim").value;
+    
+    let filtered = [...(window.allRiwayatData || [])];
+    
+    if (statusVal !== "semua") {
+        filtered = filtered.filter(a => a.status?.id == parseInt(statusVal));
+    }
+    
+    if (kategoriVal !== "semua") {
+        if (kategoriVal === "belum") {
+            filtered = filtered.filter(a => !a.kategori);
+        } else {
+            filtered = filtered.filter(a => a.kategori?.namaKategori === kategoriVal);
+        }
+    }
+    
+    if (anonimVal !== "semua") {
+        const isAnon = anonimVal === "anonim";
+        filtered = filtered.filter(a => a.anonim === isAnon);
+    }
+    
+    document.getElementById("countBadge").innerText = filtered.length + " Aspirasi";
+    
+    if (!filtered.length) {
+        document.getElementById("listRiwayat").innerHTML = `
+            <div class="empty-state">
+                <div class="icon">📭</div>
+                <h5>Tidak ada aspirasi</h5>
+                <p>Tidak ditemukan aspirasi yang sesuai dengan filter.</p>
+            </div>`;
+        return;
+    }
+    
+    let html = "";
+    filtered.forEach((a, i) => {
+        let badge = "";
+        if (a.status?.id == 1)      badge = '<span class="badge-status badge-proses" style="background:var(--border); color:var(--text-soft);">Masuk</span>';
+        else if (a.status?.id == 2) badge = '<span class="badge-status badge-diproses">⏳ Diproses</span>';
+        else if (a.status?.id == 3) badge = '<span class="badge-status badge-selesai">✓ Selesai</span>';
+        else if (a.status?.id == 4) badge = '<span class="badge-status badge-ditolak">✕ Ditolak</span>';
 
+        const feedback = a.feedback
+            ? `<div class="feedback-box"><div class="fb-label">Feedback Admin</div>${a.feedback}</div>`
+            : '';
+
+        const fotoGallery = a.fotoPaths && a.fotoPaths.length > 0
+            ? `<div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                ${a.fotoPaths.map(path => `<img src="${path}" style="width:70px; height:70px; object-fit:cover; border-radius:6px; cursor:pointer; border:1px solid var(--border);" onclick="openFullImage('${path}')">`).join('')}
+               </div>`
+            : '';
+
+        html += `<div class="aspirasi-card" style="animation-delay:${i * 0.05}s">
+            <div class="card-top">
+                <div class="card-title">Aspirasi</div>
+                ${badge}
+            </div>
+            <div class="aspirasi-text">${a.isiAspirasi}</div>
+            ${fotoGallery}
+            <div class="meta-row" style="margin-top:12px">
+                <div class="meta-item"><strong>Kategori:</strong> ${a.kategori?.namaKategori || '—'}</div>
+                <div class="meta-item"><strong>Dikirim:</strong> ${formatTgl(a.tanggal)}</div>
+                <div class="meta-item"><strong>Anonim:</strong> ${a.anonim ? 'Ya' : 'Tidak'}</div>
+            </div>
+            ${feedback}
+        </div>`;
+    });
+    document.getElementById("listRiwayat").innerHTML = html;
+}
+
+async function kirimAspirasi() {
     const isiAspirasi = document.getElementById("isiAspirasi").value;
     const anonim      = document.getElementById("anonim").checked;
     const msg         = document.getElementById("message");
@@ -779,58 +874,52 @@ async function kirimAspirasi() {
     msg.className = "msg-box";
 
     if (!isiAspirasi.trim()) {
-
         msg.className = "msg-box error";
         msg.innerText = "Isi aspirasi terlebih dahulu.";
-
         return;
     }
 
     const btn = document.querySelector('.btn-kirim');
-
     btn.textContent = "Mengirim...";
     btn.disabled    = true;
 
     try {
+        let uploadedUrls = [];
+
+        if (selectedFiles.length > 0) {
+            const formData = new FormData();
+            selectedFiles.forEach(file => {
+                formData.append("files", file);
+            });
+            const uploadRes = await fetch("http://localhost:8080/api/upload", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${JSON.parse(localStorage.getItem("user")).token}`
+                },
+                body: formData
+            });
+            if (!uploadRes.ok) throw new Error("Gagal mengunggah gambar.");
+            uploadedUrls = await uploadRes.json();
+        }
 
         const payload = {
-
             isiAspirasi,
             anonim,
-
-            user: {
-                id: user.id
-            },
-
-            ...(selectedKategoriId && {
-
-                kategori: {
-                    id: selectedKategoriId
-                }
-
-            })
-
+            user: { id: user.id },
+            fotoPaths: uploadedUrls, 
+            ...(selectedKategoriId && { kategori: { id: selectedKategoriId } })
         };
 
-        const res = await fetch(API, {
-
+        const res = await authenticatedFetch(API, {
             method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
-
         });
 
         if (!res.ok) {
-
             const err = await res.text();
-
             msg.className = "msg-box error";
             msg.innerText = "Gagal mengirim: " + (err || res.status);
-
             return;
         }
 
@@ -840,36 +929,26 @@ async function kirimAspirasi() {
         document.getElementById("isiAspirasi").value = "";
         document.getElementById("anonim").checked    = false;
         document.getElementById("charCount").innerText = "0";
+        selectedFiles = [];
+        document.getElementById("fotoPreviewContainer").innerHTML = "";
 
-        // reset kategori
         selectedKategoriId = null;
-
         document.getElementById('kategoriSelect').value = '';
-
         syncChips();
 
         setTimeout(() => {
-
             loadRiwayat();
-
         }, 600);
 
     } catch (e) {
-
         msg.className = "msg-box error";
-
-        msg.innerText =
-            "Gagal mengirim aspirasi. Pastikan server berjalan.";
-
+        msg.innerText = "Gagal mengirim aspirasi. Pastikan server berjalan.";
     } finally {
-
         btn.textContent = "Kirim Aspirasi →";
-
         btn.disabled = false;
     }
 }
 
-/* Init */
 loadKategori();
 loadRiwayat();
 </script>

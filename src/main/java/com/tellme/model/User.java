@@ -27,10 +27,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String token;
+
     public enum Role {
         MAHASISWA,
-        ADMIN,
-        PENGELOLA
+        ADMIN
     }
 
     public Long getId() {
@@ -43,7 +44,7 @@ public class User {
 
     public String getNama() {
         return nama;
-    }
+        }
 
     public void setNama(String nama) {
         this.nama = nama;
@@ -79,5 +80,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -6,9 +6,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tellme.model.Aspirasi;
 
-public interface AspirasiRepository extends JpaRepository<Aspirasi, Long> {
+public interface AspirasiRepository
+        extends JpaRepository<Aspirasi, Long> {
 
-    // 🔥 filter berdasarkan kategori
-    List<Aspirasi> findByKategoriId(Long kategoriId);
-    long countByStatusId(Long statusId);
+    List<Aspirasi> findByKategoriId(
+            Long kategoriId
+    );
+
+    long countByStatusId(
+            Long statusId
+    );
+
+    void deleteByUserId(
+            Long userId
+    );
+
+    List<Aspirasi> findByUserId(
+            Long userId
+    );
 }

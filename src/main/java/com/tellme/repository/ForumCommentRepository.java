@@ -9,11 +9,17 @@ import com.tellme.model.ForumComment;
 public interface ForumCommentRepository
         extends JpaRepository<ForumComment, Long> {
 
-    List<ForumComment> findByPostIdAndParentCommentIsNull(
+    List<ForumComment>
+    findByPostIdAndParentCommentIsNull(
             Long postId
     );
 
-    List<ForumComment> findByParentCommentId(
+    List<ForumComment>
+    findByParentCommentId(
             Long parentId
+    );
+
+    void deleteByUserId(
+            Long userId
     );
 }

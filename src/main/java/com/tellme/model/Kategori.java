@@ -16,7 +16,6 @@ public class Kategori {
 
     private String namaKategori;
 
-    // getter setter
     public Long getId() { return id; }
 
     public String getNamaKategori() { return namaKategori; }

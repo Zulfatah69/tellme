@@ -11,7 +11,10 @@ import com.tellme.dto.DashboardResponse;
 import com.tellme.dto.TopKategoriResponse;
 import com.tellme.dto.UpdateStatusRequest;
 import com.tellme.model.Aspirasi;
+import com.tellme.model.User;
 import com.tellme.service.interfaces.AspirasiService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/aspirasi")
@@ -27,13 +30,20 @@ public class AspirasiController {
 
     @GetMapping
     public List<AspirasiResponse> getAspirasi(
-            @RequestParam(required = false) Long kategoriId) {
+            @RequestParam(required = false) Long kategoriId,
+            @RequestParam(required = false) String nama) {
 
         if (kategoriId != null) {
-            return aspirasiService.getAspirasiByKategori(kategoriId);
+            return aspirasiService.getAspirasiByKategori(kategoriId, nama);
         }
 
-        return aspirasiService.getAllAspirasi();
+        return aspirasiService.getAllAspirasi(nama);
+    }
+
+    @GetMapping("/my")
+    public List<AspirasiResponse> getMyAspirasi(HttpServletRequest request) {
+        User user = (User) request.getAttribute("currentUser");
+        return aspirasiService.getAspirasiByUserId(user.getId());
     }
 
     @PutMapping("/{id}/status")
@@ -65,11 +75,8 @@ public class AspirasiController {
             @RequestBody Map<String, Long> body
     ){
 
-        Long kategoriId =
-                body.get("kategoriId");
-
-        Long statusId =
-                body.get("statusId");
+        Long kategoriId = body.get("kategoriId");
+        Long statusId = body.get("statusId");
 
         return aspirasiService.prosesAspirasi(
                 id,

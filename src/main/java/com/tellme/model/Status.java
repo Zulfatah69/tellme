@@ -16,7 +16,6 @@ public class Status {
 
     private String namaStatus;
 
-    // getter setter
     public Long getId() { return id; }
 
     public String getNamaStatus() { return namaStatus; }

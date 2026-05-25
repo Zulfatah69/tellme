@@ -11,9 +11,9 @@ public interface AspirasiService {
 
     Aspirasi createAspirasi(Aspirasi aspirasi);
 
-    List<AspirasiResponse> getAllAspirasi();
+    List<AspirasiResponse> getAllAspirasi(String nama);
 
-    List<AspirasiResponse> getAspirasiByKategori(Long kategoriId);
+    List<AspirasiResponse> getAspirasiByKategori(Long kategoriId, String nama);
 
     Aspirasi updateStatus(Long id, Long statusId);
 
@@ -30,4 +30,6 @@ public interface AspirasiService {
     );
 
     Aspirasi updateWithFeedback(Long id, Long statusId, String feedback);
+
+    List<AspirasiResponse> getAspirasiByUserId(Long userId);
 }

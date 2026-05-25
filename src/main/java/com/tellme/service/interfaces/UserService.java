@@ -16,5 +16,8 @@ public interface UserService {
 
     void deleteById(Long id);
 
-    User login(String identifier, String password);
+    User login(
+            String identifier,
+            String password
+    );
 }

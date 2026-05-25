@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TellMe - Beranda</title>
+    <script src="/js/auth.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* ── LIGHT THEME ── */
+        
         :root,
         [data-theme="light"] {
             --navy: #0f1f3d;
@@ -40,7 +41,7 @@
             --sidebar-divider: rgba(15,31,61,0.08);
         }
 
-        /* ── DARK THEME (default) ── */
+        
         [data-theme="dark"] {
             --navy: #e2e8f0;
             --teal: #2dd4bf;
@@ -83,7 +84,7 @@
             min-height: 100vh;
         }
 
-        /* ── NAV ── */
+        
         .tm-nav {
             background: var(--nav-bg);
             border-bottom: 1px solid var(--border);
@@ -133,7 +134,7 @@
         }
         .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
 
-        /* ── THEME TOGGLE ── */
+        
         .theme-toggle {
             display: flex; align-items: center; gap: 7px;
             cursor: pointer; user-select: none; flex-shrink: 0;
@@ -158,10 +159,10 @@
             font-size: 0.55rem;
         }
 
-        /* ── PAGE WRAP ── */
+        
         .page-wrap { max-width: 1280px; margin: 0 auto; padding: 32px 28px; }
 
-        /* ── HERO ── */
+        
         .hero-banner {
             background: var(--hero-gradient);
             border-radius: 20px;
@@ -171,7 +172,7 @@
             border: 1px solid var(--hero-border);
             transition: background 0.35s ease, border-color 0.35s ease;
         }
-        /* Decorative orbs */
+        
         .hero-banner::before {
             content: '';
             position: absolute; right: -80px; top: -80px;
@@ -201,7 +202,7 @@
         }
         .hero-banner p { color: rgba(255,255,255,0.42); font-size: 0.88rem; margin: 0; line-height: 1.6; }
 
-        /* Stats row */
+        
         .hero-stats { display: flex; gap: 0; margin-top: 36px; }
         .stat-item {
             padding-right: 36px; margin-right: 36px;
@@ -221,7 +222,7 @@
             margin-top: 4px; font-weight: 500; letter-spacing: 0.02em;
         }
 
-        /* ── SECTION TITLE ── */
+        
         .section-header {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 16px;
@@ -238,7 +239,7 @@
         }
         .see-all:hover { color: var(--teal-light); }
 
-        /* ── CARDS ── */
+        
         .card-tm {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -252,7 +253,7 @@
             transition: background 0.35s ease;
         }
 
-        /* ── FORUM LIST ── */
+        
         .forum-item {
             padding: 16px 0; border-bottom: 1px solid var(--border);
             transition: border-color 0.35s ease;
@@ -285,7 +286,7 @@
         }
         .forum-empty { text-align: center; padding: 44px 0; color: var(--muted); font-size: 0.87rem; }
 
-        /* ── QUICK ACCESS ── */
+        
         .qa-btn {
             display: flex; align-items: center; gap: 14px;
             padding: 14px 16px; border-radius: 12px; text-decoration: none;
@@ -302,7 +303,7 @@
             font-size: 0.95rem; flex-shrink: 0;
         }
 
-        /* Dark mode QA buttons */
+        
         [data-theme="dark"] .qa-btn.aspirasi {
             background: rgba(96,165,250,0.07);
             color: #93c5fd; border-color: rgba(96,165,250,0.15);
@@ -319,7 +320,7 @@
         }
         [data-theme="dark"] .qa-btn.riwayat .icon { background: rgba(167,139,250,0.12); }
 
-        /* Light mode QA buttons */
+        
         [data-theme="light"] .qa-btn.aspirasi { background: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
         [data-theme="light"] .qa-btn.aspirasi .icon { background: #dbeafe; }
         [data-theme="light"] .qa-btn.forum { background: #f0fdfa; color: #0f766e; border-color: #99f6e4; }
@@ -327,7 +328,7 @@
         [data-theme="light"] .qa-btn.riwayat { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
         [data-theme="light"] .qa-btn.riwayat .icon { background: #ede9fe; }
 
-        /* ── INFO CARD ── */
+        
         .info-card {
             background: var(--surface3);
             border: 1px solid var(--border);
@@ -345,7 +346,7 @@
             transition: color 0.35s ease;
         }
 
-        /* ── EMPTY STATE ── */
+        
         .empty-state {
             text-align: center; padding: 56px 24px;
         }
@@ -373,7 +374,7 @@
 </script>
 
 <script>
-const user = JSON.parse(localStorage.getItem("user") || '{"nama":"Byantara","role":"MAHASISWA"}');
+const user = JSON.parse(localStorage.getItem("user"));
 window.onload = function() {
     document.querySelectorAll(".namaUser").forEach(el => el.innerText = user.nama);
     applyThemeUI(document.documentElement.getAttribute('data-theme') || 'dark');
@@ -406,7 +407,7 @@ window.onload = function() {
 
 <div class="page-wrap">
 
-    <!-- Hero -->
+    
     <div class="hero-banner">
         <div class="hero-eyebrow">Dashboard Mahasiswa</div>
         <h2>Selamat datang, <span class="namaUser"></span>!</h2>
@@ -425,7 +426,7 @@ window.onload = function() {
 
     <div class="row g-4">
 
-        <!-- Forum Terbaru -->
+        
         <div class="col-md-8">
             <div class="section-header">
                 <span class="section-title">Forum Terbaru</span>
@@ -440,7 +441,6 @@ window.onload = function() {
             </div>
         </div>
 
-        <!-- Sidebar -->
         <div class="col-md-4">
             <div class="section-header">
                 <span class="section-title">Akses Cepat</span>
@@ -448,16 +448,10 @@ window.onload = function() {
             <div class="card-tm mb-3">
                 <div class="card-body">
                     <a href="/aspirasi.html" class="qa-btn aspirasi">
-                        <span class="icon"></span>
                         <span>Buat Aspirasi</span>
                     </a>
                     <a href="/forum.html" class="qa-btn forum">
-                        <span class="icon"></span>
                         <span>Buka Forum</span>
-                    </a>
-                    <a href="/riwayat.html" class="qa-btn riwayat">
-                        <span class="icon"></span>
-                        <span>Riwayat Aspirasi</span>
                     </a>
                 </div>
             </div>
@@ -474,7 +468,15 @@ window.onload = function() {
 const API_FORUM    = "http://localhost:8080/api/forum";
 const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
 
-function logout() { localStorage.removeItem("user"); window.location.href = "/login.html"; }
+async function logout() {
+    try {
+        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+    } catch (e) {
+        console.error("Gagal logout di server:", e);
+    }
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
+}
 
 function applyThemeUI(theme) {
     const isLight = theme === 'light';
@@ -493,11 +495,11 @@ function toggleTheme() {
 
 async function loadForum() {
     try {
-        const res  = await fetch(API_FORUM);
+        const res  = await authenticatedFetch(API_FORUM);
         const data = await res.json();
         document.getElementById("statForum").innerText = data.length;
 
-        const posts = data.reverse().slice(0, 5);
+        const posts = data.slice(0, 5);
         if (!posts.length) {
             document.getElementById("forumList").innerHTML = `
                 <div class="empty-state">
@@ -532,7 +534,7 @@ async function loadForum() {
 
 async function loadStats() {
     try {
-        const res  = await fetch(API_ASPIRASI);
+        const res  = await authenticatedFetch(API_ASPIRASI);
         const data = await res.json();
         document.getElementById("statAspirasi").innerText = data.length;
     } catch {}

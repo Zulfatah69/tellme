@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - TellMe</title>
+<script src="/js/auth.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-    /* ── LIGHT THEME (default) ── */
+    
     :root,
     [data-theme="light"] {
         --navy: #0f1f3d;
@@ -42,7 +43,7 @@
         --btn-login-shadow-hover: 0 6px 20px rgba(14,159,142,0.35);
     }
 
-    /* ── DARK THEME ── */
+    
     [data-theme="dark"] {
         --navy: #e2e8f0;
         --teal: #2dd4bf;
@@ -87,7 +88,7 @@
         color: var(--text);
     }
 
-    /* ── LEFT PANEL ── */
+    
     .left-panel {
         width: 44%;
         background: var(--left-panel-bg);
@@ -168,7 +169,7 @@
         transition: color 0.35s ease;
     }
 
-    /* ── RIGHT PANEL ── */
+    
     .right-panel {
         flex: 1;
         display: flex; align-items: center; justify-content: center;
@@ -179,7 +180,7 @@
         gap: 20px;
     }
 
-    /* ── THEME TOGGLE (top-right of right panel) ── */
+    
     .right-panel-top {
         width: 100%;
         max-width: 380px;
@@ -331,7 +332,7 @@
 </head>
 <body>
 
-<!-- Theme init before render to avoid flash -->
+
 <script>
 (function() {
     const saved = localStorage.getItem('tellme-theme') || 'light';
@@ -339,7 +340,7 @@
 })();
 </script>
 
-<!-- Left: branding -->
+
 <div class="left-panel">
     <div class="orb"></div>
     <div class="brand-logo">Tell<span>Me</span></div>
@@ -368,9 +369,9 @@
     </div>
 </div>
 
-<!-- Right: form -->
+
 <div class="right-panel">
-    <!-- Theme toggle -->
+    
     <div class="right-panel-top">
         <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema">
             <div class="toggle-track">
@@ -410,7 +411,7 @@
 <script>
 const API = "http://localhost:8080/api/auth/login";
 
-/* ── THEME ── */
+
 function applyThemeUI(theme) {
     const isLight = theme === 'light';
     document.getElementById('themeLabel').textContent = isLight ? 'Terang' : 'Gelap';
@@ -426,10 +427,10 @@ function toggleTheme() {
     applyThemeUI(next);
 }
 
-// Init UI on load
+
 applyThemeUI(document.documentElement.getAttribute('data-theme') || 'light');
 
-/* ── LOGIN ── */
+
 async function login() {
     const identifier = document.getElementById("email").value.trim();
     const password   = document.getElementById("password").value;

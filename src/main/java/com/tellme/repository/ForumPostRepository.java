@@ -26,4 +26,8 @@ public interface ForumPostRepository
         """,
         nativeQuery = true)
     List<ForumPost> findAllByPopular();
+
+    void deleteByUserId(
+            Long userId
+    );
 }

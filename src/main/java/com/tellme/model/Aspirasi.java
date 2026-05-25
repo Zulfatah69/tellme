@@ -1,8 +1,19 @@
 package com.tellme.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "aspirasi")
@@ -22,6 +33,11 @@ public class Aspirasi {
 
     private String feedback;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "aspirasi_foto", joinColumns = @JoinColumn(name = "aspirasi_id"))
+    @Column(name = "foto_path")
+    private List<String> fotoPaths;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -36,6 +52,10 @@ public class Aspirasi {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getIsiAspirasi() {
@@ -76,6 +96,14 @@ public class Aspirasi {
 
     public void setFeedback(String feedback) {
         this.feedback = feedback;
+    }
+
+    public List<String> getFotoPaths() {
+        return fotoPaths;
+    }
+
+    public void setFotoPaths(List<String> fotoPaths) {
+        this.fotoPaths = fotoPaths;
     }
 
     public User getUser() {
