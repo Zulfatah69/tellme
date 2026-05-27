@@ -362,6 +362,54 @@
             font-weight: 700; color: var(--text); margin-bottom: 6px;
         }
         .empty-state p { font-size: 0.84rem; color: var(--muted); margin: 0; }
+
+        @media (max-width: 768px) {
+            .tm-nav .inner {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 10px 16px;
+                gap: 10px;
+                justify-content: space-between;
+            }
+            .tm-brand {
+                order: 1;
+                margin-right: 0;
+            }
+            .tm-user {
+                order: 2;
+            }
+            .tm-links {
+                order: 3;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                gap: 8px;
+                scrollbar-width: none;
+            }
+            .tm-links::-webkit-scrollbar {
+                display: none;
+            }
+            .page-wrap {
+                padding: 16px 12px;
+            }
+            .hero-banner {
+                padding: 24px 20px;
+                margin-bottom: 16px;
+            }
+            .hero-banner h2 {
+                font-size: 1.5rem;
+            }
+            .hero-stats {
+                margin-top: 20px;
+            }
+            .stat-item {
+                padding-right: 20px;
+                margin-right: 20px;
+            }
+            .stat-num {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -493,6 +541,18 @@ function toggleTheme() {
     applyThemeUI(next);
 }
 
+const API_COMMENT = "http://localhost:8080/api/forum-comment";
+
+function countCommentsRecursively(commentsList) {
+    let count = 0;
+    if (!commentsList) return 0;
+    count += commentsList.length;
+    commentsList.forEach(c => {
+        count += countCommentsRecursively(c.replies);
+    });
+    return count;
+}
+
 async function loadForum() {
     try {
         const res  = await authenticatedFetch(API_FORUM);
@@ -509,8 +569,21 @@ async function loadForum() {
                 </div>`;
             return;
         }
+
+        const counts = await Promise.all(
+            posts.map(async (post) => {
+                try {
+                    const cRes = await authenticatedFetch(`${API_COMMENT}/${post.id}`);
+                    const cData = await cRes.json();
+                    return countCommentsRecursively(cData);
+                } catch {
+                    return 0;
+                }
+            })
+        );
+
         let html = "";
-        posts.forEach(post => {
+        posts.forEach((post, index) => {
             const initial = (post.user?.nama || "?").charAt(0).toUpperCase();
             html += `<div class="forum-item">
                 <div class="forum-meta">
@@ -519,6 +592,9 @@ async function loadForum() {
                     <span class="forum-date">${formatTgl(post.tanggal)}</span>
                 </div>
                 <p class="forum-content">${post.isiPost}</p>
+                <div style="font-size:0.75rem; color:var(--muted); display:flex; align-items:center; gap:4px; margin-top:6px;">
+                    <span>💬 ${counts[index]} Komentar / Balasan</span>
+                </div>
             </div>`;
         });
         document.getElementById("forumList").innerHTML = html;

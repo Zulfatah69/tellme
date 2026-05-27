@@ -607,6 +607,9 @@ const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
 const API_FORUM    = "http://localhost:8080/api/forum";
 const API_USER     = "http://localhost:8080/api/users";
 
+let isProcessingAspirasi = false;
+let isSubmittingFeedback = false;
+
 const user = JSON.parse(localStorage.getItem("user"));
 const nama = user.nama || user.email || "Admin";
 document.getElementById("namaAdmin").textContent   = nama;
@@ -747,6 +750,15 @@ let currentTab = "masuk";
 let kategoriFilter = "semua";
 let searchNama = "";
 
+async function refreshAspirasiData() {
+    try {
+        window.allAspirasi = await authenticatedFetch(API_ASPIRASI).then(r => r.json());
+        switchAspirasiTab(currentTab);
+    } catch {
+        showToast("Gagal memuat aspirasi", "error");
+    }
+}
+
 async function loadAspirasi() {
     document.getElementById("judulHalaman").textContent = "Kelola Aspirasi";
     document.getElementById("contentArea").innerHTML = `
@@ -782,12 +794,20 @@ async function loadAspirasi() {
         </div>
     `;
 
-    try {
-        window.allAspirasi = await authenticatedFetch(API_ASPIRASI).then(r => r.json());
-        switchAspirasiTab('masuk');
-    } catch {
-        showToast("Gagal memuat aspirasi", "error");
+    if (searchNama) {
+        document.getElementById("searchNamaAspirasi").value = searchNama;
     }
+    document.getElementById("tabMasuk").className = currentTab === "masuk" ? "btn btn-purple" : "btn btn-ghost";
+    document.getElementById("tabProses").className = currentTab === "proses" ? "btn btn-purple" : "btn btn-ghost";
+    document.getElementById("tabSelesai").className = currentTab === "selesai" ? "btn btn-purple" : "btn btn-ghost";
+    document.getElementById("tabDitolak").className = currentTab === "ditolak" ? "btn btn-purple" : "btn btn-ghost";
+
+    document.getElementById("filterKategoriSemua").className = kategoriFilter === "semua" ? "btn btn-purple" : "btn btn-ghost";
+    document.getElementById("filterKategoriBelum").className = kategoriFilter === "belum" ? "btn btn-purple" : "btn btn-ghost";
+    document.getElementById("filterKategoriAkademik").className = kategoriFilter === "Akademik" ? "btn btn-purple" : "btn btn-ghost";
+    document.getElementById("filterKategoriOrganisasi").className = kategoriFilter === "Organisasi" ? "btn btn-purple" : "btn btn-ghost";
+
+    await refreshAspirasiData();
 }
 
 function handleSearchNama(val) {
@@ -935,6 +955,8 @@ function toggleFeedback(id){
 }
 
 async function prosesAspirasi(id, kategoriId){
+    if (isProcessingAspirasi) return;
+    isProcessingAspirasi = true;
     try{
         await authenticatedFetch(`${API_ASPIRASI}/${id}/proses`, {
             method:"PUT",
@@ -942,9 +964,11 @@ async function prosesAspirasi(id, kategoriId){
             body:JSON.stringify({ kategoriId: kategoriId, statusId: 2 })
         });
         showToast("Aspirasi berhasil diproses");
-        loadAspirasi();
+        await refreshAspirasiData();
     }catch{
         showToast("Gagal memproses aspirasi", "error");
+    }finally{
+        isProcessingAspirasi = false;
     }
 }
 
@@ -977,6 +1001,7 @@ function closeFeedbackModal() {
 }
 
 async function submitFeedbackModal() {
+    if (isSubmittingFeedback) return;
     const id = document.getElementById("feedbackAspirasiId").value;
     const statusId = parseInt(document.getElementById("feedbackStatusId").value);
     const feedback = document.getElementById("feedbackText").value.trim();
@@ -991,6 +1016,7 @@ async function submitFeedbackModal() {
         finalFeedback = "Aspirasi kamu telah diterima.";
     }
     
+    isSubmittingFeedback = true;
     try {
         await authenticatedFetch(`${API_ASPIRASI}/${id}/feedback`, {
             method: "PUT",
@@ -999,9 +1025,11 @@ async function submitFeedbackModal() {
         });
         showToast(statusId == 4 ? "Aspirasi ditolak" : statusId == 3 ? "Aspirasi selesai" : "Aspirasi diproses");
         closeFeedbackModal();
-        loadAspirasi();
+        await refreshAspirasiData();
     } catch {
         showToast("Gagal merespon aspirasi", "error");
+    } finally {
+        isSubmittingFeedback = false;
     }
 }
 

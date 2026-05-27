@@ -244,6 +244,37 @@
         .empty-state { text-align: center; padding: 56px 24px; }
         .empty-state h4 { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
         .empty-state p { font-size: 0.84rem; color: var(--muted); margin: 0; }
+
+        @media (max-width: 768px) {
+            .tm-nav .inner {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 10px 16px;
+                gap: 10px;
+                justify-content: space-between;
+            }
+            .tm-brand {
+                order: 1;
+                margin-right: 0;
+            }
+            .tm-user {
+                order: 2;
+            }
+            .tm-links {
+                order: 3;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                gap: 8px;
+                scrollbar-width: none;
+            }
+            .tm-links::-webkit-scrollbar {
+                display: none;
+            }
+            .page-wrap {
+                padding: 16px 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -379,6 +410,16 @@ function formatKomentarTeks(teks) {
     return teks;
 }
 
+function countCommentsRecursively(commentsList) {
+    let count = 0;
+    if (!commentsList) return 0;
+    count += commentsList.length;
+    commentsList.forEach(c => {
+        count += countCommentsRecursively(c.replies);
+    });
+    return count;
+}
+
 async function loadPost() {
     try {
         const res = await authenticatedFetch(POST_API); 
@@ -395,8 +436,21 @@ async function loadPost() {
             return;
         }
 
-        data.forEach(post => {
+        const counts = await Promise.all(
+            data.map(async (post) => {
+                try {
+                    const cRes = await authenticatedFetch(`${COMMENT_API}/${post.id}`);
+                    const cData = await cRes.json();
+                    return countCommentsRecursively(cData);
+                } catch {
+                    return 0;
+                }
+            })
+        );
+
+        data.forEach((post, index) => {
             const canDel = post.user?.id == user.id || user.role == 'ADMIN';
+            const count = counts[index];
             html += `
             <div style="margin-bottom:20px;">
                 <div class="card-tm" id="post-${post.id}" style="background:var(--surface); border-radius:22px; padding:24px; border:1px solid var(--border); box-shadow: 0 8px 28px rgba(0,0,0,0.06);">
@@ -415,7 +469,7 @@ async function loadPost() {
                     </div>
                     <div class="post-footer">
                         <button class="btn-comment" onclick="openDiscussionModal(${post.id})">
-                            💬 Lihat Diskusi
+                            💬 Lihat Diskusi (${count})
                         </button>
                     </div>
                 </div>
