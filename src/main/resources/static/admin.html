@@ -603,9 +603,9 @@ body::after {
 </div>
 
 <script>
-const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
-const API_FORUM    = "http://localhost:8080/api/forum";
-const API_USER     = "http://localhost:8080/api/users";
+const API_ASPIRASI = "/api/aspirasi";
+const API_FORUM    = "/api/forum";
+const API_USER     = "/api/users";
 
 let isProcessingAspirasi = false;
 let isSubmittingFeedback = false;
@@ -642,7 +642,7 @@ function showToast(msg, type = "success") {
 
 async function logout() {
     try {
-        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+        await authenticatedFetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
         console.error("Gagal logout di server:", e);
     }
@@ -1167,7 +1167,7 @@ async function loadModalComments() {
     contentArea.innerHTML = html;
     
     try {
-        const comments = await authenticatedFetch(`http://localhost:8080/api/forum-comment/${activePostId}`).then(r => r.json());
+        const comments = await authenticatedFetch(`/api/forum-comment/${activePostId}`).then(r => r.json());
         const treeArea = document.getElementById("modalCommentTree");
         if (!comments.length) {
             treeArea.innerHTML = `<p style="text-align:center; color:var(--muted); font-size:13px; padding:20px 0;">Belum ada komentar.</p>`;
@@ -1234,7 +1234,7 @@ async function sendModalComment() {
     }
     
     try {
-        await authenticatedFetch("http://localhost:8080/api/forum-comment", {
+        await authenticatedFetch("/api/forum-comment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -1250,7 +1250,7 @@ async function sendModalComment() {
 async function hapusKomentar(commentId) {
     if (!confirm("Hapus komentar ini?")) return;
     try {
-        await authenticatedFetch(`http://localhost:8080/api/forum-comment/${commentId}`, { method: "DELETE" });
+        await authenticatedFetch(`/api/forum-comment/${commentId}`, { method: "DELETE" });
         await loadModalComments();
     } catch (e) {
         showToast("Gagal menghapus komentar", "error");

@@ -513,12 +513,12 @@ window.onload = function() {
 </div>
 
 <script>
-const API_FORUM    = "http://localhost:8080/api/forum";
-const API_ASPIRASI = "http://localhost:8080/api/aspirasi";
+const API_FORUM = "/api/forum";
+const API_ASPIRASI = "/api/aspirasi";
 
 async function logout() {
     try {
-        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+        await authenticatedFetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
         console.error("Gagal logout di server:", e);
     }
@@ -541,7 +541,7 @@ function toggleTheme() {
     applyThemeUI(next);
 }
 
-const API_COMMENT = "http://localhost:8080/api/forum-comment";
+const API_COMMENT = "/api/forum-comment";
 
 function countCommentsRecursively(commentsList) {
     let count = 0;

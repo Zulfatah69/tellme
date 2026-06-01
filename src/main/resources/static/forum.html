@@ -360,15 +360,15 @@ window.onload = function() {
 </div>
 
 <script>
-const POST_API = "http://localhost:8080/api/forum";
-const COMMENT_API = "http://localhost:8080/api/forum-comment";
+const POST_API = "/api/forum";
+const COMMENT_API = "/api/forum-comment";
 let currentReplyUser = null;
 let activePostId = null;
 let allPosts = [];
 
 async function logout() {
     try {
-        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+        await authenticatedFetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
         console.error("Gagal logout di server:", e);
     }

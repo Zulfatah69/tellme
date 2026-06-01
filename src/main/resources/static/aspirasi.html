@@ -680,9 +680,9 @@ window.onload = function() {
 </div>
 
 <script>
-const API = "http://localhost:8080/api/aspirasi";
-const API_MY = "http://localhost:8080/api/aspirasi/my";
-const API_KATEGORI = "http://localhost:8080/api/kategori";
+const API = "/api/aspirasi";
+const API_MY = "/api/aspirasi/my";
+const API_KATEGORI = "/api/kategori";
 
 const FALLBACK_KATEGORI = [
     { id: 1, namaKategori: "Akademik" },
@@ -699,7 +699,7 @@ let selectedFiles      = [];
 
 async function logout() {
     try {
-        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+        await authenticatedFetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
         console.error("Gagal logout di server:", e);
     }
@@ -959,7 +959,7 @@ async function kirimAspirasi() {
             selectedFiles.forEach(file => {
                 formData.append("files", file);
             });
-            const uploadRes = await fetch("http://localhost:8080/api/upload", {
+            const uploadRes = await fetch("/api/upload", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${JSON.parse(localStorage.getItem("user")).token}`

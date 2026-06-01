@@ -401,11 +401,11 @@ window.onload = function() {
 </div>
 
 <script>
-const API = "http://localhost:8080/api/users";
+const API = "/api/users";
 
 async function logout() {
     try {
-        await authenticatedFetch("http://localhost:8080/api/auth/logout", { method: "POST" });
+        await authenticatedFetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
         console.error("Gagal logout di server:", e);
     }
