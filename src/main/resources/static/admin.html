@@ -1284,6 +1284,7 @@ async function loadUser(){
             <div class="panel-body">
                 <div class="form-grid">
                     <input id="namaUser" class="form-input" placeholder="Nama lengkap">
+                    <input id="nimUser" class="form-input" placeholder="NIM">
                     <input id="emailUser" class="form-input" placeholder="Email" type="email">
                     <input id="passwordUser" class="form-input" placeholder="Password" type="password">
                     <select id="roleUser" class="form-select">
@@ -1327,6 +1328,7 @@ async function refreshUserTable(){
 
 async function tambahUser(){
     const nama=document.getElementById("namaUser").value.trim();
+    const nim=document.getElementById("nimUser").value.trim();
     const email=document.getElementById("emailUser").value.trim();
     const password=document.getElementById("passwordUser").value.trim();
     const role=document.getElementById("roleUser").value;
@@ -1334,18 +1336,25 @@ async function tambahUser(){
         showToast("Semua field wajib diisi","error");
         return;
     }
+    if(role === "MAHASISWA" && !nim){
+        showToast("NIM wajib diisi untuk Mahasiswa", "error");
+        return;
+    }
     try{
         const res=await authenticatedFetch(API_USER,{
             method:"POST",
             headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({nama,email,password,role})
+            body:JSON.stringify({nama,nim,email,password,role})
         });
-        if(!res.ok) throw new Error();
+        if(!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText || "Gagal menambahkan user");
+        }
         showToast("User berhasil ditambahkan");
-        ["namaUser","emailUser","passwordUser"].forEach(id=>document.getElementById(id).value="");
+        ["namaUser","nimUser","emailUser","passwordUser"].forEach(id=>document.getElementById(id).value="");
         await refreshUserTable();
-    }catch{
-        showToast("Gagal menambahkan user","error");
+    }catch(err){
+        showToast(err.message || "Gagal menambahkan user","error");
     }
 }
 

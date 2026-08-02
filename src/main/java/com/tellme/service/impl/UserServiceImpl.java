@@ -3,105 +3,151 @@ package com.tellme.service.impl;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.tellme.config.PasswordUtil;
+import com.tellme.exception.BusinessException;
+import com.tellme.exception.ResourceNotFoundException;
 import com.tellme.model.User;
 import com.tellme.repository.AspirasiRepository;
 import com.tellme.repository.ForumCommentRepository;
 import com.tellme.repository.ForumPostRepository;
 import com.tellme.repository.UserRepository;
 import com.tellme.service.interfaces.UserService;
+import com.tellme.util.PasswordUtil;
 
 import jakarta.transaction.Transactional;
 
+/**
+ * Default implementation of {@link UserService}.
+ *
+ * <p>Manages user registration, authentication, profile updates, and deletion.
+ * Passwords are stored as SHA-256 hashes via {@link PasswordUtil}.
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private ForumCommentRepository forumCommentRepository;
+    private final UserRepository userRepository;
+    private final ForumCommentRepository forumCommentRepository;
+    private final ForumPostRepository forumPostRepository;
+    private final AspirasiRepository aspirasiRepository;
 
-    @Autowired
-    private ForumPostRepository forumPostRepository;
+    public UserServiceImpl(UserRepository userRepository,
+                           ForumCommentRepository forumCommentRepository,
+                           ForumPostRepository forumPostRepository,
+                           AspirasiRepository aspirasiRepository) {
+        this.userRepository = userRepository;
+        this.forumCommentRepository = forumCommentRepository;
+        this.forumPostRepository = forumPostRepository;
+        this.aspirasiRepository = aspirasiRepository;
+    }
 
-    @Autowired
-    private AspirasiRepository aspirasiRepository;
-
+    /** {@inheritDoc} */
     @Override
     public User createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Email sudah digunakan");
+            throw new BusinessException("Email address is already registered.");
         }
-        if (userRepository.findByNim(user.getNim()) != null) {
-            throw new RuntimeException("NIM sudah digunakan");
+
+        if (user.getRole() == User.Role.MAHASISWA) {
+            if (user.getNim() == null || user.getNim().trim().isEmpty()) {
+                throw new BusinessException("Student ID (NIM) is required for student accounts.");
+            }
+            if (userRepository.findByNim(user.getNim()) != null) {
+                throw new BusinessException("Student ID (NIM) is already registered.");
+            }
+        } else if (user.getNim() != null && !user.getNim().trim().isEmpty()) {
+            if (userRepository.findByNim(user.getNim()) != null) {
+                throw new BusinessException("Student ID (NIM) is already registered.");
+            }
         }
+
         user.setPassword(PasswordUtil.hash(user.getPassword()));
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        log.info("New user registered: id={}, role={}", saved.getId(), saved.getRole());
+        return saved;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /** {@inheritDoc} */
     @Override
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
     }
 
+    /** {@inheritDoc} */
     @Override
-    public User updateUser(Long id, User user) {
+    public User updateUser(Long id, User incoming) {
         User existing = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
 
-        existing.setNama(user.getNama());
-        existing.setEmail(user.getEmail());
+        existing.setNama(incoming.getNama());
+        existing.setEmail(incoming.getEmail());
 
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existing.setPassword(PasswordUtil.hash(user.getPassword()));
+        if (incoming.getPassword() != null && !incoming.getPassword().isEmpty()) {
+            existing.setPassword(PasswordUtil.hash(incoming.getPassword()));
+        }
+        if (incoming.getRole() != null) {
+            existing.setRole(incoming.getRole());
         }
 
-        existing.setRole(user.getRole());
         return userRepository.save(existing);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deleteById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
 
         if (user.getRole() == User.Role.ADMIN) {
-            throw new RuntimeException("Admin tidak bisa dihapus");
+            throw new BusinessException("Admin accounts cannot be deleted through this endpoint.");
         }
 
         forumCommentRepository.deleteByUserId(id);
         aspirasiRepository.deleteByUserId(id);
         forumPostRepository.deleteByUserId(id);
         userRepository.deleteById(id);
+        log.info("User {} deleted", id);
     }
 
+    /** {@inheritDoc} */
     @Override
     public User login(String identifier, String password) {
         User user = userRepository.findByEmail(identifier);
         if (user == null) {
             user = userRepository.findByNim(identifier);
         }
-
         if (user == null || !PasswordUtil.verify(password, user.getPassword())) {
-            throw new RuntimeException("Email/NIM atau password salah");
+            throw new BusinessException("Invalid credentials. Please check your email/NIM and password.");
         }
-
-        if (user.getPassword().length() != 64) {
+        // Transparently upgrade legacy SHA-256 / plain-text passwords to BCrypt
+        // on first successful login. No user action required.
+        if (!PasswordUtil.isBcryptHash(user.getPassword())) {
+            log.info("Upgrading password hash for user {} to BCrypt", user.getId());
             user.setPassword(PasswordUtil.hash(password));
         }
-
         user.setToken(UUID.randomUUID().toString());
         return userRepository.save(user);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void logout(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+        user.setToken(null);
+        userRepository.save(user);
+        log.info("User {} logged out", userId);
     }
 }

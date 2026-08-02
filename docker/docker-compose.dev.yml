@@ -1,0 +1,22 @@
+version: '3.8'
+
+# Run this to get a MySQL container for local development. 
+# Start the app with: ./mvnw spring-boot:run
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: tellme_db_dev
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: tellme
+      MYSQL_USER: ${DB_USERNAME:-tellme_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-tellme_pass}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    ports:
+      - "3306:3306"
+    volumes:
+      - tellme_mysql_dev_data:/var/lib/mysql
+
+volumes:
+  tellme_mysql_dev_data:

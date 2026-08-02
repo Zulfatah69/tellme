@@ -1,0 +1,57 @@
+version: '3.8'
+
+# Note: Create a .env file in this directory with the required environment variables.
+# Example .env contents:
+# DB_USERNAME=tellme_user
+# DB_PASSWORD=secret
+# MAIL_HOST=smtp.gmail.com
+# etc.
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: tellme_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: tellme
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    volumes:
+      - tellme_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: tellme_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
+    environment:
+      - SERVER_PORT=${SERVER_PORT:-8081}
+      - DB_URL=jdbc:mysql://db:3306/tellme?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_ROUTING_ORGANISASI=${MAIL_ROUTING_ORGANISASI}
+      - MAIL_ROUTING_AKADEMIK=${MAIL_ROUTING_AKADEMIK}
+      - UPLOAD_DIR=/app/uploads
+    volumes:
+      - tellme_uploads:/app/uploads
+
+volumes:
+  tellme_mysql_data:
+  tellme_uploads:
