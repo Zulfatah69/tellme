@@ -21,9 +21,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tellme.exception.BusinessException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * REST controller that handles file uploads for submissions.
+ *
+ * <p>Accepts image and PDF files (jpg, jpeg, png, pdf). Files are saved with
+ * random UUID filenames to prevent path traversal and name collisions. The
+ * returned paths can be attached to a submission via the aspirasi API.
  */
+@Tag(name = "File Upload", description = "Upload attachment files for submissions (images and PDFs)")
 @RestController
 @RequestMapping("/api/upload")
 public class UploadController {
@@ -46,6 +54,7 @@ public class UploadController {
         }
     }
 
+    @Operation(summary = "Upload one or more files (jpg, jpeg, png, pdf)")
     @PostMapping
     public ResponseEntity<List<String>> uploadFiles(@RequestParam("files") MultipartFile[] files) {
         if (files.length > maxFiles) {

@@ -42,6 +42,7 @@ This document outlines the planned development and feature timeline for the Tell
 
 We rely on the community to guide our roadmap. Have a feature request? 
 
-1. Check our [GitHub Issues](https://github.com/TellMe Contributors/tellme/issues) to see if it has already been proposed.
+1. Check our [GitHub Issues](https://github.com/Zulfatah69/tellme/issues) to see if it has already been proposed.
 2. If not, open a new **Feature Request** issue and let's discuss it!
 3. Feel free to submit a Pull Request if you'd like to implement a feature yourself. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+

@@ -23,7 +23,8 @@ import jakarta.transaction.Transactional;
  * Default implementation of {@link UserService}.
  *
  * <p>Manages user registration, authentication, profile updates, and deletion.
- * Passwords are stored as SHA-256 hashes via {@link PasswordUtil}.
+ * New passwords are hashed with BCrypt via {@link PasswordUtil}.
+ * Legacy SHA-256 hashes are transparently upgraded on first successful login.
  */
 @Service
 public class UserServiceImpl implements UserService {

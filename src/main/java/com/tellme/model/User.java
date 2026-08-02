@@ -21,8 +21,9 @@ import jakarta.persistence.Table;
  * <p>Authentication is token-based. On login, a UUID session token is generated
  * and stored in the {@code token} field. Logout nullifies this field.
  *
- * <p><strong>Password storage:</strong> Passwords are hashed with SHA-256 (no salt).
- * See {@link com.tellme.util.PasswordUtil} for details and the migration roadmap.
+ * <p><strong>Password storage:</strong> Passwords are hashed with BCrypt (work factor 12).
+ * Legacy SHA-256 hashes are transparently upgraded to BCrypt on first successful login.
+ * See {@link com.tellme.util.PasswordUtil} for full details.
  */
 @Entity
 @Table(name = "users")

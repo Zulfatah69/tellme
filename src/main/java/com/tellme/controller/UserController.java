@@ -1,9 +1,9 @@
 package com.tellme.controller;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,64 +16,91 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tellme.model.User;
 import com.tellme.service.interfaces.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+/**
+ * REST controller for user account management.
+ *
+ * <p>Provides endpoints for registering new users and for administrators to
+ * list, update, and delete user accounts. Authorization is enforced by
+ * {@link com.tellme.config.AuthInterceptor}: only ADMIN users may list all
+ * accounts or access other users' records.
+ */
+@Tag(name = "Users", description = "User registration and management")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Returns all registered users. Admin only.
+     *
+     * @return list of all user accounts
+     */
+    @Operation(summary = "List all users (admin only)")
     @GetMapping
-    public List<User> getAll() {
-
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAll() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    /**
+     * Returns a single user by their ID.
+     *
+     * <p>Non-admin users may only retrieve their own record.
+     * Access to other users' records is blocked by {@link com.tellme.config.AuthInterceptor}.
+     *
+     * @param id the user ID
+     * @return the user account
+     */
+    @Operation(summary = "Get a user by ID")
     @GetMapping("/{id}")
-    public User getById(
-            @PathVariable Long id) {
-
-        return userService.getById(id);
+    public ResponseEntity<User> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getById(id));
     }
 
+    /**
+     * Registers a new user account (self-registration — no token required).
+     *
+     * @param user the new user data (name, email, NIM, password, role)
+     * @return the created user with HTTP 201
+     */
+    @Operation(summary = "Register a new user account — no auth required")
     @PostMapping
-    public User create(
-            @RequestBody User user) {
-
-        return userService.createUser(user);
+    public ResponseEntity<User> create(@RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.createUser(user));
     }
 
+    /**
+     * Updates an existing user's profile.
+     *
+     * @param id   the user ID to update
+     * @param user the updated user data
+     * @return the updated user account
+     */
+    @Operation(summary = "Update a user account")
     @PutMapping("/{id}")
-    public User update(
-            @PathVariable Long id,
-            @RequestBody User user) {
-
-        return userService.updateUser(
-                id,
-                user
-        );
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
+    /**
+     * Deletes a user account and all their associated content. Admin only.
+     *
+     * <p>Admin accounts cannot be deleted through this endpoint.
+     *
+     * @param id the user ID to delete
+     */
+    @Operation(summary = "Delete a user account (admin only)")
     @DeleteMapping("/{id}")
-    public void delete(
-            @PathVariable Long id) {
-
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteById(id);
-    }
-
-    @PostMapping("/login")
-    public User login(
-            @RequestBody Map<String, String> req) {
-
-        String identifier =
-                req.get("identifier");
-
-        String password =
-                req.get("password");
-
-        return userService.login(
-                identifier,
-                password
-        );
+        return ResponseEntity.noContent().build();
     }
 }

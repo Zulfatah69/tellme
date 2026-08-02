@@ -16,12 +16,16 @@ import com.tellme.dto.ForumCommentResponse;
 import com.tellme.model.ForumComment;
 import com.tellme.service.interfaces.ForumCommentService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * REST controller for forum comments and threaded replies.
  *
  * <p>Comments belong to a {@link com.tellme.model.ForumPost} and optionally
  * reference a parent comment to form one level of threading.
  */
+@Tag(name = "Forum Comments", description = "Create, retrieve, and delete forum comments and threaded replies")
 @RestController
 @RequestMapping("/api/forum-comment")
 public class ForumCommentController {
@@ -38,6 +42,7 @@ public class ForumCommentController {
      * @param comment the comment payload (must include {@code post.id} and {@code user.id})
      * @return the created comment with HTTP 201
      */
+    @Operation(summary = "Create a new forum comment or reply")
     @PostMapping
     public ResponseEntity<ForumComment> createComment(@RequestBody ForumComment comment) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,6 +55,7 @@ public class ForumCommentController {
      * @param postId the forum post ID
      * @return list of comment trees
      */
+    @Operation(summary = "Get all comments for a forum post (with nested replies)")
     @GetMapping("/{postId}")
     public ResponseEntity<List<ForumCommentResponse>> getByPost(@PathVariable Long postId) {
         return ResponseEntity.ok(forumCommentService.getByPost(postId));
@@ -60,6 +66,7 @@ public class ForumCommentController {
      *
      * @param id the comment ID
      */
+    @Operation(summary = "Delete a forum comment")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         forumCommentService.deleteComment(id);

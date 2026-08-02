@@ -34,7 +34,7 @@ There are many ways to contribute to TellMe:
    ```
 3. Add the upstream repository:
    ```bash
-   git remote add upstream https://github.com/TellMe Contributors/tellme.git
+   git remote add upstream https://github.com/Zulfatah69/tellme.git
    ```
 
 ### Run Locally
