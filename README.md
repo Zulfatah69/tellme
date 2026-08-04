@@ -1,5 +1,4 @@
 <h1 align="center">
-  <img src="docs/assets/logo.svg" width="64" alt="TellMe Logo" />
   <br/>
   TellMe
 </h1>
