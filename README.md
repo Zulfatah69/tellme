@@ -31,11 +31,28 @@
 
 ## 📸 Screenshots
 
-| Dashboard | Submit Feedback | Discussion Forum |
-| :---: | :---: | :---: |
-| *(screenshot coming soon)* | *(screenshot coming soon)* | *(screenshot coming soon)* |
+<p align="center">
+  <img src="docs/screenshots/login.png" width="45%" alt="Login Page"/>
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/dashboard.png" width="45%" alt="Dashboard"/>
+</p>
 
-> Want to add screenshots? See [CONTRIBUTING.md](CONTRIBUTING.md).
+<p align="center">
+  <img src="docs/screenshots/submit.png" width="45%" alt="Submit Feedback"/>
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/forum.png" width="45%" alt="Discussion Forum"/>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/riwayat.png" width="45%" alt="Status Tracking"/>
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/admin.png" width="45%" alt="Admin Dashboard"/>
+</p>
+
+> 📁 **Cara menambahkan screenshot:**
+> 1. Buat folder `docs/screenshots/` di repository
+> 2. Upload file gambar dengan nama: `login.png`, `dashboard.png`, `submit.png`, `forum.png`, `riwayat.png`, `admin.png`
+> 3. Commit dan push — gambar akan otomatis tampil di sini
 
 ---
 
