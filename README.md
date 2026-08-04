@@ -49,11 +49,6 @@
   <img src="docs/screenshots/admin.png" width="45%" alt="Admin Dashboard"/>
 </p>
 
-> 📁 **Cara menambahkan screenshot:**
-> 1. Buat folder `docs/screenshots/` di repository
-> 2. Upload file gambar dengan nama: `login.png`, `dashboard.png`, `submit.png`, `forum.png`, `riwayat.png`, `admin.png`
-> 3. Commit dan push — gambar akan otomatis tampil di sini
-
 ---
 
 ## ✨ Features
